@@ -3,12 +3,14 @@ import RootLayout from "../Layout/RootLayout/RootLayout";
 import Homepage from "../Pages/Home/HomePage/Homepage";
 import Login from "../Pages/Login/Login";
 import Register from "../Pages/Register/Register";
+import ErrorPage from "../Pages/ErrorPage/ErrorPage";
+import ForgetPassword from "../Pages/ForgetPassword/ForgetPassword";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout></RootLayout>,
-    errorElement:<h1>This is error page</h1>,
+    errorElement:<ErrorPage></ErrorPage>,
     children:[
         {
             index:true,
@@ -23,8 +25,8 @@ export const router = createBrowserRouter([
             element:<Register></Register>
         },
         {
-            index:true,
-            element:<Homepage></Homepage>
+            path:'/forget-password',
+            element:<ForgetPassword></ForgetPassword>
         },
         {
             index:true,

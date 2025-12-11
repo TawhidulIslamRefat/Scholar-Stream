@@ -92,7 +92,7 @@ const [showPassword, setShowPassword] = useState(false);
       });
   };
   return (
-    <div className="">
+    <div>
       <div className="min-h-screen flex flex-col md:flex-row justify-center items-center w-10/12 mx-auto">
         <div className="bg-white font-display text-text-main flex items-center justify-center p-6 flex-1 ">
           <div className="w-full max-w-[460px] mx-auto bg-white">
@@ -179,6 +179,13 @@ const [showPassword, setShowPassword] = useState(false);
                   >
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </span>
+                </div>
+                <div className="text-right">
+                  <Link to='/forget-password' 
+                  className="text-sm underline hover:text-primary"
+                  >
+                  Forget Password
+                  </Link>
                 </div>
               </div>
 
