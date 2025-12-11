@@ -3,12 +3,14 @@ import logo from "../../../assets/scholarship (1).png";
 const Footer = () => {
   return (
     <div className="bg-base-200">
-      <footer className="footer w-10/12 mx-auto sm:footer-horizontal  text-base-content p-10">
+      <footer className="footer w-9/12 mx-auto sm:footer-horizontal  text-base-content p-10">
         <aside className="grid-flow-col items-center">
           <div>
             <img src={logo} alt="logo" className="w-10" />
             <p className="text-xl font-medium">ScholarStream</p>
-          <span className="text-sm font-medium">Scholarship Management Platform</span>
+            <span className="text-sm font-medium">
+              Scholarship Management Platform
+            </span>
           </div>
         </aside>
         <nav>

@@ -8,10 +8,10 @@ const Register = () => {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const {createUser,updateUser,setUser,signInGoogle} = useAuth()
+  const { createUser, updateUser, setUser, signInGoogle } = useAuth();
 
   const handleRegister = (event) => {
-      event.preventDefault();
+    event.preventDefault();
     const name = event.target.name.value;
     const photo = event.target.photo.value;
     const email = event.target.email.value;
@@ -73,14 +73,14 @@ const Register = () => {
           icon: "error",
           title: "Oops...",
           text: "Something went wrong!",
-          confirmButtonColor:"#FF5A3C",
+          confirmButtonColor: "#FF5A3C",
           error,
         });
       });
   };
 
   const handleGoogleLogin = () => {
-      signInGoogle()
+    signInGoogle()
       .then((result) => {
         const user = result.user;
         setUser(user);
@@ -116,13 +116,13 @@ const Register = () => {
           icon: "error",
           title: "Oops...",
           text: "Something went wrong!",
-          confirmButtonColor:"#FF5A3C",
+          confirmButtonColor: "#FF5A3C",
           error,
         });
       });
   };
   return (
-    <div className="min-h-screen flex flex-col md:flex-row justify-center items-center w-10/12 mx-auto">
+    <div className="min-h-screen flex flex-col md:flex-row justify-center items-center w-9/12 mx-auto">
       <div className="bg-white font-display text-text-main flex items-center justify-center p-6 flex-1 ">
         <div className="w-full max-w-[460px] mx-auto bg-white">
           <header className="mb-8">
@@ -134,7 +134,10 @@ const Register = () => {
             </p>
           </header>
 
-          <button onClick={handleGoogleLogin} className="w-full flex items-center justify-center gap-3 border border-border-light rounded-lg py-2.5 px-4  transition-colors duration-200 mb-6 group hover:bg-primary">
+          <button
+            onClick={handleGoogleLogin}
+            className="w-full flex items-center justify-center gap-3 border border-border-light rounded-lg py-2.5 px-4  transition-colors duration-200 mb-6 group hover:bg-primary"
+          >
             <svg
               className="w-5 h-5"
               viewBox="0 0 24 24"
@@ -265,7 +268,7 @@ const Register = () => {
                 I accepted all terms &amp; conditions.
               </label>
             </div>
-             {error && <p className="text-red-600">{error}</p>}
+            {error && <p className="text-red-600">{error}</p>}
             <button
               className="w-full bg-[#1A1A1A] text-white font-bold rounded-lg py-3  transition-all duration-300 shadow-sm mt-2 hover:bg-primary"
               type="submit"

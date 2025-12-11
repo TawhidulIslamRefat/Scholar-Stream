@@ -9,14 +9,14 @@ const ForgetPassword = () => {
   const location = useLocation();
   const preEmail = location.state?.email || "";
   const [email, setEmail] = useState(preEmail);
-   const handleForgetPassword = (event) => {
+  const handleForgetPassword = (event) => {
     event.preventDefault();
     if (!email) {
-       Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "Please Enter Your Email First",
-              });
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please Enter Your Email First",
+      });
       return;
     }
     forgetPassword(email)
@@ -28,22 +28,21 @@ const ForgetPassword = () => {
           showConfirmButton: false,
           timer: 1500,
         });
-        navigate('/login');
+        navigate("/login");
       })
       .catch((error) => {
         Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: error.message,
-                confirmButtonColor:"#FF5A3C"
-              });
+          icon: "error",
+          title: "Oops...",
+          text: error.message,
+          confirmButtonColor: "#FF5A3C",
+        });
       });
   };
 
-
   return (
     <div>
-      <div className="min-h-screen flex flex-col md:flex-row justify-center items-center w-10/12 mx-auto">
+      <div className="min-h-screen flex flex-col md:flex-row justify-center items-center w-9/12 mx-auto">
         <div className="bg-white font-display text-text-main flex items-center justify-center p-6 flex-1 ">
           <div className="w-full max-w-[460px] mx-auto bg-white">
             <header className="mb-8">

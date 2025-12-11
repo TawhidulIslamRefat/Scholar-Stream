@@ -6,11 +6,11 @@ import Swal from "sweetalert2";
 import useAuth from "../../Hooks/useAuth";
 
 const SignUp = () => {
-const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
-   const {signIn,setUser,signInGoogle} = useAuth();
+  const { signIn, setUser, signInGoogle } = useAuth();
 
   const handleLogin = (event) => {
     event.preventDefault();
@@ -35,7 +35,7 @@ const [showPassword, setShowPassword] = useState(false);
           icon: "error",
           title: "Oops...",
           text: "Something went wrong!",
-          confirmButtonColor:"#FF5A3C",
+          confirmButtonColor: "#FF5A3C",
           error,
         });
       });
@@ -76,7 +76,7 @@ const [showPassword, setShowPassword] = useState(false);
               icon: "error",
               title: "Oops...",
               text: "Something went wrong!",
-              confirmButtonColor:"#FF5A3C"
+              confirmButtonColor: "#FF5A3C",
             });
             console.error(error);
           });
@@ -86,14 +86,14 @@ const [showPassword, setShowPassword] = useState(false);
           icon: "error",
           title: "Oops...",
           text: "Something went wrong!",
-          confirmButtonColor:"#FF5A3C",
+          confirmButtonColor: "#FF5A3C",
           error,
         });
       });
   };
   return (
     <div>
-      <div className="min-h-screen flex flex-col md:flex-row justify-center items-center w-10/12 mx-auto">
+      <div className="min-h-screen flex flex-col md:flex-row justify-center items-center w-9/12 mx-auto">
         <div className="bg-white font-display text-text-main flex items-center justify-center p-6 flex-1 ">
           <div className="w-full max-w-[460px] mx-auto bg-white">
             <header className="mb-8">
@@ -105,7 +105,10 @@ const [showPassword, setShowPassword] = useState(false);
               </p>
             </header>
 
-            <button onClick={handleGoogleLogin} className="w-full flex items-center justify-center gap-3 border border-border-light rounded-lg py-2.5 px-4  transition-colors duration-200 mb-6 group hover:bg-primary">
+            <button
+              onClick={handleGoogleLogin}
+              className="w-full flex items-center justify-center gap-3 border border-border-light rounded-lg py-2.5 px-4  transition-colors duration-200 mb-6 group hover:bg-primary"
+            >
               <svg
                 className="w-5 h-5"
                 viewBox="0 0 24 24"
@@ -140,7 +143,7 @@ const [showPassword, setShowPassword] = useState(false);
               </span>
             </div>
 
-            <form onSubmit={handleLogin}  className="space-y-5">
+            <form onSubmit={handleLogin} className="space-y-5">
               <div>
                 <label
                   className="block text-sm font-bold text-dark mb-1.5"
@@ -159,9 +162,7 @@ const [showPassword, setShowPassword] = useState(false);
               </div>
 
               <div>
-                <label
-                  className="block text-sm font-bold text-dark mb-1.5"
-                >
+                <label className="block text-sm font-bold text-dark mb-1.5">
                   Password
                 </label>
                 <div className="relative">
@@ -181,10 +182,11 @@ const [showPassword, setShowPassword] = useState(false);
                   </span>
                 </div>
                 <div className="text-right">
-                  <Link to='/forget-password' 
-                  className="text-sm underline hover:text-primary"
+                  <Link
+                    to="/forget-password"
+                    className="text-sm underline hover:text-primary"
                   >
-                  Forget Password
+                    Forget Password
                   </Link>
                 </div>
               </div>
