@@ -2,12 +2,39 @@ import React from "react";
 import { FaArrowRight } from "react-icons/fa";
 import { Link, NavLink } from "react-router";
 import logo from '../../../assets/scholarship (1).png'
+import useAuth from "../../../Hooks/useAuth";
+import Swal from "sweetalert2";
 
 const Navbar = () => {
+          const {user,logOut} = useAuth();
+
     const Links = <>
         <li ><NavLink>Home</NavLink></li>
         <li ><NavLink>All Scholarships</NavLink></li>
     </>
+
+    
+  const handleLogOut = () => {
+    logOut()
+      .then(() => {
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Logout Successful",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      })
+      .catch((error) => {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Something went wrong! ",
+          error,
+        });
+      });
+  };
+
   return (
     <div className="bg-base-100 shadow-sm">
       <div className="navbar  w-10/12 mx-auto">
@@ -40,7 +67,7 @@ const Navbar = () => {
 
           <Link to='/' className="flex items-center gap-2">
             <img src={logo} alt="Logo" className="w-8" />
-            <a className="text-xl font-semibold">ScholarStream</a>
+            <span className="text-xl font-semibold">ScholarStream</span>
           </Link>
         </div>
         <div className="navbar-center hidden lg:flex">
@@ -49,8 +76,41 @@ const Navbar = () => {
           </ul>
         </div>
         <div className="navbar-end space-x-4">
-          <Link to='/login' className="font-medium text-primary flex items-center gap-1">Login <FaArrowRight className="text-sm" /></Link>
+
+
+         {user && user.photoURL ? (
+            <>
+              <div className="dropdown dropdown-left">
+                <div tabIndex={0} role="button" className=" m-1">
+                  <img
+                    className="w-10 md:w-12 h-10 md:h-12 rounded-full border-primary border-2"
+                    src={user.photoURL}
+                    alt="user avator"
+                  />
+                </div>
+                <div
+                  tabIndex="-1"
+                  className="dropdown-content menu bg-base-300 rounded-box z-1 w-65 p-2 shadow-sm mt-16"
+                >
+                  <div>
+                    <button
+                      className=" btn bg-gray-900 hover:bg-primary text-white w-full text-[12px] md:text-[15px] my-1 md:my-2"
+                      onClick={handleLogOut}
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+             <Link to='/login' className="font-medium text-primary flex items-center gap-1">Login <FaArrowRight className="text-sm" /></Link>
           <Link to='/register' className="btn bg-primary rounded-4xl text-white">Register</Link>
+            </>
+          )}
+
+          
         </div>
       </div>
     </div>
