@@ -1,5 +1,7 @@
 import React from "react";
-import { NavLink } from "react-router";
+import { FaArrowRight } from "react-icons/fa";
+import { Link, NavLink } from "react-router";
+import logo from '../../../assets/scholarship (1).png'
 
 const Navbar = () => {
     const Links = <>
@@ -7,8 +9,8 @@ const Navbar = () => {
         <li ><NavLink>All Scholarships</NavLink></li>
     </>
   return (
-    <div>
-      <div className="navbar bg-base-100 shadow-sm">
+    <div className="bg-base-100 shadow-sm">
+      <div className="navbar  w-10/12 mx-auto">
         <div className="navbar-start">
           <div className="dropdown">
             <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -35,15 +37,20 @@ const Navbar = () => {
               {Links}
             </ul>
           </div>
-          <a className="btn btn-ghost text-xl">daisyUI</a>
+
+          <Link to='/' className="flex items-center gap-2">
+            <img src={logo} alt="Logo" className="w-8" />
+            <a className="text-xl font-semibold">ScholarStream</a>
+          </Link>
         </div>
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">
            {Links}
           </ul>
         </div>
-        <div className="navbar-end">
-          <a className="btn">Button</a>
+        <div className="navbar-end space-x-4">
+          <Link to='/login' className="font-medium text-primary flex items-center gap-1">Login <FaArrowRight className="text-sm" /></Link>
+          <Link to='/register' className="btn bg-primary rounded-4xl text-white">Register</Link>
         </div>
       </div>
     </div>
