@@ -11,7 +11,7 @@ const StoriesSection = () => {
   }, []);
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 mt-10">
       <div className="w-9/12 mx-auto px-4 text-center">
         <h2 className="text-2xl md:text-4xl font-bold text-[#0A2540] mb-4">
           Success Stories

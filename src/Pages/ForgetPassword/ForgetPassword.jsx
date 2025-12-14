@@ -43,8 +43,8 @@ const ForgetPassword = () => {
   return (
     <div>
       <div className="min-h-screen flex flex-col md:flex-row justify-center items-center w-9/12 mx-auto">
-        <div className="bg-white font-display text-text-main flex items-center justify-center p-6 flex-1 ">
-          <div className="w-full max-w-[460px] mx-auto bg-white">
+        <div className="font-display text-text-main flex items-center justify-center p-6 flex-1 ">
+          <div className="w-full max-w-[460px] mx-auto ">
             <header className="mb-8">
               <h1 className="text-3xl font-bold text-dark mb-2">
                 Recover Your Account

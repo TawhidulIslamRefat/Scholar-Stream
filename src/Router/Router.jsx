@@ -5,6 +5,7 @@ import Login from "../Pages/Login/Login";
 import Register from "../Pages/Register/Register";
 import ErrorPage from "../Pages/ErrorPage/ErrorPage";
 import ForgetPassword from "../Pages/ForgetPassword/ForgetPassword";
+import AllScholarShipPage from "../Pages/AllScholarShip/AllScholarShipPage/AllScholarShipPage";
 
 export const router = createBrowserRouter([
   {
@@ -29,8 +30,8 @@ export const router = createBrowserRouter([
             element:<ForgetPassword></ForgetPassword>
         },
         {
-            index:true,
-            element:<Homepage></Homepage>
+            path:'/all-scholarship',
+            element:<AllScholarShipPage></AllScholarShipPage>
         }
     ]
   },

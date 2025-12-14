@@ -11,10 +11,10 @@ const Navbar = () => {
   const Links = (
     <>
       <li>
-        <NavLink className='font-medium text-sm'>Home</NavLink>
+        <NavLink to='/' className='font-medium text-sm'>Home</NavLink>
       </li>
       <li>
-        <NavLink className='font-medium text-sm'>All Scholarships</NavLink>
+        <NavLink to='/all-scholarship' className='font-medium text-sm'>All Scholarships</NavLink>
       </li>
     </>
   );

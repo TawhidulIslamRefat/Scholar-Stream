@@ -123,8 +123,8 @@ const Register = () => {
   };
   return (
     <div className="min-h-screen flex flex-col md:flex-row justify-center items-center w-9/12 mx-auto">
-      <div className="bg-white font-display text-text-main flex items-center justify-center p-6 flex-1 ">
-        <div className="w-full max-w-[460px] mx-auto bg-white">
+      <div className=" font-display text-text-main flex items-center justify-center p-6 flex-1 ">
+        <div className="w-full max-w-[460px] mx-auto ">
           <header className="mb-8">
             <h1 className="text-3xl font-bold text-dark mb-2">
               Create Your Account
@@ -167,7 +167,7 @@ const Register = () => {
 
           <div className="relative flex items-center justify-center mb-6">
             <div className="h-px bg-gray-200 w-full"></div>
-            <span className="absolute bg-white px-3 text-xs text-gray-400 font-medium uppercase">
+            <span className="absolute  px-3 text-xs text-gray-400 font-medium uppercase">
               OR
             </span>
           </div>
