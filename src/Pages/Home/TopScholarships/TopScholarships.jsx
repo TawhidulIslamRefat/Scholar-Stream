@@ -29,7 +29,7 @@ const TopScholarships = () => {
             Achieve More with the World’s Best Scholarships
         </p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8  md:gap-10 xl:gap-16">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8  ">
         {scholarships.slice(0, 6).map((scholarship) => (
           <TopScholarshipCard key={scholarship._id} scholarship={scholarship}></TopScholarshipCard>
         ))}

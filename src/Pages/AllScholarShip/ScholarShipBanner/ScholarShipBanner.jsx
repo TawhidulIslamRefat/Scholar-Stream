@@ -1,18 +1,23 @@
 import React, { useState } from "react";
 
-const ScholarshipHero = () => {
+const ScholarshipHero = ({setQuery}) => {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [subject, setSubject] = useState("");
   const [location, setLocation] = useState("");
 
   const handleSearch = () => {
-    console.log({ search, category, subject, location });
+    setQuery({
+      search,
+      scholarshipCategory:category,
+      subjectCategory:subject,
+      location
+    })
   };
 
   return (
     <section className="relative bg-[#F8FAFC] overflow-hidden">
-      <div className=" w-9/12 mx-auto px-6 py-20 grid md:grid-cols-2 gap-14 items-center">
+      <div className=" w-9/12 mx-auto  py-20 grid md:grid-cols-2 gap-14 items-center">
         
         {/* LEFT CONTENT */}
         <div>
@@ -47,9 +52,9 @@ const ScholarshipHero = () => {
                 className="px-4 py-3 rounded-xl border border-gray-300"
               >
                 <option value="">Category</option>
-                <option>Fully Funded</option>
-                <option>Merit Based</option>
-                <option>Self-funded</option>
+                <option>Full Fund</option>
+                <option>Partial</option>
+                <option>Self Fund</option>
               </select>
 
               <select
