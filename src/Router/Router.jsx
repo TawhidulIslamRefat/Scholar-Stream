@@ -7,6 +7,7 @@ import ErrorPage from "../Pages/ErrorPage/ErrorPage";
 import ForgetPassword from "../Pages/ForgetPassword/ForgetPassword";
 import AllScholarShipPage from "../Pages/AllScholarShip/AllScholarShipPage/AllScholarShipPage";
 import ScholarshipDetails from "../Pages/ScholarshipDetails/ScholarshipDetails";
+import CheckoutPage from "../Pages/CheckoutPage/CheckoutPage";
 
 export const router = createBrowserRouter([
   {
@@ -37,6 +38,10 @@ export const router = createBrowserRouter([
         {
             path:'/scholarships/:id',
             element:<ScholarshipDetails></ScholarshipDetails>
+        },
+        {
+            path:'/checkout/:id',
+            element:<CheckoutPage></CheckoutPage>
         }
     ]
   },

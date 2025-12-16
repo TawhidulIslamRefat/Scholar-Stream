@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import useAuth from "../../Hooks/useAuth";
 // import Swal from "sweetalert2";
 // import Loading from "../../Components/Loading/Loading";
@@ -61,10 +61,6 @@ const PropertyDetails = () => {
       });
   };
 
-  const handleApply = () => {
-    // navigate(`/checkout/${id}`);
-  };
-
   //   if (loading) {
   //     return <Loading />;
   //   }
@@ -122,12 +118,12 @@ const PropertyDetails = () => {
             <div className="mt-10"></div>
           </div>
           <div>
-            <button
-              onClick={handleApply}
+            <Link
+              to={`/checkout/${id}`}
               className="bg-primary px-1 py-0.5 md:px-2 md:py-1 rounded-sm hover:bg-green-700 hover:text-white text-lg font-medium "
             >
               Apply for Scholarship
-            </button>
+            </Link>
           </div>
         </div>
       </div>
