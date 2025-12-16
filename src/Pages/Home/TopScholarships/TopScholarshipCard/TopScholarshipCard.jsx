@@ -34,7 +34,9 @@ const TopScholarshipCard = ({ scholarship }) => {
           </div>
           <div className="flex items-center justify-between">
             <p className="text-[17px] font-medium text-gray-700">Application Fees : {scholarship.applicationFees > 0 ? `$${scholarship.applicationFees}` : "Free"}</p>
-             <Link className="mt-3 p-1 flex gap-2  items-center font-semibold text-primary transition-all duration-300 hover:underline justify-end">
+             <Link
+              to={`/scholarships/${scholarship._id}`}
+             className="mt-3 p-1 flex gap-2  items-center font-semibold text-primary transition-all duration-300 hover:underline justify-end">
             View Details <BsArrowRight className="text-[18px]" />
           </Link>
           </div>
