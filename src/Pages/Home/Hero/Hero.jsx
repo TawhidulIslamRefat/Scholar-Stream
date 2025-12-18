@@ -27,9 +27,9 @@ const Hero = () => {
           {/* Right - Image */}
           <div className="flex justify-center lg:justify-end">
             <img
-              src="https://themephi.net/template/eduan/eduan/assets/img/banner/8/1.png"
+              src="https://themephi.net/html/eduan/eduan/assets/img/banner/2/banner-bg.png"
               alt="Graduate Girl"
-              className="w-[380px] lg:w-[450px] object-cover drop-shadow-xl"
+              className="w-[480px] lg:w-[550px] object-cover drop-shadow-xl"
             />
           </div>
 

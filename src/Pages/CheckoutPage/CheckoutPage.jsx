@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router";
+import { useParams } from "react-router";
 import useAuth from "../../Hooks/useAuth";
 
 const CheckoutPage = () => {
   const { id } = useParams();
-//   const navigate = useNavigate();
+  //   const navigate = useNavigate();
   const { user } = useAuth();
 
   const [scholarship, setScholarship] = useState({});

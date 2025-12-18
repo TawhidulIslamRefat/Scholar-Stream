@@ -42,7 +42,7 @@ const Register = () => {
           });
 
           const userInfo = {
-            Name: name,
+            name: name,
             email: email,
             photo: photo,
             createAt: new Date(),
@@ -88,7 +88,7 @@ const Register = () => {
         const newUser = {
           name: user.displayName,
           email: user.email,
-          image: user.photoURL,
+          photo: user.photoURL,
           createAt: new Date(),
         };
 

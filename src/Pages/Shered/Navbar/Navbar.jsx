@@ -11,10 +11,14 @@ const Navbar = () => {
   const Links = (
     <>
       <li>
-        <NavLink to='/' className='font-medium text-sm'>Home</NavLink>
+        <NavLink to="/" className="font-medium text-sm">
+          Home
+        </NavLink>
       </li>
       <li>
-        <NavLink to='/all-scholarship' className='font-medium text-sm'>All Scholarships</NavLink>
+        <NavLink to="/all-scholarship" className="font-medium text-sm">
+          All Scholarships
+        </NavLink>
       </li>
     </>
   );
@@ -91,15 +95,120 @@ const Navbar = () => {
                 </div>
                 <div
                   tabIndex="-1"
-                  className="dropdown-content menu bg-base-300 rounded-box z-1 w-65 p-2 shadow-sm mt-16"
+                  className="dropdown-content rounded-3xl bg-base-300 z-50 w-80 p-6 shadow-2xl border-2 border-purple-100 mt-16 backdrop-blur-3xl"
                 >
-                  <div>
+                  <div className="space-y-4">
+                    <div className="text-center mb-6">
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-white/20 rounded-2xl blur-xl"></div>
+                        <div className="relative bg-white backdrop-blur-md rounded-2xl p-2 border border-white/20">
+                          <h3 className=" font-bold text-lg mb-1">
+                            Welcome Back!
+                          </h3>
+                          <p className="text-sm">
+                            {user.displayName || "Scholar"}
+                          </p>
+                          <div className="flex justify-center mt-2">
+                            <div className="w-12 h-1 bg-linear-to-r from-yellow-400 to-orange-400 rounded-full"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <Link to="/dashboard" className="group relative block">
+                      <div className="relative overflow-hidden bg-white backdrop-blur-2xl border border-white/20  rounded-2xl p-2.5 transform transition-all duration-500  shadow-xl">
+                        {/* Content */}
+                        <div className="relative z-10 flex items-center justify-between">
+                          <div className="flex items-center space-x-4">
+                            
+                            <div className="relative">
+                              <div className="w-8 h-8 bg-linear-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center transform  transition-transform duration-500">
+                                <svg
+                                  className="w-6 h-6 text-white"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                                  />
+                                </svg>
+                              </div>
+                            </div>
+
+                            <div>
+                              <h4 className="font-bold text-gray-800transition-colors duration-300">
+                                Dashboard
+                              </h4>
+                              <p className="text-sm text-gray-500 transition-colors duration-300">
+                                Manage your profile
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="w-8 h-8 bg-gray-100  rounded-full flex items-center justify-center">
+                            <FaArrowRight className="text-gray-600  text-sm" />
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
                     <button
-                      className=" btn bg-gray-900 hover:bg-primary text-white w-full text-[12px] md:text-[15px] my-1 md:my-2"
                       onClick={handleLogOut}
+                      className="group relative w-full block"
                     >
-                      Logout
+                      <div className="relative overflow-hidden backdrop-blur-2xl border border-white/20 rounded-2xl p-2 transform transition-all duration-500 bg-white  shadow-xl">
+                        <div className="relative z-10 flex items-center justify-center space-x-4">
+                          <div className="relative">
+                            <div className="w-8 h-8 bg-linear-to-br from-red-500 to-pink-600 rounded-xl flex items-center justify-center transform  transition-transform duration-500">
+                              <svg
+                                className="w-6 h-6 text-white transform  transition-transform duration-300"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <h4 className="font-bold text-gray-800 transition-colors duration-300">
+                              Sign Out
+                            </h4>
+                            <p className="text-sm text-gray-500 transition-colors duration-300">
+                              See you later!
+                            </p>
+                          </div>
+                          <div className="w-8 h-8 bg-gray-100  rounded-full flex items-center justify-center">
+                            <FaArrowRight className="text-gray-600  text-sm" />
+                          </div>
+                        </div>
+                      </div>
                     </button>
+
+                    {/* Decorative Footer */}
+                    <div className="text-center pt-4 border-t border-white/20">
+                      <div className="flex justify-center space-x-2 mb-2">
+                        <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                        <div
+                          className="w-2 h-2 bg-green-400 rounded-full animate-pulse"
+                          style={{ animationDelay: "0.2s" }}
+                        ></div>
+                        <div
+                          className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"
+                          style={{ animationDelay: "0.4s" }}
+                        ></div>
+                      </div>
+                      <p className=" text-xs font-medium">
+                        ScholarStream Portal
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -5,7 +5,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Swal from "sweetalert2";
 import useAuth from "../../Hooks/useAuth";
 
-const SignUp = () => {
+const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -49,7 +49,7 @@ const SignUp = () => {
         const newUser = {
           name: user.displayName,
           email: user.email,
-          image: user.photoURL,
+          photo: user.photoURL,
           createAt: new Date(),
         };
 
@@ -220,4 +220,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default SignIn;

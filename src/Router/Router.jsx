@@ -8,6 +8,8 @@ import ForgetPassword from "../Pages/ForgetPassword/ForgetPassword";
 import AllScholarShipPage from "../Pages/AllScholarShip/AllScholarShipPage/AllScholarShipPage";
 import ScholarshipDetails from "../Pages/ScholarshipDetails/ScholarshipDetails";
 import CheckoutPage from "../Pages/CheckoutPage/CheckoutPage";
+import DashBoardLayout from "../Layout/DashboardLayout/DashBoardLayout";
+import Profile from "../Layout/DashboardLayout/Components/Profile";
 
 export const router = createBrowserRouter([
   {
@@ -45,4 +47,14 @@ export const router = createBrowserRouter([
         }
     ]
   },
+  {
+    path:'/dashboard',
+    element:<DashBoardLayout></DashBoardLayout>,
+    children:[
+        {
+            path:"profile",
+            element:<Profile></Profile>
+        }
+    ]
+  }
 ]);
