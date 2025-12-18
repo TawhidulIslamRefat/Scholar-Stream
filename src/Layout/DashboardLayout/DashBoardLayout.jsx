@@ -31,7 +31,6 @@ const DashboardLayout = () => {
   const userRole = role?.toLowerCase().replace(/"/g, "").trim();
   console.log("DB Role:", role);
 
-  // Role-based navigation items
   const getNavigationItems = () => {
     const commonItems = [
       {
@@ -166,22 +165,7 @@ const DashboardLayout = () => {
 
         {/* Navigation Menu */}
         <nav className="p-4 space-y-2 flex-1 overflow-y-auto">
-          {/* Dashboard Home */}
-          <NavLink
-            to="/dashboard"
-            end
-            className={({ isActive }) =>
-              `flex items-center space-x-3 p-3 rounded-xl transition-all duration-200 ${
-                isActive
-                  ? `bg-linear-to-r ${getRoleColor()} text-white shadow-lg`
-                  : 'text-gray-700 hover:bg-gray-100'
-              }`
-            }
-          >
-            <FaHome className="w-5 h-5" />
-            <span className="font-medium">Dashboard</span>
-          </NavLink>
-
+          
           {/* Role-based Navigation Items */}
           {navigationItems.map((item, index) => (
             <NavLink
