@@ -45,17 +45,13 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white w-full max-w-4xl rounded-xl overflow-hidden">
-        {/* Header */}
         <div className="bg-gray-200 px-6 py-7 ">
           <h2 className="text-2xl font-bold">Update Scholarship</h2>
         </div>
-
-        {/* Form */}
         <form
           onSubmit={handleSubmit}
           className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 max-h-[80vh] overflow-y-auto"
         >
-          {/* Scholarship Name */}
           <div className="flex flex-col">
             <label className="font-medium mb-1">Scholarship Name</label>
             <input
@@ -67,8 +63,6 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
               placeholder="Global Excellence Scholarship"
             />
           </div>
-
-          {/* University Name */}
           <div className="flex flex-col">
             <label className="font-medium mb-1">University Name</label>
             <input
@@ -80,8 +74,6 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
               placeholder="University of Oxford"
             />
           </div>
-
-          {/* University Image */}
           <div className="flex flex-col">
             <label className="font-medium mb-1">University Image URL</label>
             <input
@@ -94,7 +86,6 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
             />
           </div>
 
-          {/* Country */}
           <div className="flex flex-col">
             <label className="font-medium mb-1">Country</label>
             <input
@@ -107,7 +98,6 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
             />
           </div>
 
-          {/* City */}
           <div className="flex flex-col">
             <label className="font-medium mb-1">City</label>
             <input
@@ -120,7 +110,6 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
             />
           </div>
 
-          {/* World Rank */}
           <div className="flex flex-col">
             <label className="font-medium mb-1">University World Rank</label>
             <input
@@ -133,7 +122,6 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
             />
           </div>
 
-          {/* Subject Category */}
           <div className="flex flex-col">
             <label className="font-medium mb-1">Subject Category</label>
             <input
@@ -146,7 +134,6 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
             />
           </div>
 
-          {/* Scholarship Category */}
           <div className="flex flex-col">
             <label className="font-medium mb-1">Scholarship Category</label>
             <input
@@ -159,7 +146,6 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
             />
           </div>
 
-          {/* Degree */}
           <div className="flex flex-col">
             <label className="font-medium mb-1">Degree</label>
             <input
@@ -171,8 +157,6 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
               placeholder="Masters"
             />
           </div>
-
-          {/* Tuition Fees */}
           <div className="flex flex-col">
             <label className="font-medium mb-1">Tuition Fees</label>
             <input
@@ -184,8 +168,6 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
               placeholder="0"
             />
           </div>
-
-          {/* Application Fees */}
           <div className="flex flex-col">
             <label className="font-medium mb-1">Application Fees</label>
             <input
@@ -198,7 +180,6 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
             />
           </div>
 
-          {/* Service Charge */}
           <div className="flex flex-col">
             <label className="font-medium mb-1">Service Charge</label>
             <input
@@ -210,8 +191,6 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
               placeholder="50"
             />
           </div>
-
-          {/* Application Deadline */}
           <div className="flex flex-col">
             <label className="font-medium mb-1">Application Deadline</label>
             <input
@@ -223,7 +202,6 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
             />
           </div>
 
-          {/* Scholarship Post Date */}
           <div className="flex flex-col">
             <label className="font-medium mb-1">Post Date</label>
             <input
@@ -235,7 +213,6 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
             />
           </div>
 
-          {/* Admin Email */}
           <div className="flex flex-col">
             <label className="font-medium mb-1">Posted User Email</label>
             <input
@@ -247,8 +224,6 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
               placeholder="admin@email.com"
             />
           </div>
-
-          {/* Buttons */}
           <div className="md:col-span-2 flex justify-end gap-3 mt-4">
             <button
               type="button"

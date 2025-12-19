@@ -7,7 +7,6 @@ import TopScholarships from '../TopScholarships/TopScholarships';
 import EducationHero from '../EducationHero/EducationHero';
 
 const Homepage = () => {
-  // Animation variants for sections
   const sectionVariants = {
     hidden: {
       opacity: 0,

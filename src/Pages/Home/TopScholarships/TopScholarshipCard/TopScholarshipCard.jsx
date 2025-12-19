@@ -7,7 +7,6 @@ const TopScholarshipCard = ({ scholarship }) => {
   return (
     <div>
       <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col h-full">
-        {/* University Image */}
         <div className="relative h-70 w-full p-7">
           <img
             src={scholarship.universityImage}
@@ -16,7 +15,6 @@ const TopScholarshipCard = ({ scholarship }) => {
           />
         </div>
 
-        {/* Card Content */}
         <div className="px-7 py-4 space-y-2">
           <span className=" px-2 py-1 text-sm  text-gray-500 border border-gray-200 mt-5 font-medium">
             {scholarship.scholarshipCategory}

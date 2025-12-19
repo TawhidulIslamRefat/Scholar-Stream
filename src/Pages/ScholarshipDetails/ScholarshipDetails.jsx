@@ -38,6 +38,7 @@ const PropertyDetails = () => {
     e.preventDefault();
     const reviewInfo = {
       scholarshipId: id,
+      scholarshipName: scholarship.scholarshipName,
       universityName: scholarship.universityName,
       userName: user?.displayName,
       userEmail: user?.email,
@@ -79,7 +80,6 @@ const PropertyDetails = () => {
         </div>
         <div>
           <div>
-            {/* Scholarship Header */}
             <h1 className="text-3xl font-bold mb-2 ">
               {scholarship.scholarshipName}
             </h1>
@@ -88,7 +88,6 @@ const PropertyDetails = () => {
               {scholarship.universityWorldRank})
             </p>
           </div>
-          {/* Key Info Grid */}
           <div className="grid md:grid-cols-2 gap-5 md:gap-6  font-medium text-sm">
             <p className="text-xs sm:text-text-sm md:text-[17px] font-medium">
               📍 Location: {scholarship.universityCity},{" "}
@@ -194,7 +193,7 @@ const PropertyDetails = () => {
                   <img
                     src={r.userPhoto}
                     alt={r.userName}
-                    className="w-10 h-10 rounded-full border border-gray-300 "
+                    className="w-35 h-10 rounded-full border border-gray-300 "
                   />
                 </div>
 
@@ -214,7 +213,7 @@ const PropertyDetails = () => {
                     </p>
                   </div>
 
-                  <p className="text-gray-600  text-xs sm:text-sm">
+                  <p className="text-gray-600  text-xs sm:text-sm mt-1">
                     {formatComment(r.comment)}
                   </p>
                 </div>

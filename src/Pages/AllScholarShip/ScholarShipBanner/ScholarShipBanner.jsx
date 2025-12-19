@@ -18,8 +18,6 @@ const ScholarshipHero = ({setQuery}) => {
   return (
     <section className="relative bg-[#F8FAFC] overflow-hidden">
       <div className=" w-9/12 mx-auto  py-20 grid md:grid-cols-2 gap-14 items-center">
-        
-        {/* LEFT CONTENT */}
         <div>
           <span className="inline-block mb-4 px-4 py-1 rounded-full bg-green-100 text-green-600 text-sm font-semibold">
             🎓 Find Best Scholarship For You
@@ -34,8 +32,6 @@ const ScholarshipHero = ({setQuery}) => {
             Find scholarships by university, degree or program. Apply smart
             filters and get matched with the best opportunities worldwide.
           </p>
-
-          {/* SEARCH CARD */}
           <div className="mt-8 bg-white rounded-2xl shadow-xl p-6 space-y-4">
             <input
               type="text"
@@ -90,8 +86,6 @@ const ScholarshipHero = ({setQuery}) => {
             </button>
           </div>
         </div>
-
-        {/* RIGHT IMAGE */}
         <div className="relative">
           <div className="absolute -top-10 -left-10 w-72 h-72 bg-indigo-300/30 rounded-full blur-3xl"></div>
 

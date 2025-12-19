@@ -5,14 +5,11 @@ import { Link } from "react-router";
 const EducationHero = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden  bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200 font-display transition-colors duration-300">
-      {/* Background wavy-lines */}
       <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[600px] h-[600px] -z-10 wavy-lines rounded-full opacity-50 pointer-events-none transform -rotate-12 translate-x-[-20%]"></div>
 
       <div className="w-9/12 mx-auto px-4 lg:px-8 xl:px-12">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-          {/* Left Images */}
           <div className="relative w-full  flex justify-center items-center">
-            {/* Small decorative bars */}
             <div className="absolute top-0 right-10 lg:right-20 transform -translate-y-1/2 flex flex-col gap-2 z-20">
               <div className="w-12 h-2 bg-purple-500 rounded-full transform -rotate-45"></div>
               <div className="w-8 h-2 bg-orange-400 rounded-full transform -rotate-45 ml-4"></div>
@@ -40,8 +37,6 @@ const EducationHero = () => {
               <div className="absolute -bottom-6 -right-8 w-24 h-24 dot-pattern opacity-60 z-[-1]"></div>
             </div>
           </div>
-
-          {/* Right Text Section */}
           <div className="w-full  space-y-8 flex-1">
             <div className="space-y-4">
               <h1 className="text-3xl lg:text-4xl xl:text-5xl font-bold leading-tight text-gray-900">

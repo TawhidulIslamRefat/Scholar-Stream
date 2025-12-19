@@ -4,7 +4,6 @@ import useAuth from "../../Hooks/useAuth";
 
 const CheckoutPage = () => {
   const { id } = useParams();
-  //   const navigate = useNavigate();
   const { user } = useAuth();
 
   const [scholarship, setScholarship] = useState({});
@@ -48,7 +47,6 @@ const CheckoutPage = () => {
       .then(res => res.json())
       .then(() => {
         alert("Application submitted successfully!");
-        // navigate("/dashboard/my-applications");
       });
   };
 
@@ -59,8 +57,6 @@ const CheckoutPage = () => {
   return (
     <div className="min-h-screen bg-linear-to-br  py-12 px-4">
       <div className="w-9/12 px-10 mx-auto">
-
-        {/* Header */}
         <div className="text-center mb-12">
           <h2 className="text-4xl font-extrabold">
             Scholarship Check<span className="text-primary">out</span>
@@ -71,8 +67,6 @@ const CheckoutPage = () => {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
-
-          {/* Scholarship Details */}
           <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg overflow-hidden">
             <img
               src={scholarship.universityImage}
@@ -97,8 +91,6 @@ const CheckoutPage = () => {
               </div>
             </div>
           </div>
-
-          {/* Checkout Card */}
           <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-6">
             <h3 className="text-xl md:text-2xl font-bold mb-4 text-gray-800">
               Payment Summary
@@ -120,8 +112,6 @@ const CheckoutPage = () => {
                 <span>${totalAmount}</span>
               </div>
             </div>
-
-            {/* Applicant Info */}
             <form onSubmit={handleSubmit} className="mt-6 space-y-4">
               <div>
                 <label className="text-xs md:text-sm font-semibold text-gray-700">

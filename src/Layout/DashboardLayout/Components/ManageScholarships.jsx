@@ -9,7 +9,6 @@ const ManageScholarships = () => {
   const [loading, setLoading] = useState(true);
   const [selectedScholarship, setSelectedScholarship] = useState(null);
 
-  // 🔹 Fetch all scholarships
   useEffect(() => {
     fetch("http://localhost:3000/scholarships")
       .then((res) => res.json())

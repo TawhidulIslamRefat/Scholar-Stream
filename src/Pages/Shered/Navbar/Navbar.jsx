@@ -116,7 +116,6 @@ const Navbar = () => {
                     </div>
                     <Link to="/dashboard/profile" className="group relative block">
                       <div className="relative overflow-hidden bg-white backdrop-blur-2xl border border-white/20  rounded-2xl p-2.5 transform transition-all duration-500  shadow-xl">
-                        {/* Content */}
                         <div className="relative z-10 flex items-center justify-between">
                           <div className="flex items-center space-x-4">
                             
@@ -191,8 +190,6 @@ const Navbar = () => {
                         </div>
                       </div>
                     </button>
-
-                    {/* Decorative Footer */}
                     <div className="text-center pt-4 border-t border-white/20">
                       <div className="flex justify-center space-x-2 mb-2">
                         <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
