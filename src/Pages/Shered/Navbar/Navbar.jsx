@@ -114,7 +114,7 @@ const Navbar = () => {
                         </div>
                       </div>
                     </div>
-                    <Link to="/dashboard" className="group relative block">
+                    <Link to="/dashboard/profile" className="group relative block">
                       <div className="relative overflow-hidden bg-white backdrop-blur-2xl border border-white/20  rounded-2xl p-2.5 transform transition-all duration-500  shadow-xl">
                         {/* Content */}
                         <div className="relative z-10 flex items-center justify-between">

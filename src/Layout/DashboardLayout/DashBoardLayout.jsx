@@ -43,6 +43,12 @@ const DashboardLayout = () => {
 
     const adminItems = [
       {
+        name: "Analytics",
+        path: "/dashboard/analytics",
+        icon: <FaChartBar className="w-5 h-5" />,
+        roles: ["admin"]
+      },
+      {
         name: "Add Scholarship",
         path: "/dashboard/add-scholarship",
         icon: <FaPlus className="w-5 h-5" />,
@@ -60,12 +66,6 @@ const DashboardLayout = () => {
         icon: <FaUsers className="w-5 h-5" />,
         roles: ["admin"]
       },
-      {
-        name: "Analytics",
-        path: "/dashboard/analytics",
-        icon: <FaChartBar className="w-5 h-5" />,
-        roles: ["admin"]
-      }
     ];
 
     const moderatorItems = [
@@ -224,7 +224,7 @@ const DashboardLayout = () => {
                   {userRole === 'moderator' && 'Moderator Dashboard'}
                   {userRole === 'student' && 'Student Dashboard'}
                 </h1>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 font-medium">
                   Welcome back, {user?.displayName || 'User'}
                 </p>
               </div>
@@ -232,30 +232,6 @@ const DashboardLayout = () => {
 
             {/* Header Actions */}
             <div className="flex items-center space-x-4">
-              {/* Quick Stats */}
-              <div className="hidden md:flex items-center space-x-6">
-                {userRole === 'admin' && (
-                  <>
-                    <div className="text-center">
-                      <p className="text-2xl font-bold text-green-600">28</p>
-                      <p className="text-xs text-gray-500">Scholarships</p>
-                    </div>
-                  </>
-                )}
-              </div>
-
-              {/* User Avatar */}
-              <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                {user?.photoURL ? (
-                  <img
-                    src={user.photoURL}
-                    alt="User"
-                    className="w-full h-full rounded-full object-cover"
-                  />
-                ) : (
-                  <FaUser className="w-5 h-5 text-gray-600" />
-                )}
-              </div>
             </div>
           </div>
         </header>

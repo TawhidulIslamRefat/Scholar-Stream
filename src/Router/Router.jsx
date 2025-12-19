@@ -27,7 +27,7 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage></ErrorPage>,
     children: [
       {
-        index: true,
+        index:true,
         element: <Homepage></Homepage>,
       },
       {
@@ -58,68 +58,61 @@ export const router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    element: <DashBoardLayout></DashBoardLayout>,
+    element: <DashBoardLayout />,
+    errorElement: <ErrorPage />,
     children: [
+      { index: true, element: <Profile /> }, 
+      { path: "profile", element: <Profile /> },
       {
-      path: "profile",
-      element: <Profile />
-    },
-    {
-      path: "add-scholarship",
-      element: (
-        <AdminRoute>
-          <AddScholarship />
-        </AdminRoute>
-      )
-    },
-    {
-      path: "manage-scholarships",
-      element: (
-        <AdminRoute>
-          <ManageScholarships />
-        </AdminRoute>
-      )
-    },
-    {
-      path: "manage-users",
-      element: (
-        <AdminRoute>
-          <ManageUsers />
-        </AdminRoute>
-      )
-    },
-    {
-      path: "manage-users",
-      element: (
-        <AdminRoute>
-          <Analytics />
-        </AdminRoute>
-      )
-    },
-    {
-      path: "manage-applications",
-      element: (
-        <ModeratorRoute>
-          <ManageApplications />
-        </ModeratorRoute>
-      )
-    },
-    {
-      path: "all-reviews",
-      element: (
-        <ModeratorRoute>
-          <AllReviews />
-        </ModeratorRoute>
-      )
-    },
-    {
-      path: "my-applications",
-      element: <MyApplications />
-    },
-    {
-      path: "my-reviews",
-      element: <MyReviews />
-    }
+        path: "add-scholarship",
+        element: (
+          <AdminRoute>
+            <AddScholarship />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "manage-scholarships",
+        element: (
+          <AdminRoute>
+            <ManageScholarships />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "manage-users",
+        element: (
+          <AdminRoute>
+            <ManageUsers />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "analytics",
+        element: (
+          <AdminRoute>
+            <Analytics />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "manage-applications",
+        element: (
+          <ModeratorRoute>
+            <ManageApplications />
+          </ModeratorRoute>
+        ),
+      },
+      {
+        path: "all-reviews",
+        element: (
+          <ModeratorRoute>
+            <AllReviews />
+          </ModeratorRoute>
+        ),
+      },
+      { path: "my-applications", element: <MyApplications /> },
+      { path: "my-reviews", element: <MyReviews /> },
     ],
   },
 ]);

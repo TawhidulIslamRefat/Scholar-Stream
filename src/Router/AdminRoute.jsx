@@ -10,7 +10,7 @@ const AdminRoute = ({ children }) => {
   }
 
   if (role?.toLowerCase() !== "admin") {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/Home" replace />;
   }
 
   return children;
