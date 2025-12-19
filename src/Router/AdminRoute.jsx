@@ -9,8 +9,8 @@ const AdminRoute = ({ children }) => {
     return <p>Checking Admin Access...</p>;
   }
 
-  if (role?.toLowerCase() !== "admin") {
-    return <Navigate to="/Home" replace />;
+  if (role?.toLowerCase().replace(/"/g, "").trim() !== "admin") {
+    return <Navigate to="/" replace />;
   }
 
   return children;

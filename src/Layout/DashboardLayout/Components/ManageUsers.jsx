@@ -1,11 +1,186 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import useAuth from "../../../Hooks/useAuth";
+
+const roleBadge = (role) => {
+  if (role === "Admin") return "bg-red-100 text-red-700";
+  if (role === "Moderator") return "bg-blue-100 text-blue-700";
+  return "bg-green-100 text-green-700";
+};
 
 const ManageUsers = () => {
-    return (
-        <div>
-            <h1 className='text-3xl text-center font-bold '>This is ManageUsers add page</h1>
-        </div>
+  const { user } = useAuth();
+  const [users, setUsers] = useState([]);
+  const [filterRole, setFilterRole] = useState("All");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/users")
+      .then((res) => res.json())
+      .then((data) => {
+        setUsers(data);
+        setLoading(false);
+      });
+  }, []);
+
+  const filteredUsers =
+    filterRole === "All" ? users : users.filter((u) => u.role === filterRole);
+
+  const handleRoleChange = async (id, newRole) => {
+    const confirm = await Swal.fire({
+      title: "Change Role?",
+      text: `Make this user ${newRole}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#16a34a",
+      cancelButtonColor: "#dc2626",
+      confirmButtonText: "Yes, Change",
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    const res = await fetch(`http://localhost:3000/users/role/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "x-user-email": user.email,
+      },
+      body: JSON.stringify({ role: newRole }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      Swal.fire("Error", data.message, "error");
+      return;
+    }
+
+    setUsers((prev) =>
+      prev.map((u) => (u._id === id ? { ...u, role: newRole } : u))
     );
+
+    Swal.fire("Updated!", "User role updated successfully", "success");
+  };
+
+  const handleDelete = async (id) => {
+    const confirm = await Swal.fire({
+      title: "Delete User?",
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Delete",
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    const res = await fetch(`http://localhost:3000/users/${id}`, {
+      method: "DELETE",
+    });
+
+    if (res.ok) {
+      setUsers(users.filter((u) => u._id !== id));
+      Swal.fire("Deleted!", "User removed successfully", "success");
+    }
+  };
+
+  if (loading) return <p className="text-center py-10">Loading users...</p>;
+
+  return (
+    <div className="p-6">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+        <h1 className="text-3xl font-bold">Manage Users</h1>
+
+        <select
+          className="border px-3 py-2 rounded-md mt-3 md:mt-0"
+          value={filterRole}
+          onChange={(e) => setFilterRole(e.target.value)}
+        >
+          <option value="All">All Roles</option>
+          <option value="Student">Student</option>
+          <option value="Moderator">Moderator</option>
+          <option value="Admin">Admin</option>
+        </select>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-md overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="bg-gray-200 text-gray-700 text-lg">
+            <tr>
+              <th className="p-3">#</th>
+              <th className="p-3">Name</th>
+              <th className="p-3">Email</th>
+              <th className="p-3">Role</th>
+              <th className="p-3 text-center">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {filteredUsers.map((u, idx) => {
+              const isMySelf = u.email === user.email;
+
+              return (
+                <tr
+                  key={u._id}
+                  className="border-t hover:bg-gray-50 transition"
+                >
+                  <td className="p-5 text-[16px] font-medium">{idx + 1}</td>
+                  <td className="p-5 font-medium text-[16px]">{u.name}</td>
+                  <td className="p-5 text-gray-600 font-medium text-[15px]">
+                    {u.email}
+                  </td>
+                  <td className="p-5">
+                    <span
+                      className={`px-3 py-1 rounded-full text-[14px] font-semibold ${roleBadge(
+                        u.role
+                      )}`}
+                    >
+                      {u.role}
+                    </span>
+                  </td>
+
+                  <td className="p-3">
+                    <div className="flex gap-2 justify-center flex-wrap">
+                      {!isMySelf && u.role !== "Admin" && (
+                        <button
+                          onClick={() => handleRoleChange(u._id, "Admin")}
+                          className="px-3 py-2 text-[12px] font-medium bg-green-600 hover:bg-green-700 text-white rounded-md text-xs"
+                        >
+                          Make Admin
+                        </button>
+                      )}
+
+                      {!isMySelf && u.role === "Student" && (
+                        <button
+                          onClick={() => handleRoleChange(u._id, "Moderator")}
+                          className="px-3 py-2 font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs"
+                        >
+                          Make Moderator
+                        </button>
+                      )}
+
+                      {isMySelf ? (
+                        <span className="text-[15px] text-gray-400 italic">
+                          You
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => handleDelete(u._id)}
+                          className="px-3 py-2 font-medium bg-red-600 hover:bg-red-700 text-white rounded-md text-xs"
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 };
 
 export default ManageUsers;

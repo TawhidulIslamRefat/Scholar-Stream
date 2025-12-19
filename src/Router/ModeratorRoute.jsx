@@ -12,7 +12,7 @@ const ModeratorRoute = ({ children }) => {
   const userRole = role?.toLowerCase().replace(/"/g, "").trim();;
 
   if (userRole !== "admin" && userRole !== "moderator") {
-    return <Navigate to="/home" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return children;
