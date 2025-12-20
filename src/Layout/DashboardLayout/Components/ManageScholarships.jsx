@@ -10,7 +10,7 @@ const ManageScholarships = () => {
   const [selectedScholarship, setSelectedScholarship] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:3000/scholarships")
+    fetch("http://localhost:3000/top-scholarships")
       .then((res) => res.json())
       .then((data) => {
         setScholarships(data);
