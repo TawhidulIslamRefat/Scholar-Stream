@@ -4,7 +4,6 @@ import Testimonial from '../SuccessStroy/SuccessStory';
 import FAQ from '../FAQ/FAQ';
 import NewsletterSection from '../Newsletter/Newsletter';
 import TopScholarships from '../TopScholarships/TopScholarships';
-import EducationHero from '../EducationHero/EducationHero';
 
 const Homepage = () => {
   const sectionVariants = {
@@ -46,16 +45,6 @@ const Homepage = () => {
       >
         <Hero />
       </Motion.section>
-
-      <Motion.section
-        variants={sectionVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-      >
-        <EducationHero />
-      </Motion.section>
-
       <Motion.section
         variants={sectionVariants}
         initial="hidden"

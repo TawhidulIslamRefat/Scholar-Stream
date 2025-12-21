@@ -22,9 +22,9 @@ import MyReviews from "../Layout/DashboardLayout/Components/MyReviews";
 import ManageApplications from "../Layout/DashboardLayout/Components/ManageApplications";
 import PrivateRoute from "./PrivateRoute";
 import Payment from "../Layout/DashboardLayout/Payment/Payment";
-import PaymentCancelled from "../Layout/DashboardLayout/Payment/PaymentFailed";
 import PaymentSuccess from "../Layout/DashboardLayout/Payment/PaymentSuccess";
 import PaymentFailed from "../Layout/DashboardLayout/Payment/PaymentFailed";
+import Overview from "../Layout/DashboardLayout/Components/Overview";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -70,7 +70,14 @@ export const router = createBrowserRouter([
     element: <DashBoardLayout />,
     errorElement: <ErrorPage />,
     children: [
-      { index: true, element: <Profile /> },
+      {
+        index:true,
+        element:<Overview></Overview>
+      },
+      {
+        path:"overview",
+        element:<Overview></Overview>
+      },
       { path: "profile", element: <Profile /> },
       {
         path: "add-scholarship",

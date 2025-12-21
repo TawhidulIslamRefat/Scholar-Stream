@@ -30,9 +30,9 @@ const CheckoutPage = () => {
       scholarshipId: id,
       scholarshipName: scholarship.scholarshipName,
       universityName: scholarship.universityName,
-      universityAddress:scholarship.universityCountry,
-      Feedback:"",
-      subjectCategory:scholarship.subjectCategory,
+      universityAddress: scholarship.universityCountry,
+      Feedback: "",
+      subjectCategory: scholarship.subjectCategory,
       applicantName: user?.displayName,
       applicantEmail: user?.email,
       applicationFees: totalAmount,
@@ -50,7 +50,7 @@ const CheckoutPage = () => {
       .then(() => {
         alert("Application submitted successfully!");
       });
-      navigate("/dashboard/my-applications")
+    navigate("/dashboard/my-applications")
   };
 
   if (loading) {

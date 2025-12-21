@@ -25,13 +25,19 @@ const DashboardLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   if (roleLoading) {
-    return <p>Loading Dashboard...</p>;
+    return <p>Loading Dashboard...</p>
   }
 
   const userRole = role?.toLowerCase().replace(/"/g, "").trim();
 
   const getNavigationItems = () => {
     const commonItems = [
+      {
+        name: "Overview",
+        path: "/dashboard/overview",
+        icon: <FaHome className="w-5 h-5" />,
+        roles: ["admin", "moderator", "student"],
+      },
       {
         name: "My Profile",
         path: "/dashboard/profile",

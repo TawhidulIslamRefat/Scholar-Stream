@@ -6,220 +6,168 @@ const Profile = () => {
   const { user } = useAuth();
   const { role, roleLoading } = useRole();
 
-  const getRoleStyles = (role) => {
-    const styles = {
-      Admin: {
-        primary: "text-red-600",
-        bg: "bg-red-50",
-        border: "border-red-200",
-        badge: "bg-red-600 text-white",
-        icon: "👑"
-      },
-      Moderator: {
-        primary: "text-blue-600",
-        bg: "bg-blue-50",
-        border: "border-blue-200",
-        badge: "bg-blue-600 text-white",
-        icon: "🛡️"
-      },
-      Student: {
-        primary: "text-green-600",
-        bg: "bg-green-50",
-        border: "border-green-200",
-        badge: "bg-green-600 text-white",
-        icon: "🎓"
-      }
-    };
-    return styles[role] || styles.Student;
-  };
-
-  const roleStyles = getRoleStyles(role);
-
   if (roleLoading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="bg-white rounded-lg shadow-md p-8 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading your profile...</p>
-        </div>
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
+  const getRoleGradient = () => {
+    switch (role?.toLowerCase()) {
+      case "admin":
+        return "bg-gradient-to-r from-red-500 to-pink-500";
+      case "moderator":
+        return "bg-gradient-to-r from-blue-500 to-indigo-500";
+      case "student":
+        return "bg-gradient-to-r from-green-500 to-emerald-500";
+      default:
+        return "bg-gradient-to-r from-gray-500 to-gray-600";
+    }
+  };
+
+  const getRoleBadge = () => {
+    switch (role?.toLowerCase()) {
+      case "admin":
+        return "bg-red-100 text-red-700 border-red-200";
+      case "moderator":
+        return "bg-blue-100 text-blue-700 border-blue-200";
+      case "student":
+        return "bg-green-100 text-green-700 border-green-200";
+      default:
+        return "bg-gray-100 text-gray-700 border-gray-200";
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="py-4">
-            <h1 className="text-2xl font-bold text-gray-900">Profile</h1>
+    <div className="max-w-5xl mx-auto space-y-6">
+      {/* Hero Profile Section */}
+      <div className={`${getRoleGradient()} rounded-xl p-8 text-white shadow-lg`}>
+        <div className="flex flex-col md:flex-row items-center gap-6">
+          <div className="relative">
+            <img
+              src={user?.photoURL || "https://i.ibb.co/2y9YpJH/user-placeholder.png"}
+              alt="Profile"
+              className="w-24 h-24 rounded-full object-cover border-4 border-white/20 shadow-lg"
+            />
+            <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
+          </div>
+          
+          <div className="text-center md:text-left flex-1">
+            <h1 className="text-3xl font-bold mb-2">
+              {user?.displayName || "User"}
+            </h1>
+            <p className="text-white/90 text-lg mb-3">{user?.email}</p>
+            <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+              <span className="px-3 py-1 bg-white/20 rounded-full text-sm font-medium backdrop-blur-sm">
+                {role}
+              </span>
+              <span className="px-3 py-1 bg-white/20 rounded-full text-sm font-medium backdrop-blur-sm">
+                Active Member
+              </span>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <div className="text-2xl font-bold">
+              {user?.metadata?.creationTime ? 
+                new Date(user.metadata.creationTime).getFullYear() : 
+                "2024"
+              }
+            </div>
+            <div className="text-white/80 text-sm">Member Since</div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-sm border p-6 sticky top-8">
-              <div className="text-center mb-6">
-                <div className="relative inline-block">
-                  <img
-                    src={user?.photoURL || "https://i.ibb.co/2y9YpJH/user-placeholder.png"}
-                    alt="Profile"
-                    className="w-24 h-24 rounded-full object-cover mx-auto border-4 border-gray-200"
-                  />
-                  <div className={`absolute -bottom-1 -right-1 w-8 h-8 ${roleStyles.badge} rounded-full flex items-center justify-center text-sm`}>
-                    {roleStyles.icon}
-                  </div>
-                </div>
-                <h3 className="mt-4 text-lg font-semibold text-gray-900">
-                  {user?.displayName || "User"}
-                </h3>
-                <p className="text-sm text-gray-500">{user?.email}</p>
-              </div>
-              <div className="text-center mb-6">
-                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${roleStyles.badge}`}>
-                  <span className="mr-1">{roleStyles.icon}</span>
-                  {role}
-                </span>
-              </div>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-sm text-gray-600">Status</span>
-                  <span className="text-sm font-medium text-green-600">Active</span>
-                </div>
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-sm text-gray-600">Verified</span>
-                  <span className="text-sm font-medium text-green-600">✓ Yes</span>
-                </div>
-                <div className="flex justify-between items-center py-2">
-                  <span className="text-sm text-gray-600">Member Since</span>
-                  <span className="text-sm font-medium text-gray-900">
-                    {user?.metadata?.creationTime ? 
-                      new Date(user.metadata.creationTime).getFullYear() : 
-                      "2024"
-                    }
-                  </span>
-                </div>
-              </div>
+      {/* Information Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Personal Info */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+          <div className="flex items-center mb-4">
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900">Personal Info</h3>
+          </div>
+          <div className="space-y-3">
+            <div>
+              <p className="text-sm text-gray-500 mb-1">Full Name</p>
+              <p className="text-gray-900 font-medium">{user?.displayName || "Not provided"}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 mb-1">Email</p>
+              <p className="text-gray-900 font-medium break-all">{user?.email}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 mb-1">Role</p>
+              <span className={`inline-block px-2 py-1 rounded-md text-sm font-medium border ${getRoleBadge()}`}>
+                {role}
+              </span>
             </div>
           </div>
+        </div>
 
-          <div className="lg:col-span-3">
-            <div className="space-y-6">
-              <div className="bg-white rounded-lg shadow-sm border">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h2 className="text-lg font-semibold text-gray-900 flex items-center">
-                    <span className="mr-2">👤</span>
-                    Personal Information
-                  </h2>
-                </div>
-                <div className="px-6 py-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Full Name
-                      </label>
-                      <div className="p-3 bg-gray-50 rounded-md border">
-                        <p className="text-gray-900">{user?.displayName || "Not provided"}</p>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Email Address
-                      </label>
-                      <div className="p-3 bg-gray-50 rounded-md border">
-                        <p className="text-gray-900">{user?.email}</p>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Account Role
-                      </label>
-                      <div className="p-3 bg-gray-50 rounded-md border">
-                        <p className={`font-medium ${roleStyles.primary}`}>{role}</p>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Account Status
-                      </label>
-                      <div className="p-3 bg-gray-50 rounded-md border">
-                        <p className="text-green-600 font-medium">Active & Verified</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-white rounded-lg shadow-sm border">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h2 className="text-lg font-semibold text-gray-900 flex items-center">
-                    <span className="mr-2">📋</span>
-                    Account Details
-                  </h2>
-                </div>
-                <div className="px-6 py-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Member Since
-                      </label>
-                      <div className="p-3 bg-gray-50 rounded-md border">
-                        <p className="text-gray-900">
-                          {user?.metadata?.creationTime ? 
-                            new Date(user.metadata.creationTime).toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric'
-                            }) : 
-                            "Recently joined"
-                          }
-                        </p>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Last Sign In
-                      </label>
-                      <div className="p-3 bg-gray-50 rounded-md border">
-                        <p className="text-gray-900">
-                          {user?.metadata?.lastSignInTime ? 
-                            new Date(user.metadata.lastSignInTime).toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric'
-                            }) : 
-                            "Today"
-                          }
-                        </p>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Access Level
-                      </label>
-                      <div className="p-3 bg-gray-50 rounded-md border">
-                        <p className={`font-medium ${roleStyles.primary}`}>
-                          {role === "Admin" ? "Full System Access" : 
-                           role === "Moderator" ? "Management Access" : 
-                           "Standard User Access"}
-                        </p>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Email Verification
-                      </label>
-                      <div className="p-3 bg-gray-50 rounded-md border">
-                        <p className="text-green-600 font-medium flex items-center">
-                          <span className="mr-1">✓</span>
-                          Verified
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+        {/* Account Status */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+          <div className="flex items-center mb-4">
+            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+              <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
             </div>
+            <h3 className="text-lg font-semibold text-gray-900">Account Status</h3>
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-500">Status</span>
+              <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></div>
+                Active
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-500">Email Verified</span>
+              <span className="text-green-600 font-medium text-sm">✓ Verified</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-500">Last Login</span>
+              <span className="text-gray-900 font-medium text-sm">Today</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Account Details */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-6">Account Details</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="text-center p-4 bg-gray-50 rounded-lg">
+            <div className="text-sm text-gray-500 mb-1">Member Since</div>
+            <div className="font-semibold text-gray-900">
+              {user?.metadata?.creationTime ? 
+                new Date(user.metadata.creationTime).toLocaleDateString('en-US', {
+                  month: 'short',
+                  year: 'numeric'
+                }) : 
+                "Recently"
+              }
+            </div>
+          </div>
+          <div className="text-center p-4 bg-gray-50 rounded-lg">
+            <div className="text-sm text-gray-500 mb-1">Account Type</div>
+            <div className="font-semibold text-gray-900">{role}</div>
+          </div>
+          <div className="text-center p-4 bg-gray-50 rounded-lg">
+            <div className="text-sm text-gray-500 mb-1">Status</div>
+            <div className="font-semibold text-green-600">Active</div>
+          </div>
+          <div className="text-center p-4 bg-gray-50 rounded-lg">
+            <div className="text-sm text-gray-500 mb-1">Verification</div>
+            <div className="font-semibold text-green-600">Verified</div>
           </div>
         </div>
       </div>
