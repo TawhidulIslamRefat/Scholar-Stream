@@ -29,7 +29,6 @@ const DashboardLayout = () => {
   }
 
   const userRole = role?.toLowerCase().replace(/"/g, "").trim();
-  console.log("DB Role:", role);
 
   const getNavigationItems = () => {
     const commonItems = [

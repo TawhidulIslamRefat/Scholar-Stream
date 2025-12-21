@@ -3,7 +3,6 @@ import { BsArrowRight } from "react-icons/bs";
 import { Link } from "react-router";
 
 const TopScholarshipCard = ({ scholarship }) => {
-  console.log(scholarship);
   return (
     <div>
       <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col h-full">

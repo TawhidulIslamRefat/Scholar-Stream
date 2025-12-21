@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import useAuth from "../../Hooks/useAuth";
 
 const CheckoutPage = () => {
@@ -8,6 +8,7 @@ const CheckoutPage = () => {
 
   const [scholarship, setScholarship] = useState({});
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`http://localhost:3000/scholarships/${id}`)
@@ -29,13 +30,14 @@ const CheckoutPage = () => {
       scholarshipId: id,
       scholarshipName: scholarship.scholarshipName,
       universityName: scholarship.universityName,
+      universityAddress:scholarship.universityCountry,
+      Feedback:"",
+      subjectCategory:scholarship.subjectCategory,
       applicantName: user?.displayName,
       applicantEmail: user?.email,
-      applicationFees: scholarship.applicationFees,
-      serviceCharge: scholarship.serviceCharge,
-      totalPaid: totalAmount,
-      paymentStatus: "pending",
-      applicationStatus: "submitted",
+      applicationFees: totalAmount,
+      paymentStatus: "unpaid",
+      applicationStatus: "pending",
       appliedDate: new Date().toISOString()
     };
 
@@ -48,6 +50,7 @@ const CheckoutPage = () => {
       .then(() => {
         alert("Application submitted successfully!");
       });
+      navigate("/dashboard/my-applications")
   };
 
   if (loading) {
@@ -137,7 +140,7 @@ const CheckoutPage = () => {
                 />
               </div>
 
-              <button className="btn bg-primary w-full text-lg mt-4 rounded-xl">
+              <button type="submit" className="btn bg-primary w-full text-lg mt-4 rounded-xl">
                 Confirm & Apply
               </button>
             </form>

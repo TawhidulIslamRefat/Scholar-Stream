@@ -1,19 +1,22 @@
-import { Navigate } from "react-router";
-import useRole from "../Hooks/useRole";
+import React from 'react';
+import useAuth from '../Hooks/useAuth';
+import useRole from '../Hooks/useRole';
+
 
 
 const AdminRoute = ({ children }) => {
-  const { role, roleLoading } = useRole();
+    const { loading } = useAuth();
+    const { role, roleLoading } = useRole()
 
-  if (roleLoading) {
-    return <p>Checking Admin Access...</p>;
-  }
+    if (loading || roleLoading) {
+        return <p>Loading....</p>;
+    }
 
-  if (role?.toLowerCase().replace(/"/g, "").trim() !== "admin") {
-    return <Navigate to="/" replace />;
-  }
+    if (role !== 'Admin') {
+        return <p>Forbiden Access</p>
+    }
 
-  return children;
+    return children;
 };
 
 export default AdminRoute;

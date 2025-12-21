@@ -1,21 +1,20 @@
-import { Navigate } from "react-router";
-import useRole from "../Hooks/useRole";
-
+import React from 'react';
+import useAuth from '../Hooks/useAuth';
+import useRole from '../Hooks/useRole';
 
 const ModeratorRoute = ({ children }) => {
-  const { role, roleLoading } = useRole();
+     const { loading } = useAuth();
+    const { role, roleLoading } = useRole()
 
-  if (roleLoading) {
-    return <p>Checking Moderator Access...</p>;
-  }
+    if (loading || roleLoading) {
+        return <p>Loading....</p>;
+    }
 
-  const userRole = role?.toLowerCase().replace(/"/g, "").trim();;
+    if (role !== 'Moderator') {
+        return <p>Forbiden Access</p>
+    }
 
-  if (userRole !== "admin" && userRole !== "moderator") {
-    return <Navigate to="/" replace />;
-  }
-
-  return children;
+    return children;
 };
 
 export default ModeratorRoute;

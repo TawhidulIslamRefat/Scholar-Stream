@@ -20,6 +20,11 @@ import AllReviews from "../Layout/DashboardLayout/Components/AllReviews";
 import MyApplications from "../Layout/DashboardLayout/Components/MyApplications";
 import MyReviews from "../Layout/DashboardLayout/Components/MyReviews";
 import ManageApplications from "../Layout/DashboardLayout/Components/ManageApplications";
+import PrivateRoute from "./PrivateRoute";
+import Payment from "../Layout/DashboardLayout/Payment/Payment";
+import PaymentCancelled from "../Layout/DashboardLayout/Payment/PaymentFailed";
+import PaymentSuccess from "../Layout/DashboardLayout/Payment/PaymentSuccess";
+import PaymentFailed from "../Layout/DashboardLayout/Payment/PaymentFailed";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -27,7 +32,7 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage></ErrorPage>,
     children: [
       {
-        index:true,
+        index: true,
         element: <Homepage></Homepage>,
       },
       {
@@ -52,7 +57,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "/checkout/:id",
-        element: <CheckoutPage></CheckoutPage>,
+        element: (
+          <PrivateRoute>
+            <CheckoutPage></CheckoutPage>
+          </PrivateRoute>
+        ),
       },
     ],
   },
@@ -61,7 +70,7 @@ export const router = createBrowserRouter([
     element: <DashBoardLayout />,
     errorElement: <ErrorPage />,
     children: [
-      { index: true, element: <Profile /> }, 
+      { index: true, element: <Profile /> },
       { path: "profile", element: <Profile /> },
       {
         path: "add-scholarship",
@@ -113,6 +122,18 @@ export const router = createBrowserRouter([
       },
       { path: "my-applications", element: <MyApplications /> },
       { path: "my-reviews", element: <MyReviews /> },
+      {
+        path: "payment/:applicationId",
+        element: <Payment></Payment>,
+      },
+      {
+        path: "/dashboard/payment-success",
+        element: <PaymentSuccess></PaymentSuccess>,
+      },
+      {
+        path: "/dashboard/payment-failed",
+        element: <PaymentFailed></PaymentFailed>,
+      },
     ],
   },
 ]);
