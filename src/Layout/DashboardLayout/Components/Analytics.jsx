@@ -27,6 +27,7 @@ const Analytics = () => {
   if (!data) {
     return (
       <div className="flex justify-center items-center min-h-screen p-4">
+        <title>Analytics</title>
         <div className="text-center bg-white p-6 sm:p-8 rounded-xl shadow-lg max-w-sm w-full">
           <div className="w-12 h-12 sm:w-16 sm:h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-6 h-6 sm:w-8 sm:h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

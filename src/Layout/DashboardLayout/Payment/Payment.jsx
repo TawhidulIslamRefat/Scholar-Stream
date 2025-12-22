@@ -66,6 +66,7 @@ const Payment = () => {
 
   return (
     <div className="p-10 text-center">
+      <title>Payment</title>
       <h1 className="text-2xl font-semibold mb-4">
         Please pay ${scholarship.applicationFees} for{" "}
         {scholarship.scholarshipName}

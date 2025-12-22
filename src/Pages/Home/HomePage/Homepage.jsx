@@ -4,6 +4,7 @@ import Testimonial from '../SuccessStroy/SuccessStory';
 import FAQ from '../FAQ/FAQ';
 import NewsletterSection from '../Newsletter/Newsletter';
 import TopScholarships from '../TopScholarships/TopScholarships';
+import { div, title } from 'framer-motion/client';
 
 const Homepage = () => {
   const sectionVariants = {
@@ -32,7 +33,9 @@ const Homepage = () => {
   };
 
   return (
-    <Motion.div
+    <div>
+      <title>ScholarStream Home</title>
+      <Motion.div
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -81,6 +84,7 @@ const Homepage = () => {
         <NewsletterSection />
       </Motion.section>
     </Motion.div>
+    </div>
   );
 };
 

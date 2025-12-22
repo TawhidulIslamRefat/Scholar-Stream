@@ -96,6 +96,7 @@ const SignIn = () => {
   };
   return (
     <div>
+      <title>Login</title>
       <div className="min-h-screen flex flex-col md:flex-row justify-center items-center w-full md:w-9/12 mx-auto">
         <div className=" font-display text-text-main flex items-center justify-center p-6 flex-1 ">
           <div className="w-full max-w-[460px] mx-auto ">

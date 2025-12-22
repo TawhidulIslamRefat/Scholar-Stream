@@ -90,6 +90,7 @@ const MyReviews = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+      <title>My Review</title>
       <div className="max-w-8xl mx-auto">
         <div className="text-center mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2 sm:mb-3">

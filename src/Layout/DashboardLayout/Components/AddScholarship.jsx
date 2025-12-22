@@ -76,6 +76,7 @@ const AddScholarship = () => {
 
   return (
     <div className="w-full max-w-6xl mx-auto p-4 sm:p-6">
+      <title>Add Scholarship</title>
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
         <div className="bg-gray-200 px-4 sm:px-6 py-4 border-b border-gray-200">
           <h1 className="text-2xl sm:text-3xl font-bold mb-2">

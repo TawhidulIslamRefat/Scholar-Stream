@@ -5,6 +5,7 @@ import { Link } from "react-router";
 const ErrorPage = () => {
   return (
     <div>
+      <title>Error</title>
       <div className="flex flex-col justify-center items-center">
         <div className=" w-[300px] md:-[500px] lg:w-[800px]">
           <Lottie animationData={error} loop={true} />

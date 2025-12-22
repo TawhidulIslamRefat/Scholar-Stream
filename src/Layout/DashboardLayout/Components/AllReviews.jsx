@@ -76,6 +76,7 @@ const AllReviews = () => {
 
   return (
     <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
+      <title>All Reviews</title>
       <div className="max-w-8xl mx-auto">
         <div className="bg-white rounded-lg shadow-sm border p-4 sm:p-6 mb-4 sm:mb-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">

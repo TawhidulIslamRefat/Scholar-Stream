@@ -40,6 +40,7 @@ const Profile = () => {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
+      <title>Profile</title>
       <div className={`${getRoleGradient()} rounded-xl p-8 text-white shadow-lg`}>
         <div className="flex flex-col md:flex-row items-center gap-6">
           <div className="relative">

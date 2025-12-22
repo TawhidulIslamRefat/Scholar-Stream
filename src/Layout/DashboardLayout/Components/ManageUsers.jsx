@@ -109,6 +109,7 @@ const ManageUsers = () => {
 
   return (
     <div className="p-4 sm:p-6">
+      <title>Manage User</title>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 sm:mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold">Manage Users</h1>
 

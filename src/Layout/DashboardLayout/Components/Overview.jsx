@@ -130,6 +130,7 @@ const Overview = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
+      <title>Overview</title>
       <div className={`${getRoleColor()} rounded-2xl p-8 text-white shadow-lg`}>
         <div className="flex flex-col md:flex-row items-center justify-between">
           <div className="text-center md:text-left mb-4 md:mb-0">

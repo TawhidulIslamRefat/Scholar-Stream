@@ -92,6 +92,7 @@ const ManageApplications = () => {
 
   return (
     <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
+      <title>Manage Application</title>
       <div className="mb-4 sm:mb-6">
         <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 border">
           <div className="flex flex-col sm:flex-row sm:items-center mb-4 gap-3 sm:gap-0">

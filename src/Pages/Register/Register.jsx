@@ -106,6 +106,7 @@ const Register = () => {
   };
   return (
     <div className="min-h-screen flex flex-col md:flex-row justify-center items-center w-full md:w-9/12 mx-auto">
+      <title>Register</title>
       <div className=" font-display text-text-main flex items-center justify-center p-6 flex-1 ">
         <div className="w-full max-w-[500px] mx-auto ">
           <header className="mb-8">

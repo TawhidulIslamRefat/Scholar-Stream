@@ -54,6 +54,7 @@ const ManageScholarships = () => {
 
   return (
     <div className="max-w-8xl mx-auto p-3 sm:p-4 md:p-6">
+      <title>Manage Scholarship</title>
       <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8">
         Manage Scholarships
       </h1>

@@ -72,6 +72,7 @@ const ScholarshipDetails = () => {
   }
   return (
     <div className="w-full px-4 sm:px-6 md:px-8 lg:w-11/12 xl:w-9/12 mx-auto py-6 sm:py-8 md:py-10">
+      <title>Scholarship Details Details</title>
       <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-center py-6 sm:py-8 md:py-10">
         Scholarship Details
       </h1>

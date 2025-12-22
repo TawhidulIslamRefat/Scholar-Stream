@@ -147,6 +147,7 @@ const MyApplications = () => {
 
   return (
     <div className="p-4 sm:p-6">
+      <title>My Application</title>
       <div className="mb-4 sm:mb-6">
         <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
           My Applications

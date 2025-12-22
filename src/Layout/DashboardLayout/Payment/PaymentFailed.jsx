@@ -10,6 +10,7 @@ const PaymentFailed = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
+      <title>Payment failed</title>
       <div className="max-w-3xl mx-auto py-8">
         <div className="text-center mb-8">
           <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">

@@ -55,8 +55,9 @@ const AllScholarShipPage = () => {
 
   return (
     <div>
+      <title>All Scholarship</title>
       <ScholarShipBanner setQuery={setQuery} />
-
+ 
       <section className="w-full md:w-9/12 mx-auto px-4 sm:px-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-4 sm:mb-6">
           <h1 className="font-medium text-xl sm:text-2xl">

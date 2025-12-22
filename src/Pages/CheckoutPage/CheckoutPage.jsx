@@ -75,6 +75,7 @@ const CheckoutPage = () => {
 
   return (
     <div className="min-h-screen bg-linear-to-br py-8 sm:py-10 md:py-12 px-4">
+      <title>Scholarship Checkout</title>
       <div className="w-full sm:w-11/12 md:w-10/12 lg:w-9/12 px-4 sm:px-6 md:px-8 lg:px-10 mx-auto">
         <div className="text-center mb-8 sm:mb-10 md:mb-12">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold">
