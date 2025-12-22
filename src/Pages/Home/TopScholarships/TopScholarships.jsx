@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from "react";
 import TopScholarshipCard from "./TopScholarshipCard/TopScholarshipCard";
 import Loading from "../../../Components/Loading";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
+import Swal from "sweetalert2";
 
 const TopScholarships = () => {
   const [scholarships, setScholarships] = useState([]);
   const [loading, setLoading] = useState(true);
+  const axiosSecure = useAxiosSecure();
 
   useEffect(() => {
-    fetch("http://localhost:3000/top-scholarships")
-      .then((res) => res.json())
-      .then((data) => {
+    axiosSecure
+      .get("/top-scholarships")
+      .then((res) => {
+        const data = res.data;
         const sorted = data.sort((a, b) => {
           if (a.applicationFees === b.applicationFees) {
             return (
@@ -20,10 +24,11 @@ const TopScholarships = () => {
         });
         setScholarships(sorted.slice(0, 8));
       })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
+      .catch((err) => {
+        Swal.fire("Error to fetch data",err)
+      })
+      .finally(() => setLoading(false));
+  }, [axiosSecure]);
 
   if (loading) {
     return <Loading></Loading>;

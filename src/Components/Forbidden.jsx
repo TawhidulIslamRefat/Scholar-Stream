@@ -7,7 +7,6 @@ const Forbidden = () => {
   return (
     <div className="min-h-screen bg-linear-to-br from-red-50 to-orange-50 flex items-center justify-center px-4">
       <div className="max-w-md w-full text-center">
-        {/* Icon */}
         <div className="mb-8">
           <div className="mx-auto w-24 h-24 bg-red-100 rounded-full flex items-center justify-center">
             <svg 
@@ -26,7 +25,6 @@ const Forbidden = () => {
           </div>
         </div>
 
-        {/* Content */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-4">403</h1>
           <h2 className="text-2xl font-semibold text-gray-700 mb-4">Access Forbidden</h2>
@@ -35,8 +33,6 @@ const Forbidden = () => {
             Please contact your administrator if you believe this is an error.
           </p>
         </div>
-
-        {/* Actions */}
         <div className="space-y-4">
           <button
             onClick={() => navigate(-1)}
@@ -53,7 +49,6 @@ const Forbidden = () => {
           </button>
         </div>
 
-        {/* Help Text */}
         <div className="mt-8 pt-6 border-t border-gray-200">
           <p className="text-sm text-gray-500">
             Need help? Contact support at{' '}

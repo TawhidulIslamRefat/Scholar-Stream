@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import useAuth from "../../../Hooks/useAuth";
 import Swal from "sweetalert2";
-import axios from "axios";
 import LoadingDashboard from "../../../Components/LoadingDashboard";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const MyApplications = () => {
   const { user } = useAuth();
@@ -14,30 +14,23 @@ const MyApplications = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [reviewData, setReviewData] = useState({ rating: 5, comment: "" });
   const [editData, setEditData] = useState({});
+  const axiosSecure = useAxiosSecure();
 
   useEffect(() => {
     if (user?.email) {
-      fetchApplications();
+      axiosSecure
+        .get(`/applications/user/${user.email}`)
+        .then(({ data }) => setApplications(data))
+        .catch((err) => {
+          console.error(err);
+          Swal.fire("Error", "Failed to load applications", "error");
+        })
+        .finally(() => setLoading(false));
     }
-  }, [user]);
+  }, [user, axiosSecure]);
 
-  const fetchApplications = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:3000/applications/user/${user.email}`
-      );
-      const data = await response.json();
-      setApplications(data);
-    } catch (error) {
-      console.error(error);
-      Swal.fire("Error", "Failed to load applications", "error");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async (applicationId) => {
-    const result = await Swal.fire({
+  const handleDelete = (applicationId) => {
+    Swal.fire({
       title: "Delete Application?",
       text: "This action cannot be undone!",
       icon: "warning",
@@ -45,75 +38,68 @@ const MyApplications = () => {
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
       confirmButtonText: "Yes, delete it!",
-    });
-
-    if (result.isConfirmed) {
-      try {
-        await fetch(`http://localhost:3000/applications/${applicationId}`, {
-          method: "DELETE",
-        });
-        setApplications(
-          applications.filter((app) => app._id !== applicationId)
-        );
-        Swal.fire("Deleted!", "Application has been deleted.", "success");
-      } catch (error) {
-        Swal.fire("Error", "Failed to delete application", error);
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axiosSecure
+          .delete(`/applications/${applicationId}`)
+          .then(() => {
+            setApplications((prev) =>
+              prev.filter((app) => app._id !== applicationId)
+            );
+            Swal.fire("Deleted!", "Application has been deleted.", "success");
+          })
+          .catch((err) => {
+            console.error(err);
+            Swal.fire("Error", "Failed to delete application", "error");
+          });
       }
-    }
+    });
   };
 
-  const handleSubmitReview = async () => {
+  const handleSubmitReview = () => {
     if (!reviewData.comment.trim()) {
       Swal.fire("Error", "Please add a comment", "warning");
       return;
     }
-
-    try {
-      const reviewPayload = {
-        scholarshipId: selectedApplication.scholarshipId,
-        scholarshipName: selectedApplication.scholarshipName,
-        universityName: selectedApplication.universityName,
-        reviewerName: user.displayName,
-        reviewerEmail: user.email,
-        rating: reviewData.rating,
-        comment: reviewData.comment,
-        reviewDate: new Date().toISOString(),
-      };
-
-      await fetch("http://localhost:3000/reviews", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(reviewPayload),
+    const reviewPayload = {
+      scholarshipId: selectedApplication.scholarshipId,
+      scholarshipName: selectedApplication.scholarshipName,
+      universityName: selectedApplication.universityName,
+      reviewerName: user.displayName,
+      reviewerEmail: user.email,
+      rating: reviewData.rating,
+      comment: reviewData.comment,
+      reviewDate: new Date().toISOString(),
+    };
+    axiosSecure
+      .post("/reviews", reviewPayload)
+      .then(() => {
+        setShowReviewModal(false);
+        setReviewData({ rating: 5, comment: "" });
+        Swal.fire("Success", "Review submitted successfully", "success");
+      })
+      .catch((err) => {
+        console.error(err);
+        Swal.fire("Error", "Failed to submit review", "error");
       });
-
-      setShowReviewModal(false);
-      setReviewData({ rating: 5, comment: "" });
-      Swal.fire("Success", "Review submitted successfully", "success");
-    } catch (error) {
-      Swal.fire("Error", "Failed to submit review", error);
-    }
   };
 
-  const handleEditSubmit = async () => {
-    try {
-      await fetch(
-        `http://localhost:3000/applications/${selectedApplication._id}`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(editData),
-        }
-      );
-
-      const updatedApplications = applications.map((app) =>
-        app._id === selectedApplication._id ? { ...app, ...editData } : app
-      );
-      setApplications(updatedApplications);
-      setShowEditModal(false);
-      Swal.fire("Success", "Application updated successfully", "success");
-    } catch (error) {
-      Swal.fire("Error", "Failed to update application", error);
-    }
+  const handleEditSubmit = () => {
+    axiosSecure
+      .patch(`/applications/${selectedApplication._id}`, editData)
+      .then(() => {
+        setApplications((prev) =>
+          prev.map((app) =>
+            app._id === selectedApplication._id ? { ...app, ...editData } : app
+          )
+        );
+        setShowEditModal(false);
+        Swal.fire("Success", "Application updated successfully", "success");
+      })
+      .catch((err) => {
+        console.error(err);
+        Swal.fire("Error", "Failed to update application", "error");
+      });
   };
 
   const getStatusBadge = (status) => {
@@ -135,26 +121,24 @@ const MyApplications = () => {
     );
   };
 
-  const handlePayment = async (application) => {
-    try {
-      const paymentInfo = {
-        applicationFees: application.applicationFees,
-        applicationId: application._id,
-        applicantEmail: application.applicantEmail,
-        scholarshipName: application.scholarshipName,
-        universityName: application.universityName, 
-      };
+  const handlePayment = (application) => {
+    const paymentInfo = {
+      applicationFees: application.applicationFees,
+      applicationId: application._id,
+      applicantEmail: application.applicantEmail,
+      scholarshipName: application.scholarshipName,
+      universityName: application.universityName,
+    };
 
-      const res = await axios.post(
-        "http://localhost:3000/create-checkout-session",
-        paymentInfo
-      );
-
-      window.location.assign(res.data.url);
-    } catch (error) {
-      console.error("Payment error:", error.response?.data || error.message);
-      Swal.fire("Error", "Payment failed", "error");
-    }
+    axiosSecure
+      .post("/create-checkout-session", paymentInfo)
+      .then((res) => {
+        window.location.assign(res.data.url);
+      })
+      .catch((err) => {
+        console.error("Payment error:", err.response?.data || err.message);
+        Swal.fire("Error", "Payment failed", "error");
+      });
   };
 
   if (loading) {
@@ -164,7 +148,9 @@ const MyApplications = () => {
   return (
     <div className="p-4 sm:p-6">
       <div className="mb-4 sm:mb-6">
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-800">My Applications</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
+          My Applications
+        </h2>
         <p className="text-gray-600 mt-1 text-sm sm:text-base">
           Manage your scholarship applications
         </p>
@@ -195,24 +181,24 @@ const MyApplications = () => {
                         {application.scholarshipName}
                       </div>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-3 text-xs">
                       <div>
                         <span className="text-gray-500">Address:</span>
                         <div className="text-gray-600 truncate">
-                          {application.universityAddress || "N/A"}
+                          {application.universityAddress}
                         </div>
                       </div>
                       <div>
                         <span className="text-gray-500">Subject:</span>
                         <div className="text-gray-600 truncate">
-                          {application.subjectCategory || "N/A"}
+                          {application.subjectCategory}
                         </div>
                       </div>
                       <div>
                         <span className="text-gray-500">Fees:</span>
                         <div className="text-green-600 font-medium">
-                          ${application.applicationFees || 0}
+                          ${application.applicationFees}
                         </div>
                       </div>
                       <div>
@@ -239,20 +225,20 @@ const MyApplications = () => {
                         ) : (
                           <button
                             onClick={() => handlePayment(application)}
-                            className="px-2 py-1 bg-green-500 text-white text-xs rounded"
+                            className="btn px-3 py-2 bg-green-500 text-white text-sm font-medium rounded"
                           >
                             Pay Now
                           </button>
                         )}
                       </div>
-                      
+
                       <div className="flex gap-1 flex-wrap">
                         <button
                           onClick={() => {
                             setSelectedApplication(application);
                             setShowDetailsModal(true);
                           }}
-                          className="px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
+                          className="btn px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
                         >
                           Details
                         </button>
@@ -267,7 +253,7 @@ const MyApplications = () => {
                                 });
                                 setShowEditModal(true);
                               }}
-                              className="px-2 py-1 bg-yellow-500 text-white text-xs rounded hover:bg-yellow-600"
+                              className="btn px-2 py-1 bg-yellow-500 text-white text-xs rounded hover:bg-yellow-600"
                             >
                               Edit
                             </button>
@@ -286,7 +272,7 @@ const MyApplications = () => {
                               setSelectedApplication(application);
                               setShowReviewModal(true);
                             }}
-                            className="px-2 py-1 bg-purple-500 text-white text-xs rounded hover:bg-purple-600"
+                            className="btn px-2 py-1 bg-purple-500 text-white text-xs rounded hover:bg-purple-600"
                           >
                             Review
                           </button>
@@ -430,7 +416,9 @@ const MyApplications = () => {
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-4 sm:p-6">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-base sm:text-lg font-semibold">Application Details</h3>
+                <h3 className="text-base sm:text-lg font-semibold">
+                  Application Details
+                </h3>
                 <button
                   onClick={() => setShowDetailsModal(false)}
                   className="text-gray-500 hover:text-gray-700 text-xl p-1"
@@ -480,7 +468,9 @@ const MyApplications = () => {
           <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="p-4 sm:p-6">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-base sm:text-lg font-semibold">Add Review</h3>
+                <h3 className="text-base sm:text-lg font-semibold">
+                  Add Review
+                </h3>
                 <button
                   onClick={() => setShowReviewModal(false)}
                   className="text-gray-500 hover:text-gray-700 text-xl p-1"
@@ -561,7 +551,9 @@ const MyApplications = () => {
           <div className="bg-gray-200 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="p-4 sm:p-6">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-base sm:text-lg font-semibold">Edit Application</h3>
+                <h3 className="text-base sm:text-lg font-semibold">
+                  Edit Application
+                </h3>
                 <button
                   onClick={() => setShowEditModal(false)}
                   className="text-gray-500 hover:text-gray-700 text-xl p-1"

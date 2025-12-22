@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import useAuth from "../../../Hooks/useAuth";
 import LoadingDashboard from "../../../Components/LoadingDashboard";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const roleBadge = (role) => {
   if (role === "Admin") return "bg-red-100 text-red-700";
@@ -14,21 +15,28 @@ const ManageUsers = () => {
   const [users, setUsers] = useState([]);
   const [filterRole, setFilterRole] = useState("All");
   const [loading, setLoading] = useState(true);
+  const axiosSecure = useAxiosSecure();
 
   useEffect(() => {
-    fetch("http://localhost:3000/users")
-      .then((res) => res.json())
-      .then((data) => {
-        setUsers(data);
-        setLoading(false);
-      });
-  }, []);
+    axiosSecure
+      .get("/users")
+      .then((res) => setUsers(res.data))
+      .catch((error) => {
+        console.error("Fetch users error:", error);
+        Swal.fire(
+          "Error",
+          error.response?.data?.message || "Unable to load users",
+          "error"
+        );
+      })
+      .finally(() => setLoading(false));
+  }, [axiosSecure]);
 
   const filteredUsers =
     filterRole === "All" ? users : users.filter((u) => u.role === filterRole);
 
-  const handleRoleChange = async (id, newRole) => {
-    const confirm = await Swal.fire({
+  const handleRoleChange = (id, newRole) => {
+    Swal.fire({
       title: "Change Role?",
       text: `Make this user ${newRole}?`,
       icon: "warning",
@@ -36,34 +44,38 @@ const ManageUsers = () => {
       confirmButtonColor: "#16a34a",
       cancelButtonColor: "#dc2626",
       confirmButtonText: "Yes, Change",
+    }).then((confirm) => {
+      if (!confirm.isConfirmed) return;
+
+      axiosSecure
+        .patch(
+          `/users/role/${id}`,
+          { role: newRole },
+          {
+            headers: { "x-user-email": user.email },
+          }
+        )
+        .then(() => {
+          setUsers((prev) =>
+            prev.map((u) => (u._id === id ? { ...u, role: newRole } : u))
+          );
+          Swal.fire("Updated!", "User role updated successfully", "success");
+        })
+        .catch((error) => {
+          console.error("Role change error:", error);
+          Swal.fire(
+            "Error",
+            error.response?.data?.message ||
+              error.message ||
+              "Failed to change role",
+            "error"
+          );
+        });
     });
-
-    if (!confirm.isConfirmed) return;
-
-    const res = await fetch(`http://localhost:3000/users/role/${id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        "x-user-email": user.email,
-      },
-      body: JSON.stringify({ role: newRole }),
-    });
-
-    const data = await res.json();
-    if (!res.ok) {
-      Swal.fire("Error", data.message, "error");
-      return;
-    }
-
-    setUsers((prev) =>
-      prev.map((u) => (u._id === id ? { ...u, role: newRole } : u))
-    );
-
-    Swal.fire("Updated!", "User role updated successfully", "success");
   };
 
-  const handleDelete = async (id) => {
-    const confirm = await Swal.fire({
+  const handleDelete = (id) => {
+    Swal.fire({
       title: "Delete User?",
       text: "This action cannot be undone!",
       icon: "warning",
@@ -71,18 +83,26 @@ const ManageUsers = () => {
       confirmButtonColor: "#dc2626",
       cancelButtonColor: "#6b7280",
       confirmButtonText: "Delete",
+    }).then((confirm) => {
+      if (!confirm.isConfirmed) return;
+
+      axiosSecure
+        .delete(`/users/${id}`)
+        .then(() => {
+          setUsers((prev) => prev.filter((u) => u._id !== id));
+          Swal.fire("Deleted!", "User removed successfully", "success");
+        })
+        .catch((error) => {
+          console.error("Delete user error:", error);
+          Swal.fire(
+            "Error",
+            error.response?.data?.message ||
+              error.message ||
+              "Failed to delete user",
+            "error"
+          );
+        });
     });
-
-    if (!confirm.isConfirmed) return;
-
-    const res = await fetch(`http://localhost:3000/users/${id}`, {
-      method: "DELETE",
-    });
-
-    if (res.ok) {
-      setUsers(users.filter((u) => u._id !== id));
-      Swal.fire("Deleted!", "User removed successfully", "success");
-    }
   };
 
   if (loading) return <LoadingDashboard></LoadingDashboard>;
@@ -117,7 +137,9 @@ const ManageUsers = () => {
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-medium text-gray-500">#{idx + 1}</span>
+                      <span className="text-sm font-medium text-gray-500">
+                        #{idx + 1}
+                      </span>
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-semibold ${roleBadge(
                           u.role
@@ -126,7 +148,9 @@ const ManageUsers = () => {
                         {u.role}
                       </span>
                     </div>
-                    <h3 className="text-base font-medium text-gray-900 truncate">{u.name}</h3>
+                    <h3 className="text-base font-medium text-gray-900 truncate">
+                      {u.name}
+                    </h3>
                     <p className="text-sm text-gray-600 truncate">{u.email}</p>
                   </div>
                 </div>

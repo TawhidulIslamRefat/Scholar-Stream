@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import useAuth from "../../../Hooks/useAuth";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const AddScholarship = () => {
   const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
 
   const [formData, setFormData] = useState({
     scholarshipName: "",
@@ -34,13 +36,7 @@ const AddScholarship = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:3000/scholarships", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (!res.ok) throw new Error("Failed to add scholarship");
+      await axiosSecure.post("/scholarships", formData);
       Swal.fire({
         icon: "success",
         title: "Success!",
@@ -82,7 +78,9 @@ const AddScholarship = () => {
     <div className="w-full max-w-6xl mx-auto p-4 sm:p-6">
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
         <div className="bg-gray-200 px-4 sm:px-6 py-4 border-b border-gray-200">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-2">Add New Scholarship</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2">
+            Add New Scholarship
+          </h1>
           <p className="text-gray-600 font-medium mb-3 text-sm sm:text-base">
             Create a new scholarship opportunity for students worldwide
           </p>
@@ -349,7 +347,9 @@ const AddScholarship = () => {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
                     </svg>
-                    <span className="hidden sm:inline">Adding Scholarship...</span>
+                    <span className="hidden sm:inline">
+                      Adding Scholarship...
+                    </span>
                     <span className="sm:hidden">Adding...</span>
                   </span>
                 ) : (

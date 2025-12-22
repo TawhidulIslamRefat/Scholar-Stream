@@ -4,20 +4,25 @@ import UpdateScholarshipModal from "./UpdateScholarshipModal";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import LoadingDashboard from "../../../Components/LoadingDashboard";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const ManageScholarships = () => {
   const [scholarships, setScholarships] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedScholarship, setSelectedScholarship] = useState(null);
+  const axiosSecure = useAxiosSecure();
 
   useEffect(() => {
-    fetch("http://localhost:3000/top-scholarships")
-      .then((res) => res.json())
-      .then((data) => {
-        setScholarships(data);
-        setLoading(false);
-      });
-  }, []);
+    axiosSecure
+      .get("/top-scholarships")
+      .then(({ data }) => setScholarships(data))
+      .catch((err) => {
+        console.error("Failed to load scholarships:", err);
+        Swal.fire("Error", "Unable to fetch scholarships", "error");
+      })
+      .finally(() => setLoading(false));
+  }, [axiosSecure]);
+
   const handleDelete = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -29,16 +34,15 @@ const ManageScholarships = () => {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(`http://localhost:3000/scholarships/${id}`, {
-          method: "DELETE",
-        })
-          .then((res) => res.json())
+        axiosSecure
+          .delete(`/scholarships/${id}`)
           .then(() => {
-            setScholarships(
-              scholarships.filter((item) => item._id !== id)
-            );
-
+            setScholarships(scholarships.filter((item) => item._id !== id));
             Swal.fire("Deleted!", "Scholarship has been deleted.", "success");
+          })
+          .catch((err) => {
+            console.error("Failed to delete scholarship:", err);
+            Swal.fire("Error", "Failed to delete scholarship.", "error");
           });
       }
     });
@@ -61,7 +65,10 @@ const ManageScholarships = () => {
           </p>
         ) : (
           scholarships.map((item, index) => (
-            <div key={item._id} className="bg-white shadow rounded-xl p-4 hover:shadow-lg transition-shadow">
+            <div
+              key={item._id}
+              className="bg-white shadow rounded-xl p-4 hover:shadow-lg transition-shadow"
+            >
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
                   <div className="shrink-0">
@@ -73,31 +80,43 @@ const ManageScholarships = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-medium text-gray-500">#{index + 1}</span>
+                      <span className="text-sm font-medium text-gray-500">
+                        #{index + 1}
+                      </span>
                     </div>
                     <h3 className="font-semibold text-sm sm:text-base text-gray-900 line-clamp-2">
                       {item.scholarshipName}
                     </h3>
-                    <p className="text-xs sm:text-sm text-gray-600 truncate">{item.universityName}</p>
+                    <p className="text-xs sm:text-sm text-gray-600 truncate">
+                      {item.universityName}
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-3 text-xs sm:text-sm">
                   <div>
                     <span className="text-gray-500">Country:</span>
-                    <div className="font-medium text-gray-900 truncate">{item.universityCountry}</div>
+                    <div className="font-medium text-gray-900 truncate">
+                      {item.universityCountry}
+                    </div>
                   </div>
                   <div>
                     <span className="text-gray-500">World Rank:</span>
-                    <div className="font-medium text-gray-900">{item.universityWorldRank}</div>
+                    <div className="font-medium text-gray-900">
+                      {item.universityWorldRank}
+                    </div>
                   </div>
                   <div>
                     <span className="text-gray-500">Degree:</span>
-                    <div className="font-medium text-gray-900 truncate">{item.degree}</div>
+                    <div className="font-medium text-gray-900 truncate">
+                      {item.degree}
+                    </div>
                   </div>
                   <div>
                     <span className="text-gray-500">Deadline:</span>
-                    <div className="font-medium text-gray-900">{item.applicationDeadline}</div>
+                    <div className="font-medium text-gray-900">
+                      {item.applicationDeadline}
+                    </div>
                   </div>
                 </div>
 
@@ -151,7 +170,9 @@ const ManageScholarships = () => {
                   />
                 </td>
 
-                <td className="font-semibold text-[16px]">{item.scholarshipName}</td>
+                <td className="font-semibold text-[16px]">
+                  {item.scholarshipName}
+                </td>
                 <td className="font-medium">{item.universityName}</td>
                 <td className="font-medium">{item.universityCountry}</td>
                 <td className="font-medium">{item.universityWorldRank}</td>
@@ -170,7 +191,7 @@ const ManageScholarships = () => {
                     onClick={() => handleDelete(item._id)}
                     className="btn px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                   >
-                   <MdOutlineDeleteOutline />
+                    <MdOutlineDeleteOutline />
                   </button>
                 </td>
               </tr>

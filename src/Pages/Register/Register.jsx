@@ -4,11 +4,13 @@ import { Link, useNavigate } from "react-router";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Swal from "sweetalert2";
 import useAuth from "../../Hooks/useAuth";
+import useAxiosSecure from "../../Hooks/useAxiosSecure";
 const Register = () => {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { createUser, updateUser, setUser, signInGoogle } = useAuth();
+  const axiosSecure = useAxiosSecure();
 
   const handleRegister = (event) => {
     event.preventDefault();
@@ -47,25 +49,16 @@ const Register = () => {
             photo: photo,
             createAt: new Date(),
           };
-
-          fetch("http://localhost:3000/users", {
-            method: "POST",
-            headers: {
-              "content-type": "application/json",
-            },
-            body: JSON.stringify(userInfo),
-          })
-            .then((res) => res.json())
-            .then(() => {
-              Swal.fire({
-                position: "center",
-                icon: "success",
-                title: "Sign Up Successful",
-                showConfirmButton: false,
-                timer: 1500,
-              });
-              navigate("/");
+          axiosSecure.post("/users", userInfo).then(() => {
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "Sign Up Successful",
+              showConfirmButton: false,
+              timer: 1500,
             });
+            navigate("/");
+          });
         });
       })
       .catch((error) => {
@@ -91,25 +84,15 @@ const Register = () => {
           photo: user.photoURL,
           createAt: new Date(),
         };
-
-        fetch("http://localhost:3000/users", {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(newUser),
-        })
-          .then((res) => res.json())
-          .then(() => {
-            Swal.fire({
-              position: "center",
-              icon: "success",
-              title: "Sign Up Successful",
-              showConfirmButton: false,
-              timer: 1500,
-            });
-            navigate("/");
+        axiosSecure.post("/users", newUser).then(() => {
+          Swal.fire({
+            icon: "success",
+            title: "Sign Up Successful",
+            timer: 1500,
+            showConfirmButton: false,
           });
+          navigate("/");
+        });
       })
       .catch((error) => {
         Swal.fire({

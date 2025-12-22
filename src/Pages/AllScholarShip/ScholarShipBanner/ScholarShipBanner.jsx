@@ -5,14 +5,18 @@ const ScholarshipHero = ({setQuery}) => {
   const [category, setCategory] = useState("");
   const [subject, setSubject] = useState("");
   const [location, setLocation] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
 
   const handleSearch = () => {
+    setIsSearching(true);
     setQuery({
       search,
       scholarshipCategory:category,
       subjectCategory:subject,
       location
-    })
+    });
+    // Reset loading state after a short delay to show feedback
+    setTimeout(() => setIsSearching(false), 500);
   };
 
   return (
@@ -81,9 +85,17 @@ const ScholarshipHero = ({setQuery}) => {
 
             <button
               onClick={handleSearch}
-              className="w-full py-2 sm:py-3 rounded-xl bg-primary hover:bg-green-800 text-white font-semibold transition text-sm sm:text-base"
+              disabled={isSearching}
+              className="w-full py-2 sm:py-3 rounded-xl bg-primary hover:bg-green-800 text-white font-semibold transition text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              🔍 Search Scholarships
+              {isSearching ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Searching...</span>
+                </>
+              ) : (
+                <>🔍 Search Scholarships</>
+              )}
             </button>
           </div>
         </div>

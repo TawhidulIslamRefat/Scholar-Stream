@@ -1,5 +1,6 @@
-import { useLocation } from "react-router";
+import { Navigate, useLocation } from "react-router";
 import useAuth from "../Hooks/useAuth";
+import LoadingDashboard from "../Components/LoadingDashboard";
 
 
 const PrivateRoute = ({ children }) => {
@@ -7,7 +8,7 @@ const PrivateRoute = ({ children }) => {
   const location = useLocation();
 
   if (loading) {
-    return <p>Loading....</p>;
+    return <LoadingDashboard></LoadingDashboard>;
   }
   if (user && user?.email) {
     return children;

@@ -3,23 +3,29 @@ import { Link, useNavigate, useParams } from "react-router";
 import useAuth from "../../Hooks/useAuth";
 import Swal from "sweetalert2";
 import LoadingDashboard from "../../Components/LoadingDashboard";
+import useAxiosSecure from "../../Hooks/useAxiosSecure";
 
 const CheckoutPage = () => {
   const { id } = useParams();
   const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
 
   const [scholarship, setScholarship] = useState({});
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`http://localhost:3000/scholarships/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setScholarship(data);
+    axiosSecure
+      .get(`/scholarships/${id}`)
+      .then((res) => {
+        setScholarship(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
         setLoading(false);
       });
-  }, [id]);
+  }, [id, axiosSecure]);
 
   const totalAmount =
     (scholarship.applicationFees || 0) + (scholarship.serviceCharge || 0);
@@ -41,13 +47,8 @@ const CheckoutPage = () => {
       applicationStatus: "pending",
       appliedDate: new Date().toISOString(),
     };
-
-    fetch("http://localhost:3000/applications", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(applicationData),
-    })
-      .then((res) => res.json())
+    axiosSecure
+      .post("/applications", applicationData)
       .then(() => {
         Swal.fire({
           title: "Application Submitted Successfully!",
@@ -55,8 +56,17 @@ const CheckoutPage = () => {
           icon: "success",
           confirmButtonColor: "#008000",
         });
+        navigate("/dashboard/my-applications");
+      })
+      .catch((err) => {
+        console.error(err);
+        Swal.fire({
+          title: "Error!",
+          text: "Something went wrong while submitting the application.",
+          icon: "error",
+          confirmButtonColor: "#FF5A3C",
+        });
       });
-    navigate("/dashboard/my-applications");
   };
 
   if (loading) {

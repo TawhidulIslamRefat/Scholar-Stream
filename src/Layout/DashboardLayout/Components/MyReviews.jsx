@@ -3,33 +3,26 @@ import useAuth from "../../../Hooks/useAuth";
 import Swal from "sweetalert2";
 import { Link } from "react-router";
 import LoadingDashboard from "../../../Components/LoadingDashboard";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const MyReviews = () => {
   const { user } = useAuth();
   const [reviews, setReviews] = useState([]);
   const [editReview, setEditReview] = useState(null);
   const [loading, setLoading] = useState(true);
+  const axiosSecure = useAxiosSecure();
 
   useEffect(() => {
     if (!user?.email) return;
-    fetchReviews();
-  }, [user]);
+    axiosSecure
+      .get(`/reviews/${user.email}`)
+      .then(({ data }) => setReviews(data))
+      .catch((err) => console.error("Failed to fetch reviews:", err))
+      .finally(() => setLoading(false));
+  }, [user,axiosSecure]);
 
-  const fetchReviews = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`http://localhost:3000/reviews/${user.email}`);
-      const data = await response.json();
-      setReviews(data);
-    } catch (error) {
-      console.error("Failed to fetch reviews:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async (id, scholarshipName) => {
-    const result = await Swal.fire({
+  const handleDelete = (id, scholarshipName) => {
+    Swal.fire({
       title: "Delete Review?",
       text: `Are you sure you want to delete your review for "${scholarshipName}"?`,
       icon: "warning",
@@ -37,44 +30,45 @@ const MyReviews = () => {
       confirmButtonColor: "#ef4444",
       cancelButtonColor: "#6b7280",
       confirmButtonText: "Yes, delete it!",
-    });
-
-    if (result.isConfirmed) {
-      try {
-        await fetch(`http://localhost:3000/reviews/${id}`, {
-          method: "DELETE",
-        });
-        setReviews(reviews.filter((r) => r._id !== id));
-        Swal.fire("Deleted!", "Your review has been deleted.", "success");
-      } catch (error) {
-        Swal.fire("Error!", "Failed to delete review.", error);
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axiosSecure
+          .delete(`/reviews/${id}`)
+          .then(() => {
+            setReviews(reviews.filter((r) => r._id !== id));
+            Swal.fire("Deleted!", "Your review has been deleted.", "success");
+          })
+          .catch((err) => {
+            console.error(err);
+            Swal.fire("Error!", "Failed to delete review.", "error");
+          });
       }
-    }
+    });
   };
 
-  const handleUpdate = async (e) => {
+  const handleUpdate = (e) => {
     e.preventDefault();
 
-    try {
-      await fetch(`http://localhost:3000/reviews/${editReview._id}`, {
-        method: "PATCH",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          comment: editReview.comment,
-          rating: parseInt(editReview.rating),
-        }),
+    axiosSecure
+      .patch(`/reviews/${editReview._id}`, {
+        comment: editReview.comment,
+        rating: parseInt(editReview.rating),
+      })
+      .then(() => {
+        setReviews(
+          reviews.map((r) =>
+            r._id === editReview._id
+              ? { ...r, ...editReview, rating: parseInt(editReview.rating) }
+              : r
+          )
+        );
+        setEditReview(null);
+        Swal.fire("Updated!", "Your review has been updated.", "success");
+      })
+      .catch((err) => {
+        console.error(err);
+        Swal.fire("Error!", "Failed to update review.", "error");
       });
-
-      setReviews(
-        reviews.map((r) =>
-          r._id === editReview._id ? { ...r, ...editReview, rating: parseInt(editReview.rating) } : r
-        )
-      );
-      setEditReview(null);
-      Swal.fire("Updated!", "Your review has been updated.", "success");
-    } catch (error) {
-      Swal.fire("Error!", "Failed to update review.", error);
-    }
   };
 
   const renderStars = (rating) => {
@@ -97,26 +91,33 @@ const MyReviews = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
       <div className="max-w-8xl mx-auto">
-        
         <div className="text-center mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2 sm:mb-3">My Reviews</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2 sm:mb-3">
+            My Reviews
+          </h1>
           <p className="text-gray-600 text-base sm:text-lg">
             Track and manage your scholarship reviews
           </p>
           <div className="mt-3 sm:mt-4 inline-flex items-center bg-green-100 text-green-800 px-3 sm:px-4 py-2 rounded-full font-semibold text-sm sm:text-base">
-            📝 {reviews.length} Review{reviews.length !== 1 ? 's' : ''} Written
+            📝 {reviews.length} Review{reviews.length !== 1 ? "s" : ""} Written
           </div>
         </div>
         {reviews.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 md:p-12 text-center">
-            <div className="text-4xl sm:text-5xl md:text-6xl mb-4 sm:mb-6">📝</div>
+            <div className="text-4xl sm:text-5xl md:text-6xl mb-4 sm:mb-6">
+              📝
+            </div>
             <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 sm:mb-4">
               No Reviews Yet
             </h3>
             <p className="text-gray-600 text-base sm:text-lg mb-6 sm:mb-8 max-w-md mx-auto">
-              You haven't written any reviews yet. Start by applying to scholarships and sharing your experience to help other students!
+              You haven't written any reviews yet. Start by applying to
+              scholarships and sharing your experience to help other students!
             </p>
-            <Link to='/all-scholarship' className="bg-green-300 text-white px-6 sm:px-8 py-2 sm:py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors shadow-lg text-sm sm:text-base">
+            <Link
+              to="/all-scholarship"
+              className="bg-green-300 text-white px-6 sm:px-8 py-2 sm:py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors shadow-lg text-sm sm:text-base"
+            >
               Browse Scholarships
             </Link>
           </div>
@@ -127,7 +128,6 @@ const MyReviews = () => {
                 key={review._id}
                 className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100"
               >
-                
                 <div className="bg-linear-to-r from-green-500 to-[#009A64] p-4 sm:p-6 text-white">
                   <h3 className="text-lg sm:text-xl font-bold mb-2 line-clamp-2">
                     {review.scholarshipName}
@@ -146,16 +146,18 @@ const MyReviews = () => {
                       </span>
                     </div>
                     <div className="text-xs sm:text-sm text-gray-500">
-                      {new Date(review.date).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
+                      {new Date(review.date).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
                       })}
                     </div>
                   </div>
 
                   <div className="mb-4 sm:mb-6">
-                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Your Review:</h4>
+                    <h4 className="text-sm font-semibold text-gray-700 mb-2">
+                      Your Review:
+                    </h4>
                     <p className="text-gray-600 leading-relaxed line-clamp-4 text-sm sm:text-base">
                       {review.comment}
                     </p>
@@ -169,7 +171,9 @@ const MyReviews = () => {
                       <span>Edit</span>
                     </button>
                     <button
-                      onClick={() => handleDelete(review._id,review.scholarshipName)}
+                      onClick={() =>
+                        handleDelete(review._id, review.scholarshipName)
+                      }
                       className="flex-1 bg-red-50 text-red-600 py-2 px-4 rounded-lg font-medium hover:bg-red-100 transition-colors flex items-center justify-center space-x-2 text-sm sm:text-base"
                     >
                       <span>Delete</span>
@@ -186,19 +190,28 @@ const MyReviews = () => {
               <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-2">
                 {reviews.length}
               </div>
-              <div className="text-gray-600 font-medium text-sm sm:text-base">Total Reviews</div>
+              <div className="text-gray-600 font-medium text-sm sm:text-base">
+                Total Reviews
+              </div>
             </div>
             <div className="bg-gray-100 rounded-xl shadow-lg p-4 sm:p-6 text-center border border-gray-100">
               <div className="text-2xl sm:text-3xl font-bold text-yellow-600 mb-2">
-                {(reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1)}
+                {(
+                  reviews.reduce((sum, review) => sum + review.rating, 0) /
+                  reviews.length
+                ).toFixed(1)}
               </div>
-              <div className="text-gray-600 font-medium text-sm sm:text-base">Average Rating</div>
+              <div className="text-gray-600 font-medium text-sm sm:text-base">
+                Average Rating
+              </div>
             </div>
             <div className="bg-gray-100 rounded-xl shadow-lg p-4 sm:p-6 text-center border border-gray-100">
               <div className="text-2xl sm:text-3xl font-bold text-green-600 mb-2">
-                {reviews.filter(review => review.rating >= 4).length}
+                {reviews.filter((review) => review.rating >= 4).length}
               </div>
-              <div className="text-gray-600 font-medium text-sm sm:text-base">Positive Reviews</div>
+              <div className="text-gray-600 font-medium text-sm sm:text-base">
+                Positive Reviews
+              </div>
             </div>
           </div>
         )}
@@ -222,7 +235,7 @@ const MyReviews = () => {
                   {editReview.scholarshipName}
                 </p>
               </div>
-              <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">  
+              <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2 sm:mb-3">
                     Rating
@@ -232,11 +245,13 @@ const MyReviews = () => {
                       <button
                         key={star}
                         type="button"
-                        onClick={() => setEditReview({ ...editReview, rating: star })}
+                        onClick={() =>
+                          setEditReview({ ...editReview, rating: star })
+                        }
                         className={`p-2 sm:p-3 rounded-lg border-2 transition-all ${
                           editReview.rating >= star
-                            ? 'border-yellow-400 bg-yellow-50 text-yellow-600'
-                            : 'border-gray-200 bg-gray-50 text-gray-400'
+                            ? "border-yellow-400 bg-yellow-50 text-yellow-600"
+                            : "border-gray-200 bg-gray-50 text-gray-400"
                         }`}
                       >
                         <span className="text-lg sm:text-2xl">★</span>

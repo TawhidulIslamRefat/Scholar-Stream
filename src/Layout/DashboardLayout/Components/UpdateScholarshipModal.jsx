@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
   const [saving, setSaving] = useState(false);
+  const axiosSecure = useAxiosSecure();
 
   const { _id, ...restData } = scholarship;
 
@@ -13,33 +15,31 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setSaving(true);
 
-    try {
-      const res = await fetch(`http://localhost:3000/scholarships/${_id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-
-      Swal.fire({
-        title: "Updated!",
-        text: "Scholarship updated successfully",
-        icon: "success",
-        confirmButtonColor: "#16a34a", 
-      });
-      onUpdate({ _id, ...formData });
-      onClose();
-    } catch (error) {
-      Swal.fire("Error", error.message || "Update failed", "error");
-    } finally {
-      setSaving(false);
-    }
+    axiosSecure
+      .patch(`/scholarships/${_id}`, formData)
+      .then((res) => {
+        Swal.fire({
+          title: "Updated!",
+          text: "Scholarship updated successfully",
+          icon: "success",
+          confirmButtonColor: "#16a34a",
+        });
+        onUpdate({ _id, ...formData });
+        onClose();
+      })
+      .catch((error) => {
+        console.error("Update error:", error);
+        Swal.fire(
+          "Error",
+          error.response?.data?.message || error.message || "Update failed",
+          "error"
+        );
+      })
+      .finally(() => setSaving(false));
   };
 
   return (

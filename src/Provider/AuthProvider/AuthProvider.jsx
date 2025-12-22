@@ -13,6 +13,7 @@ import {
 import { GoogleAuthProvider } from "firebase/auth";
 import { AuthContext } from "../../Context/AuthContext/AuthContext";
 import { app } from "../../Firebase/Firebase.config";
+import axios from "axios";
 
 
 
@@ -45,6 +46,7 @@ const AuthProvider = ({ children }) => {
 
   const logOut = () => {
     setLoading(true);
+    localStorage.removeItem("access-token");
     return signOut(auth);
   };
 
@@ -56,8 +58,20 @@ const AuthProvider = ({ children }) => {
  
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+              if (currentUser?.email) {
+        try {
+          const res = await axios.post("http://localhost:3000/jwt", {
+            email: currentUser.email,
+          });
+          localStorage.setItem("access-token", res.data.token);
+        } catch (error) {
+          console.error("JWT error:", error);
+        }
+      } else {
+        localStorage.removeItem("access-token");
+      }
       setLoading(false);
     });
     return () => {

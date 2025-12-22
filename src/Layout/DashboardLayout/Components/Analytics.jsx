@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import LoadingDashboard from "../../../Components/LoadingDashboard";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const Analytics = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const axiosSecure = useAxiosSecure();
 
   useEffect(() => {
-    fetch("http://localhost:3000/analytics")
-      .then(res => res.json())
-      .then(data => {
-        setData(data);
-        setLoading(false);
+    axiosSecure.get("/analytics")
+      .then(({ data }) => setData(data))
+      .catch((err) => {
+        console.error("Failed to fetch analytics:", err);
+        setData(null);
       })
-      .catch(err => {
-        console.error(err);
-        setLoading(false);
-      });
-  }, []);
+      .finally(() => setLoading(false));
+  }, [axiosSecure]);
 
   const COLORS = ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#06B6D4"];
 

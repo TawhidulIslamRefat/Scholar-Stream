@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router";
 import useAuth from "../../Hooks/useAuth";
 import Swal from "sweetalert2";
 import Loading from "../../Components/Loading";
+import useAxiosSecure from "../../Hooks/useAxiosSecure";
 
 const ScholarshipDetails = () => {
   const { id } = useParams();
@@ -11,6 +12,7 @@ const ScholarshipDetails = () => {
   const [review, setReview] = useState([]);
   const [activeTab, setActiveTab] = useState("description");
   const [showAllReviews, setShowAllReviews] = useState(false);
+  const axiosSecure = useAxiosSecure();
 
   const formatComment = (text, limit = 30) => {
     if (!text) return "";
@@ -21,22 +23,28 @@ const ScholarshipDetails = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([
-      fetch(`http://localhost:3000/scholarships/${id}`).then((res) =>
-        res.json()
-      ),
-      fetch(
-        `http://localhost:3000/reviews?name=${scholarship.scholarshipName}`
-      ).then((res) => res.json()),
-    ])
-      .then(([scholarshipData, reviewData]) => {
-        setScholarship(scholarshipData);
-        setReview(reviewData);
-      })
-      .finally(() => setLoading(false));
-  }, [id,scholarship.scholarshipName]);
+    const fetchData = async () => {
+      try {
+        const scholarshipRes = await axiosSecure.get(`/scholarships/${id}`);
+        setScholarship(scholarshipRes.data);
 
-  const handleAddRating = (e) => {
+        const reviewRes = await axiosSecure.get(
+          `/reviews?name=${encodeURIComponent(
+            scholarshipRes.data.scholarshipName
+          )}`
+        );
+        setReview(reviewRes.data);
+      } catch (err) {
+        Swal.fire("Failed to load scholarship details", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id, axiosSecure]);
+
+  const handleAddRating = async (e) => {
     e.preventDefault();
     const reviewInfo = {
       scholarshipId: id,
@@ -49,21 +57,16 @@ const ScholarshipDetails = () => {
       comment: e.target.comment.value,
       date: new Date().toISOString(),
     };
-    fetch("http://localhost:3000/reviews", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(reviewInfo),
-    })
-      .then((res) => res.json())
-      .then(() => {
-        setReview([...review, reviewInfo]);
-        Swal.fire("Review Added ✅", "Thanks for your feedback!", "success");
-        e.target.reset();
-      });
+    try {
+      await axiosSecure.post("/reviews", reviewInfo);
+      setReview([...review, reviewInfo]);
+      Swal.fire("Review Added ✅", "Thanks for your feedback!", "success");
+      e.target.reset();
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error ❌", "Failed to add review", "error");
+    }
   };
-
   if (loading) {
     return <Loading></Loading>;
   }

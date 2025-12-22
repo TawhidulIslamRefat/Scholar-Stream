@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Swal from "sweetalert2";
 import useAuth from "../../Hooks/useAuth";
+import useAxiosSecure from "../../Hooks/useAxiosSecure";
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -11,6 +12,7 @@ const SignIn = () => {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const axiosSecure = useAxiosSecure();
 
   const { signIn, setUser, signInGoogle } = useAuth();
 
@@ -58,24 +60,16 @@ const SignIn = () => {
           photo: user.photoURL,
           createAt: new Date(),
         };
-
-        fetch("http://localhost:3000/users", {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(newUser),
-        })
-          .then((res) => res.json())
+        axiosSecure
+          .post("/users", newUser)
           .then(() => {
             Swal.fire({
-              position: "center",
               icon: "success",
-              title: "Login Successful",
-              showConfirmButton: false,
+              title: "Sign Up Successful",
               timer: 1500,
+              showConfirmButton: false,
             });
-            navigate(`${location.state ? location.state : "/"}`);
+            navigate(`${location.state ? location.state : "/"}`);;
           })
           .catch((error) => {
             Swal.fire({
@@ -122,7 +116,9 @@ const SignIn = () => {
               {isGoogleLoading ? (
                 <div className="flex items-center gap-2">
                   <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
-                  <span className="text-sm font-medium text-gray-700">Signing in...</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    Signing in...
+                  </span>
                 </div>
               ) : (
                 <>
