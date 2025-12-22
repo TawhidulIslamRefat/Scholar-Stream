@@ -18,7 +18,8 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import useRole from "../../Hooks/useRole";
-import Loading from "../../Components/Loading";
+import LoadingDashboard from "../../Components/LoadingDashboard";
+
 
 const DashboardLayout = () => {
   const { user } = useAuth();
@@ -26,7 +27,7 @@ const DashboardLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   if (roleLoading) {
-    return <Loading></Loading>
+    return <LoadingDashboard></LoadingDashboard>
   }
 
   const userRole = role?.toLowerCase().replace(/"/g, "").trim();
