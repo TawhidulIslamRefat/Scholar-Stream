@@ -7,10 +7,10 @@ Scholarship Stream is a full-stack web application designed to help students dis
 ## 🌐 Live Website
 
 🔗 **Frontend (Netlify):**  
-https://scholarship-stream.netlify.app  
+https://scholarship-stream.netlify.app/ 
 
 🔗 **Backend (Vercel):**  
-https://scholarstream-server.vercel.app  
+https://scholarstream-server-alpha.vercel.app/  
 
 ---
 

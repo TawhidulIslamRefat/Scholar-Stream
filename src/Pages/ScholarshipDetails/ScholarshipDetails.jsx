@@ -26,16 +26,22 @@ const ScholarshipDetails = () => {
     const fetchData = async () => {
       try {
         const scholarshipRes = await axiosSecure.get(`/scholarships/${id}`);
-        setScholarship(scholarshipRes.data);
+        const scholarshipData = scholarshipRes.data;
+        setScholarship(scholarshipData);
 
+        console.log(
+          "Fetching reviews for scholarship name:",
+          scholarshipData.scholarshipName
+        );
         const reviewRes = await axiosSecure.get(
-          `/reviews?name=${encodeURIComponent(
-            scholarshipRes.data.scholarshipName
+          `/reviewsByName/${encodeURIComponent(
+            scholarshipData.scholarshipName
           )}`
         );
         setReview(reviewRes.data);
+        console.log("Reviews:", reviewRes.data);
       } catch (err) {
-        Swal.fire("Failed to load scholarship details", err);
+        Swal.fire("Failed to load scholarship details", err.message);
       } finally {
         setLoading(false);
       }
@@ -47,7 +53,7 @@ const ScholarshipDetails = () => {
   const handleAddRating = async (e) => {
     e.preventDefault();
     const reviewInfo = {
-      scholarshipId: id,
+      scholarshipId: scholarship._id,
       scholarshipName: scholarship.scholarshipName,
       universityName: scholarship.universityName,
       userName: user?.displayName,
