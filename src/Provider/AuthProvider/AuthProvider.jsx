@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   createUserWithEmailAndPassword,
   getAuth,
@@ -7,7 +7,7 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
-  updateProfile
+  updateProfile,
 } from "firebase/auth";
 
 import { GoogleAuthProvider } from "firebase/auth";
@@ -15,15 +15,10 @@ import { AuthContext } from "../../Context/AuthContext/AuthContext";
 import { app } from "../../Firebase/Firebase.config";
 import axios from "axios";
 
-
-
-
-
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const AuthProvider = ({ children }) => {
-    
-   const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const createUser = (email, password) => {
@@ -50,19 +45,16 @@ const AuthProvider = ({ children }) => {
     return signOut(auth);
   };
 
-
   const updateUser = (updatedData) => {
     return updateProfile(auth.currentUser, updatedData);
   };
 
- 
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
-              if (currentUser?.email) {
+      if (currentUser?.email) {
         try {
-          const res = await axios.post("http://localhost:3000/jwt", {
+          const res = await axios.post("https://scholarstream-server-alpha.vercel.app/jwt", {
             email: currentUser.email,
           });
           localStorage.setItem("access-token", res.data.token);

@@ -10,7 +10,9 @@ const Payment = () => {
   useEffect(() => {
     const fetchScholarship = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/scholarships/${scholarshipId}`);
+        const res = await fetch(
+          `https://scholarstream-server-alpha.vercel.app/scholarships/${scholarshipId}`
+        );
         const data = await res.json();
         setScholarship(data);
       } catch (error) {
@@ -31,17 +33,20 @@ const Payment = () => {
       applicationId: scholarship._id,
       applicantEmail: scholarship.applicantEmail,
       scholarshipName: scholarship.scholarshipName,
-      universityName: scholarship.universityName || "N/A", 
+      universityName: scholarship.universityName || "N/A",
     };
 
     try {
-      const res = await fetch("http://localhost:3000/create-checkout-session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(paymentInfo),
-      });
+      const res = await fetch(
+        "https://scholarstream-server-alpha.vercel.app/create-checkout-session",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(paymentInfo),
+        }
+      );
 
       const data = await res.json();
 
@@ -62,11 +67,10 @@ const Payment = () => {
   return (
     <div className="p-10 text-center">
       <h1 className="text-2xl font-semibold mb-4">
-        Please pay ${scholarship.applicationFees} for {scholarship.scholarshipName}
+        Please pay ${scholarship.applicationFees} for{" "}
+        {scholarship.scholarshipName}
       </h1>
-      <p className="mb-6">
-        University: {scholarship.universityName || "N/A"}
-      </p>
+      <p className="mb-6">University: {scholarship.universityName || "N/A"}</p>
       <button
         onClick={handlePayment}
         className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"

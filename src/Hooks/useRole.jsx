@@ -3,7 +3,7 @@ import useAuth from "./useAuth";
 
 const useRole = () => {
   const { user } = useAuth();
-  const [role, setRole] = useState("Student");
+  const [role, setRole] = useState("");
   const [roleLoading, setRoleLoading] = useState(true);
 
   useEffect(() => {
@@ -12,14 +12,14 @@ const useRole = () => {
       return;
     }
 
-    fetch(`http://localhost:3000/users/${user.email}/role`)
-      .then(res => res.json())
-      .then(data => {
+    fetch(`https://scholarstream-server-alpha.vercel.app/users/${user.email}/role`) 
+      .then((res) => res.json())
+      .then((data) => {
         setRole(data?.role || "Student");
         setRoleLoading(false);
       })
-      .catch(err => {
-        console.error(err);
+      .catch((err) => {
+        console.error("Role fetch error:", err);
         setRole("Student");
         setRoleLoading(false);
       });

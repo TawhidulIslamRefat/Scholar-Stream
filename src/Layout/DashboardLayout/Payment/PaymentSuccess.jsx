@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router";
 import Swal from "sweetalert2";
-import { FaCheckCircle, FaUniversity, FaDollarSign, FaArrowRight, FaHome } from "react-icons/fa";
+import {
+  FaCheckCircle,
+  FaUniversity,
+  FaDollarSign,
+  FaArrowRight,
+  FaHome,
+} from "react-icons/fa";
 
 const PaymentSuccess = () => {
   const [params] = useSearchParams();
@@ -12,7 +18,7 @@ const PaymentSuccess = () => {
   useEffect(() => {
     if (!sessionId) return;
 
-    fetch(`http://localhost:3000/payment-success?session_id=${sessionId}`, {
+    fetch(`https://scholarstream-server-alpha.vercel.app/payment-success?session_id=${sessionId}`, {
       method: "PATCH",
     })
       .then((res) => res.json())
@@ -22,7 +28,7 @@ const PaymentSuccess = () => {
             title: "Payment Successful! 🎉",
             text: "Your scholarship application payment has been processed",
             icon: "success",
-            confirmButtonColor: "#10b981"
+            confirmButtonColor: "#10b981",
           });
           setPaymentData(data.payment || null);
         } else {
@@ -30,7 +36,7 @@ const PaymentSuccess = () => {
             title: "Payment Failed",
             text: data.message || "Payment processing failed",
             icon: "error",
-            confirmButtonColor: "#ef4444"
+            confirmButtonColor: "#ef4444",
           });
         }
       })
@@ -39,7 +45,7 @@ const PaymentSuccess = () => {
           title: "Error",
           text: "Something went wrong with payment processing",
           icon: "error",
-          confirmButtonColor: "#ef4444"
+          confirmButtonColor: "#ef4444",
         });
         console.error(err);
       });
@@ -50,7 +56,9 @@ const PaymentSuccess = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">Processing Payment</h2>
+          <h2 className="text-xl font-semibold text-gray-700 mb-2">
+            Processing Payment
+          </h2>
           <p className="text-gray-500">Verifying your transaction details...</p>
         </div>
       </div>
@@ -64,10 +72,12 @@ const PaymentSuccess = () => {
           <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
             <FaCheckCircle className="text-white text-3xl" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">Payment Successful! 🎉</h1>
+          <h1 className="text-4xl font-bold text-gray-800 mb-4">
+            Payment Successful! 🎉
+          </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Your scholarship application payment has been processed successfully. 
-            Thank you for choosing Scholar-Stream!
+            Your scholarship application payment has been processed
+            successfully. Thank you for choosing Scholar-Stream!
           </p>
         </div>
 
@@ -80,7 +90,9 @@ const PaymentSuccess = () => {
               </div>
               <div className="text-right">
                 <p className="text-green-100 text-sm">Date</p>
-                <p className="text-lg font-semibold">{new Date().toLocaleDateString()}</p>
+                <p className="text-lg font-semibold">
+                  {new Date().toLocaleDateString()}
+                </p>
               </div>
             </div>
           </div>
@@ -93,18 +105,30 @@ const PaymentSuccess = () => {
                     <FaUniversity className="text-white text-xl" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-800">Scholarship Details</h3>
-                    <p className="text-gray-600 text-sm">Application Information</p>
+                    <h3 className="font-bold text-gray-800">
+                      Scholarship Details
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      Application Information
+                    </p>
                   </div>
                 </div>
                 <div className="space-y-3">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Scholarship Name</p>
-                    <p className="font-semibold text-gray-800">{paymentData.scholarshipName}</p>
+                    <p className="text-sm font-medium text-gray-600">
+                      Scholarship Name
+                    </p>
+                    <p className="font-semibold text-gray-800">
+                      {paymentData.scholarshipName}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-600">University</p>
-                    <p className="font-semibold text-gray-800">{paymentData.universityName || "N/A"}</p>
+                    <p className="text-sm font-medium text-gray-600">
+                      University
+                    </p>
+                    <p className="font-semibold text-gray-800">
+                      {paymentData.universityName || "N/A"}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -121,12 +145,20 @@ const PaymentSuccess = () => {
                 </div>
                 <div className="space-y-3">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Amount Paid</p>
-                    <p className="font-bold text-2xl text-green-600">${paymentData.amount}</p>
+                    <p className="text-sm font-medium text-gray-600">
+                      Amount Paid
+                    </p>
+                    <p className="font-bold text-2xl text-green-600">
+                      ${paymentData.amount}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Currency</p>
-                    <p className="font-semibold text-gray-800">{paymentData.currency?.toUpperCase()}</p>
+                    <p className="text-sm font-medium text-gray-600">
+                      Currency
+                    </p>
+                    <p className="font-semibold text-gray-800">
+                      {paymentData.currency?.toUpperCase()}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -140,7 +172,9 @@ const PaymentSuccess = () => {
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-800">Payment Status</h4>
-                    <p className="text-green-600 font-semibold">Successfully Completed</p>
+                    <p className="text-green-600 font-semibold">
+                      Successfully Completed
+                    </p>
                   </div>
                 </div>
                 <div className="text-right">
@@ -181,7 +215,7 @@ const PaymentSuccess = () => {
                 <span>View My Applications</span>
                 <FaArrowRight className="ml-2" />
               </button>
-              
+
               <button
                 onClick={() => navigate("/")}
                 className="flex-1 inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
