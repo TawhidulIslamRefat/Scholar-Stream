@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import useAuth from "../../../Hooks/useAuth";
 import useRole from "../../../Hooks/useRole";
 import { Link } from "react-router";
+import LoadingDashboard from "../../../Components/LoadingDashboard";
 
 const Overview = () => {
   const { user } = useAuth();
@@ -16,11 +17,7 @@ const Overview = () => {
   }, []);
 
   if (roleLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
+    return <LoadingDashboard></LoadingDashboard>;
   }
 
   const userRole = role?.toLowerCase().replace(/"/g, "").trim();

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import useAuth from "../../Hooks/useAuth";
 import Swal from "sweetalert2";
+import LoadingDashboard from "../../Components/LoadingDashboard";
 
 const CheckoutPage = () => {
   const { id } = useParams();
@@ -59,11 +60,7 @@ const CheckoutPage = () => {
   };
 
   if (loading) {
-    return (
-      <p className="text-center mt-16 sm:mt-20 text-base sm:text-lg">
-        Loading...
-      </p>
-    );
+    return <LoadingDashboard></LoadingDashboard>;
   }
 
   return (

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import LoadingDashboard from "../../../Components/LoadingDashboard";
 
 const ManageApplications = () => {
   const [applications, setApplications] = useState([]);
@@ -104,14 +105,7 @@ const ManageApplications = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-64 p-4">
-        <div className="text-center">
-          <div className="w-6 h-6 sm:w-8 sm:h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-          <p className="text-gray-600 text-sm sm:text-base">Loading applications...</p>
-        </div>
-      </div>
-    );
+    return <LoadingDashboard></LoadingDashboard>;
   }
 
   return (

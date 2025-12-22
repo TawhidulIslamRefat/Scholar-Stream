@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import useAuth from "../../../Hooks/useAuth";
+import LoadingDashboard from "../../../Components/LoadingDashboard";
 
 const roleBadge = (role) => {
   if (role === "Admin") return "bg-red-100 text-red-700";
@@ -84,7 +85,7 @@ const ManageUsers = () => {
     }
   };
 
-  if (loading) return <p className="text-center py-8 sm:py-10 text-sm sm:text-base">Loading users...</p>;
+  if (loading) return <LoadingDashboard></LoadingDashboard>;
 
   return (
     <div className="p-4 sm:p-6">

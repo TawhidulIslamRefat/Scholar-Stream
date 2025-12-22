@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ScholarShipBanner from "../ScholarShipBanner/ScholarShipBanner";
 import TopScholarshipCard from "../../Home/TopScholarships/TopScholarshipCard/TopScholarshipCard";
+import Loading from "../../../Components/Loading";
 
 const AllScholarShipPage = () => {
   const [scholarships, setScholarships] = useState([]);
@@ -30,10 +31,16 @@ const AllScholarShipPage = () => {
       .then((data) => {
         setScholarships(data.result);
         setTotal(data.total);
-      });
+      }).finally(() => {
+      setLoading(false);
+    });
   }, [query, page]);
 
   const totalPages = Math.ceil(total / limit);
+
+  if (loading) {
+    return <Loading></Loading>
+  }
 
   return (
     <div>

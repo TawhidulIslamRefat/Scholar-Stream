@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaDeleteLeft } from "react-icons/fa6";
 import Swal from "sweetalert2";
+import LoadingDashboard from "../../../Components/LoadingDashboard";
 
 const AllReviews = () => {
   const [reviews, setReviews] = useState([]);
@@ -67,11 +68,7 @@ const AllReviews = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64 p-4">
-        <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-green-600"></div>
-      </div>
-    );
+    return <LoadingDashboard></LoadingDashboard>;
   }
 
   return (

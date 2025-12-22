@@ -93,9 +93,9 @@ const ScholarshipHero = ({setQuery}) => {
 
           <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl">
             <img
-              src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8c3R1ZHlpbmd8ZW58MHx8MHx8fDA%3D"
+              src="https://i.ndtvimg.com/i/2016-12/graduation-generic_650x400_81481305985.jpg?downsize=545:307"
               alt="Students studying"
-              className="w-full h-64 sm:h-80 md:h-96 lg:h-[520px] object-cover"
+              className="w-full h-64 sm:h-80 md:h-96 lg:h-[520px] "
             />
           </div>
         </div>

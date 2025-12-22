@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import useAuth from "../../../Hooks/useAuth";
 import Swal from "sweetalert2";
 import axios from "axios";
+import LoadingDashboard from "../../../Components/LoadingDashboard";
 
 const MyApplications = () => {
   const { user } = useAuth();
@@ -157,14 +158,7 @@ const MyApplications = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-64">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-          <p className="text-gray-600">Loading applications...</p>
-        </div>
-      </div>
-    );
+    return <LoadingDashboard></LoadingDashboard>;
   }
 
   return (

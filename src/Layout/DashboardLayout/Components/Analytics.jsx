@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import LoadingDashboard from "../../../Components/LoadingDashboard";
 
 const Analytics = () => {
   const [data, setData] = useState(null);
@@ -21,14 +22,7 @@ const Analytics = () => {
   const COLORS = ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#06B6D4"];
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen p-4">
-        <div className="text-center">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 font-medium text-sm sm:text-base">Loading analytics...</p>
-        </div>
-      </div>
-    );
+    return <LoadingDashboard></LoadingDashboard>;
   }
 
   if (!data) {

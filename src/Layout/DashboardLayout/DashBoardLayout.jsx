@@ -18,6 +18,7 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import useRole from "../../Hooks/useRole";
+import Loading from "../../Components/Loading";
 
 const DashboardLayout = () => {
   const { user } = useAuth();
@@ -25,7 +26,7 @@ const DashboardLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   if (roleLoading) {
-    return <p className="text-center mt-16 sm:mt-20 text-base sm:text-lg">Loading Dashboard...</p>
+    return <Loading></Loading>
   }
 
   const userRole = role?.toLowerCase().replace(/"/g, "").trim();
@@ -158,7 +159,7 @@ const DashboardLayout = () => {
           </div>
 
           <div className="flex items-center space-x-2 sm:space-x-3">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/20 flex items-center justify-center shrink-0">
               {user?.photoURL ? (
                 <img
                   src={user.photoURL}
@@ -195,7 +196,7 @@ const DashboardLayout = () => {
                 }`
               }
             >
-              <span className="flex-shrink-0">{item.icon}</span>
+              <span className="shrink-0">{item.icon}</span>
               <span className="font-medium text-sm sm:text-base truncate">{item.name}</span>
             </NavLink>
           ))}
@@ -205,7 +206,7 @@ const DashboardLayout = () => {
             to="/"
             className="flex items-center space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-xl text-gray-700 hover:bg-gray-100 transition-all duration-200"
           >
-            <FaHome className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+            <FaHome className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
             <span className="font-medium text-sm sm:text-base truncate">Back to Home</span>
           </Link>
         </nav>
@@ -231,7 +232,7 @@ const DashboardLayout = () => {
             <div className="flex items-center space-x-3 sm:space-x-4 flex-1 min-w-0">
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="p-2 rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0"
+                className="p-2 rounded-lg hover:bg-gray-100 transition-colors shrink-0"
               >
                 <FaBars className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
               </button>

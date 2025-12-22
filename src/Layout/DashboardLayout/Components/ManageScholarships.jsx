@@ -3,6 +3,7 @@ import Swal from "sweetalert2";
 import UpdateScholarshipModal from "./UpdateScholarshipModal";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
+import LoadingDashboard from "../../../Components/LoadingDashboard";
 
 const ManageScholarships = () => {
   const [scholarships, setScholarships] = useState([]);
@@ -44,7 +45,7 @@ const ManageScholarships = () => {
   };
 
   if (loading) {
-    return <p className="text-center mt-8 sm:mt-10 text-sm sm:text-base">Loading...</p>;
+    return <LoadingDashboard></LoadingDashboard>;
   }
 
   return (
@@ -63,7 +64,7 @@ const ManageScholarships = () => {
             <div key={item._id} className="bg-white shadow rounded-xl p-4 hover:shadow-lg transition-shadow">
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0">
+                  <div className="shrink-0">
                     <img
                       src={item.universityImage}
                       alt="university"

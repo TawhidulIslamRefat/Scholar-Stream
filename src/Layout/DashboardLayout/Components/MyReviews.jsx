@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import useAuth from "../../../Hooks/useAuth";
 import Swal from "sweetalert2";
 import { Link } from "react-router";
+import LoadingDashboard from "../../../Components/LoadingDashboard";
 
 const MyReviews = () => {
   const { user } = useAuth();
@@ -90,14 +91,7 @@ const MyReviews = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 sm:h-16 sm:w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 text-base sm:text-lg">Loading your reviews...</p>
-        </div>
-      </div>
-    );
+    return <LoadingDashboard></LoadingDashboard>;
   }
 
   return (
