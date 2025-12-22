@@ -133,7 +133,6 @@ const Overview = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
-      {/* Welcome Section */}
       <div className={`${getRoleColor()} rounded-2xl p-8 text-white shadow-lg`}>
         <div className="flex flex-col md:flex-row items-center justify-between">
           <div className="text-center md:text-left mb-4 md:mb-0">
@@ -163,7 +162,6 @@ const Overview = () => {
         </div>
       </div>
 
-      {/* System Status */}
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
         <h2 className="text-xl font-semibold text-gray-900 mb-6">System Status</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -185,7 +183,6 @@ const Overview = () => {
         </div>
       </div>
 
-      {/* Quick Actions */}
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
         <h2 className="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
         <div className={`grid grid-cols-1 ${quickActions.length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-4`}>
@@ -202,7 +199,6 @@ const Overview = () => {
         </div>
       </div>
 
-      {/* Recent Updates */}
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
         <h2 className="text-xl font-semibold text-gray-900 mb-6">Recent Updates</h2>
         <div className="space-y-4">

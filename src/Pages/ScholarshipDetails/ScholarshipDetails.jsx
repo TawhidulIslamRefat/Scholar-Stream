@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import useAuth from "../../Hooks/useAuth";
-// import Swal from "sweetalert2";
-// import Loading from "../../Components/Loading/Loading";
+import Swal from "sweetalert2";
+import Loading from "../../Components/Loading";
 
-const PropertyDetails = () => {
+const ScholarshipDetails = () => {
   const { id } = useParams();
   const { user } = useAuth();
   const [scholarship, setScholarship] = useState({});
@@ -18,21 +18,23 @@ const PropertyDetails = () => {
   };
 
   const displayedReviews = showAllReviews ? review : review.slice(0, 3);
-  //   const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // setLoading(true);
     Promise.all([
       fetch(`http://localhost:3000/scholarships/${id}`).then((res) =>
         res.json()
       ),
-      fetch(`http://localhost:3000/reviews/${id}`).then((res) => res.json()),
-    ]).then(([scholarshipData, reviewData]) => {
-      setScholarship(scholarshipData);
-      setReview(reviewData);
-    });
-    //   .finally(() => setLoading(false));
-  }, [id]);
+      fetch(
+        `http://localhost:3000/reviews?name=${scholarship.scholarshipName}`
+      ).then((res) => res.json()),
+    ])
+      .then(([scholarshipData, reviewData]) => {
+        setScholarship(scholarshipData);
+        setReview(reviewData);
+      })
+      .finally(() => setLoading(false));
+  }, [id,scholarship.scholarshipName]);
 
   const handleAddRating = (e) => {
     e.preventDefault();
@@ -57,69 +59,69 @@ const PropertyDetails = () => {
       .then((res) => res.json())
       .then(() => {
         setReview([...review, reviewInfo]);
-        // Swal.fire("Review Added ✅", "Thanks for your feedback!", "success");
+        Swal.fire("Review Added ✅", "Thanks for your feedback!", "success");
         e.target.reset();
       });
   };
 
-  //   if (loading) {
-  //     return <Loading />;
-  //   }
+  if (loading) {
+    return <Loading></Loading>;
+  }
   return (
-    <div className="w-9/12 mx-auto py-10">
-      <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-center py-10">
+    <div className="w-full px-4 sm:px-6 md:px-8 lg:w-11/12 xl:w-9/12 mx-auto py-6 sm:py-8 md:py-10">
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-center py-6 sm:py-8 md:py-10">
         Scholarship Details
       </h1>
-      <div className="flex flex-col md:flex-row items-center gap-10 justify-center">
-        <div>
+      <div className="flex flex-col lg:flex-row items-center gap-6 sm:gap-8 md:gap-10 justify-center">
+        <div className="w-full lg:w-1/2">
           <img
             src={scholarship.universityImage}
             alt={scholarship.universityName}
-            className="w-full h-[370px] rounded-xl object-cover"
+            className="w-full h-[250px] sm:h-[300px] md:h-[350px] lg:h-[370px] rounded-xl object-cover"
           />
         </div>
-        <div>
+        <div className="w-full lg:w-1/2">
           <div>
-            <h1 className="text-3xl font-bold mb-2 ">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 text-center lg:text-left">
               {scholarship.scholarshipName}
             </h1>
-            <p className="text-gray-600 mt- mb-3 text-lg font-medium">
+            <p className="text-gray-600 mb-3 text-base sm:text-lg font-medium text-center lg:text-left">
               🎓 {scholarship.universityName} (World Rank #
               {scholarship.universityWorldRank})
             </p>
           </div>
-          <div className="grid md:grid-cols-2 gap-5 md:gap-6  font-medium text-sm">
-            <p className="text-xs sm:text-text-sm md:text-[17px] font-medium">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-5 lg:gap-6 font-medium text-sm">
+            <p className="text-sm sm:text-base md:text-[17px] font-medium">
               📍 Location: {scholarship.universityCity},{" "}
               {scholarship.universityCountry}
             </p>
-            <p className="text-xs sm:text-text-sm md:text-[17px] font-medium">
+            <p className="text-sm sm:text-base md:text-[17px] font-medium">
               🎓 Degree: {scholarship.degree}
             </p>
-            <p className="text-xs sm:text-text-sm md:text-[17px] font-medium">
+            <p className="text-sm sm:text-base md:text-[17px] font-medium">
               📚 Subject: {scholarship.subjectCategory}
             </p>
-            <p className="text-xs sm:text-text-sm md:text-[17px] font-medium">
+            <p className="text-sm sm:text-base md:text-[17px] font-medium">
               🏷 Scholarship Type: {scholarship.scholarshipCategory}
             </p>
-            <p className="text-xs sm:text-text-sm md:text-[17px] font-medium">
+            <p className="text-sm sm:text-base md:text-[17px] font-medium">
               💵 Tuition Fees: ${scholarship.tuitionFees}
             </p>
-            <p className="text-xs sm:text-text-sm md:text-[17px] font-medium">
+            <p className="text-sm sm:text-base md:text-[17px] font-medium">
               🧾 Application Fees: ${scholarship.applicationFees}
             </p>
-            <p className="text-xs sm:text-text-sm md:text-[17px] font-medium">
+            <p className="text-sm sm:text-base md:text-[17px] font-medium">
               ⚙ Service Charge: ${scholarship.serviceCharge}
             </p>
-            <p className="text-xs sm:text-text-sm md:text-[17px] font-medium">
+            <p className="text-sm sm:text-base md:text-[17px] font-medium">
               🗓 Deadline: {scholarship.applicationDeadline}
             </p>
-            <div className="mt-10"></div>
+            <div className="mt-6 sm:mt-8 md:mt-10"></div>
           </div>
-          <div>
+          <div className="text-center lg:text-left">
             <Link
               to={`/checkout/${id}`}
-              className="bg-primary px-1 py-0.5 md:px-2 md:py-1 rounded-sm hover:bg-green-700 hover:text-white text-lg font-medium "
+              className="inline-block bg-primary px-3 py-2 sm:px-4 sm:py-2 md:px-2 md:py-1 rounded-sm hover:bg-green-700 hover:text-white text-base sm:text-lg font-medium transition-colors duration-200"
             >
               Apply for Scholarship
             </Link>
@@ -127,12 +129,12 @@ const PropertyDetails = () => {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto">
-        <div className="mt-10">
-          <div className="flex border-b-2 border-gray-300">
+      <div className="w-full  mx-auto px-4 sm:px-6 md:px-0">
+        <div className="mt-8 sm:mt-10">
+          <div className="flex border-b-2 border-gray-300 overflow-x-auto">
             <button
               onClick={() => setActiveTab("description")}
-              className={`px-5 py-2 text-sm md:text-lg font-semibold transition-all
+              className={`px-3 sm:px-4 md:px-5 py-2 text-sm sm:text-base md:text-lg font-semibold transition-all whitespace-nowrap
          ${
            activeTab === "description"
              ? "border-b-4 border-primary text-primary"
@@ -144,7 +146,7 @@ const PropertyDetails = () => {
             </button>
             <button
               onClick={() => setActiveTab("coverage")}
-              className={`px-5 py-2 text-sm md:text-lg font-semibold transition-all
+              className={`px-3 sm:px-4 md:px-5 py-2 text-sm sm:text-base md:text-lg font-semibold transition-all whitespace-nowrap
          ${
            activeTab === "coverage"
              ? "border-b-4 border-primary text-primary"
@@ -155,14 +157,14 @@ const PropertyDetails = () => {
               coverage
             </button>
           </div>
-          <div className="mt-6 p-2">
+          <div className="mt-4 sm:mt-6 p-2 sm:p-4 md:p-2">
             {activeTab === "description" && (
-              <p className="text-gray-700 font-medium loading-relaxed">
+              <p className="text-gray-700 font-medium leading-relaxed text-sm sm:text-base">
                 {scholarship.scholarshipDescription}
               </p>
             )}
             {activeTab === "coverage" && (
-              <p className="text-gray-700 font-medium loading-relaxed">
+              <p className="text-gray-700 font-medium leading-relaxed text-sm sm:text-base">
                 {scholarship.stipendCoverage}
               </p>
             )}
@@ -170,13 +172,13 @@ const PropertyDetails = () => {
         </div>
       </div>
 
-      <h3 className="text-xl sm:text-3xl font-bold mb-4 mt-10 text-center">
+      <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 mt-8 sm:mt-10 text-center">
         Ratings & Reviews
       </h3>
 
-      <div className="max-w-6xl mx-auto">
+      <div className="w-full mx-auto px-4 sm:px-6 md:px-0">
         {review.length === 0 ? (
-          <p className="text-sm sm:text-xl text-gray-600 text-center xl:text-left">
+          <p className="text-sm sm:text-base md:text-xl text-gray-600 text-center">
             No reviews yet.
           </p>
         ) : (
@@ -184,36 +186,35 @@ const PropertyDetails = () => {
             {displayedReviews.map((r, index) => (
               <div
                 key={index}
-                className=" 
-                 w-[98%] mx-auto lg:mx-0 lg:w-full 
-                 p-4 rounded-lg
-                 flex gap-4 items-start"
+                className="w-full p-3 sm:p-4 rounded-lg flex gap-3 sm:gap-4 items-start border-b border-gray-100 last:border-b-0"
               >
-                <div>
+                <div className="shrink-0">
                   <img
                     src={r.userPhoto}
                     alt={r.userName}
-                    className="w-35 h-10 rounded-full border border-gray-300 "
+                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-gray-300"
                   />
                 </div>
 
-                <div>
-                  <p className="font-semibold text-sm sm:text-lg text-gray-800 mb-2 ">
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm sm:text-base md:text-lg text-gray-800 mb-1 sm:mb-2 truncate">
                     {r.userName}
                   </p>
 
-                  <div className="flex items-center gap-2">
-                    <p className=" text-xs  font-bold">
-                      {[...Array(Number(r.rating))].map((_, i) => (
-                        <span key={i}>⭐</span>
-                      ))}
-                    </p>
-                    <p className="text-xs  text-gray-800 ">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-2">
+                    <div className="flex items-center">
+                      <p className="text-xs sm:text-sm font-bold">
+                        {[...Array(Number(r.rating))].map((_, i) => (
+                          <span key={i}>⭐</span>
+                        ))}
+                      </p>
+                    </div>
+                    <p className="text-xs text-gray-800">
                       {new Date(r.date).toLocaleDateString()}
                     </p>
                   </div>
 
-                  <p className="text-gray-600  text-xs sm:text-sm mt-1">
+                  <p className="text-gray-600 text-xs sm:text-sm break-word">
                     {formatComment(r.comment)}
                   </p>
                 </div>
@@ -223,7 +224,7 @@ const PropertyDetails = () => {
         )}
       </div>
       {review.length > 3 && !showAllReviews && (
-        <div className="text-center mt-4">
+        <div className="text-center mt-4 px-4 sm:px-6 md:px-0">
           <button
             onClick={() => setShowAllReviews(true)}
             className="text-primary text-sm font-semibold hover:underline"
@@ -232,41 +233,49 @@ const PropertyDetails = () => {
           </button>
         </div>
       )}
-      <div className="mt-12 max-w-3xl xl:w-full mx-auto sm:mx-auto bg-white rounded-lg shadow-xl border-2 border-gray-300 p-10">
-        <form onSubmit={handleAddRating} className="space-y-5">
-          <h3 className="text-xl sm:text-2xl font-bold mb-4 text-center">
-            Rate This Scholarship
-          </h3>
-          <label className="text-sm sm:text-xl font-semibold">
-            Choose Rating
-          </label>
-          <select
-            name="rating"
-            className="select select-bordered w-full my-3 text-xs sm:text-sm"
-            required
-          >
-            <option value="">Choose Rating</option>
-            <option value="5">⭐ 5 (Excellent)</option>
-            <option value="4">⭐ 4 (Good)</option>
-            <option value="3">⭐ 3 (Avarage)</option>
-            <option value="2">⭐ 2 (Poor)</option>
-            <option value="1">⭐ 1 (Vary Bad)</option>
-          </select>
-          <label className="text-sm sm:text-xl font-semibold">Comment</label>
-          <textarea
-            name="comment"
-            className="textarea textarea-bordered w-full mt-4 text-xs sm:text-sm"
-            placeholder="write a short review ..."
-            required
-          ></textarea>
+      <div className="mt-8 sm:mt-10 md:mt-12 max-w-3xl mx-auto px-4 sm:px-6 md:px-0">
+        <div className="bg-white rounded-lg shadow-xl border-2 border-gray-300 p-4 sm:p-6 md:p-8 lg:p-10">
+          <form onSubmit={handleAddRating} className="space-y-4 sm:space-y-5">
+            <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 text-center">
+              Rate This Scholarship
+            </h3>
+            <div>
+              <label className="block text-sm sm:text-base md:text-xl font-semibold mb-2">
+                Choose Rating
+              </label>
+              <select
+                name="rating"
+                className="select select-bordered w-full text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                required
+              >
+                <option value="">Choose Rating</option>
+                <option value="5">⭐ 5 (Excellent)</option>
+                <option value="4">⭐ 4 (Good)</option>
+                <option value="3">⭐ 3 (Average)</option>
+                <option value="2">⭐ 2 (Poor)</option>
+                <option value="1">⭐ 1 (Very Bad)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm sm:text-base md:text-xl font-semibold mb-2">
+                Comment
+              </label>
+              <textarea
+                name="comment"
+                className="textarea textarea-bordered w-full text-sm sm:text-base h-24 sm:h-28 md:h-32 resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                placeholder="Write a short review..."
+                required
+              ></textarea>
+            </div>
 
-          <button className="btn bg-primary w-full text-xs sm:text-sm ">
-            Submit Review
-          </button>
-        </form>
+            <button className="btn bg-primary hover:bg-green-700 text-white w-full text-sm sm:text-base py-2 sm:py-3 transition-colors duration-200">
+              Submit Review
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
 };
 
-export default PropertyDetails;
+export default ScholarshipDetails;

@@ -46,12 +46,12 @@ const FAQ = () => {
   };
 
   return (
-    <section className="py-16 bg-leaner-to-r from-blue-50 to-purple-50">
+    <section className="py-8 md:py-16 bg-leaner-to-r from-blue-50 to-purple-50">
       <div className="max-w-5xl mx-auto px-4 text-center">
-        <h2 className="text-4xl font-extrabold text-[#0A2540] mb-4">
+        <h2 className="text-2xl xl:text-4xl font-extrabold text-[#0A2540] mb-4">
           Frequently Asked Questions
         </h2>
-        <p className="text-gray-700 mb-12 text-lg">
+        <p className="text-gray-700 mb-12 text-lg font-medium">
           Answers to common questions about scholarships and how our platform works.
         </p>
 

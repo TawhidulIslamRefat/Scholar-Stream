@@ -44,16 +44,84 @@ const ManageScholarships = () => {
   };
 
   if (loading) {
-    return <p className="text-center mt-10">Loading...</p>;
+    return <p className="text-center mt-8 sm:mt-10 text-sm sm:text-base">Loading...</p>;
   }
 
   return (
-    <div className="max-w-8xl mx-auto p-3">
-      <h1 className="text-3xl font-bold text-center mb-8">
+    <div className="max-w-8xl mx-auto p-3 sm:p-4 md:p-6">
+      <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8">
         Manage Scholarships
       </h1>
 
-      <div className="overflow-x-auto bg-white shadow rounded-xl">
+      <div className="block lg:hidden space-y-4">
+        {scholarships.length === 0 ? (
+          <p className="text-center py-6 text-gray-500 text-sm sm:text-base">
+            No scholarships found.
+          </p>
+        ) : (
+          scholarships.map((item, index) => (
+            <div key={item._id} className="bg-white shadow rounded-xl p-4 hover:shadow-lg transition-shadow">
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0">
+                    <img
+                      src={item.universityImage}
+                      alt="university"
+                      className="w-12 h-12 sm:w-14 sm:h-14 rounded object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm font-medium text-gray-500">#{index + 1}</span>
+                    </div>
+                    <h3 className="font-semibold text-sm sm:text-base text-gray-900 line-clamp-2">
+                      {item.scholarshipName}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-gray-600 truncate">{item.universityName}</p>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3 text-xs sm:text-sm">
+                  <div>
+                    <span className="text-gray-500">Country:</span>
+                    <div className="font-medium text-gray-900 truncate">{item.universityCountry}</div>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">World Rank:</span>
+                    <div className="font-medium text-gray-900">{item.universityWorldRank}</div>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Degree:</span>
+                    <div className="font-medium text-gray-900 truncate">{item.degree}</div>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Deadline:</span>
+                    <div className="font-medium text-gray-900">{item.applicationDeadline}</div>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 pt-2 border-t justify-center">
+                  <button
+                    onClick={() => setSelectedScholarship(item)}
+                    className="btn px-3 py-2 bg-primary text-white rounded hover:bg-green-700 transition-colors"
+                  >
+                    <FiEdit className="w-4 h-4" />
+                  </button>
+
+                  <button
+                    onClick={() => handleDelete(item._id)}
+                    className="btn px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                  >
+                    <MdOutlineDeleteOutline className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      <div className="hidden lg:block overflow-x-auto bg-white shadow rounded-xl">
         <table className="table w-full">
           <thead className="bg-gray-200">
             <tr className="text-gray-700 text-[17px]">
@@ -89,10 +157,10 @@ const ManageScholarships = () => {
                 <td className="font-medium">{item.degree}</td>
                 <td className="font-medium">{item.applicationDeadline}</td>
 
-                <td className="flex gap-2 h-21  justify-center items-center">
+                <td className="flex gap-2 h-21 justify-center items-center">
                   <button
                     onClick={() => setSelectedScholarship(item)}
-                    className="btn px-3 py-2 bg-primary text-white rounded "
+                    className="btn px-3 py-2 bg-primary text-white rounded"
                   >
                     <FiEdit />
                   </button>

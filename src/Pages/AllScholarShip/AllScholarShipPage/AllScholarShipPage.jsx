@@ -6,6 +6,7 @@ const AllScholarShipPage = () => {
   const [scholarships, setScholarships] = useState([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   const limit = 9;
 
@@ -38,15 +39,15 @@ const AllScholarShipPage = () => {
     <div>
       <ScholarShipBanner setQuery={setQuery} />
 
-      <section className="w-9/12 mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="font-medium text-2xl">
+      <section className="w-full md:w-9/12 mx-auto px-4 sm:px-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-4 sm:mb-6">
+          <h1 className="font-medium text-xl sm:text-2xl">
             Search Result{" "}
             <span className="text-primary font-semibold">{total}</span>
           </h1>
 
           <select
-            className="select select-bordered"
+            className="select select-bordered w-full sm:w-auto text-sm sm:text-base"
             onChange={(e) =>
               setQuery({ ...query, sort: e.target.value })
             }
@@ -58,7 +59,7 @@ const AllScholarShipPage = () => {
           </select>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mb-8 sm:mb-12">
           {scholarships.map((scholarship) => (
             <TopScholarshipCard
               key={scholarship._id}
@@ -68,12 +69,12 @@ const AllScholarShipPage = () => {
         </div>
 
         {totalPages > 1 && (
-          <div className="flex flex-col items-center gap-4 mb-20">
-            <div className="flex justify-center items-center gap-2">
+          <div className="flex flex-col items-center gap-4 mb-12 sm:mb-20">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-2">
               <button
                 onClick={() => setPage(page - 1)}
                 disabled={page === 1}
-                className={`btn btn-sm ${
+                className={`btn btn-sm w-full sm:w-auto ${
                   page === 1 
                     ? "btn-disabled cursor-not-allowed opacity-50" 
                     : "btn-outline hover:btn-primary"
@@ -83,9 +84,9 @@ const AllScholarShipPage = () => {
                 Previous
               </button>
 
-              <div className="flex gap-1">
+              <div className="flex gap-1 flex-wrap justify-center">
                 {(() => {
-                  const maxVisiblePages = 5;
+                  const maxVisiblePages = window.innerWidth < 640 ? 3 : 5;
                   let startPage = Math.max(1, page - Math.floor(maxVisiblePages / 2));
                   let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
                   
@@ -107,7 +108,7 @@ const AllScholarShipPage = () => {
                     );
                     if (startPage > 2) {
                       pages.push(
-                        <span key="ellipsis1" className="px-2 py-1 text-gray-500">
+                        <span key="ellipsis1" className="px-1 sm:px-2 py-1 text-gray-500 text-sm">
                           ...
                         </span>
                       );
@@ -131,7 +132,7 @@ const AllScholarShipPage = () => {
                   if (endPage < totalPages) {
                     if (endPage < totalPages - 1) {
                       pages.push(
-                        <span key="ellipsis2" className="px-2 py-1 text-gray-500">
+                        <span key="ellipsis2" className="px-1 sm:px-2 py-1 text-gray-500 text-sm">
                           ...
                         </span>
                       );
@@ -154,7 +155,7 @@ const AllScholarShipPage = () => {
               <button
                 onClick={() => setPage(page + 1)}
                 disabled={page === totalPages}
-                className={`btn btn-sm ${
+                className={`btn btn-sm w-full sm:w-auto ${
                   page === totalPages 
                     ? "btn-disabled cursor-not-allowed opacity-50" 
                     : "btn-outline hover:btn-primary"

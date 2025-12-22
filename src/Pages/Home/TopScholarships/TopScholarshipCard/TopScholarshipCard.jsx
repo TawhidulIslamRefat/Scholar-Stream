@@ -4,9 +4,9 @@ import { Link } from "react-router";
 
 const TopScholarshipCard = ({ scholarship }) => {
   return (
-    <div>
+    <div className="h-full">
       <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col h-full">
-        <div className="relative h-70 w-full p-7">
+        <div className="relative h-48 w-full p-4 shrink-0">
           <img
             src={scholarship.universityImage}
             alt={scholarship.universityName}
@@ -14,31 +14,33 @@ const TopScholarshipCard = ({ scholarship }) => {
           />
         </div>
 
-        <div className="px-7 py-4 space-y-2">
-          <span className=" px-2 py-1 text-sm  text-gray-500 border border-gray-200 mt-5 font-medium">
+        <div className="px-7 py-4 flex flex-col grow">
+          <span className="px-2 py-1 text-sm text-gray-500 border border-gray-200 font-medium self-start mb-2">
             {scholarship.scholarshipCategory}
           </span>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mt-2">
+          <h2 className="text-xl font-bold text-gray-800 mb-2 line-clamp-2">
             {scholarship.scholarshipName}
           </h2>
 
-          <p className="text-[16px] font-medium text-gray-500">
+          <p className="text-[15px] font-medium text-gray-500 mb-2">
             {scholarship.universityName}, {scholarship.universityCountry}
           </p>
 
-          <div className=" gap-2 text-[16px] font-medium text-gray-600">
+          <div className="text-[15px] font-medium text-gray-600 mb-4">
             <p>🎓 Degree : {scholarship.degree}</p>
           </div>
-          <div className="flex items-center justify-between">
-            <p className="text-[17px] font-medium text-gray-700">Application Fees : {scholarship.applicationFees > 0 ? `$${scholarship.applicationFees}` : "Free"}</p>
+          
+          <div className="mt-auto">
+            <div className="flex items-center justify-between">
+            <p className="text-[15px] font-medium text-gray-700">Application Fees : {scholarship.applicationFees > 0 ? `$${scholarship.applicationFees}` : "Free"}</p>
              <Link
               to={`/scholarships/${scholarship._id}`}
-             className="mt-3 p-1 flex gap-2  items-center font-semibold text-primary transition-all duration-300 hover:underline justify-end">
-            View Details <BsArrowRight className="text-[18px]" />
-          </Link>
+              className="p-1 flex gap-2 items-center font-semibold text-primary transition-all duration-300 hover:underline"
+            >
+            View Details <BsArrowRight className="text-[15px]" />
+            </Link>
+            </div>
           </div>
-
-         
         </div>
       </div>
     </div>

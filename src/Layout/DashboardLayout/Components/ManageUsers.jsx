@@ -84,15 +84,15 @@ const ManageUsers = () => {
     }
   };
 
-  if (loading) return <p className="text-center py-10">Loading users...</p>;
+  if (loading) return <p className="text-center py-8 sm:py-10 text-sm sm:text-base">Loading users...</p>;
 
   return (
-    <div className="p-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-        <h1 className="text-3xl font-bold">Manage Users</h1>
+    <div className="p-4 sm:p-6">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 sm:mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold">Manage Users</h1>
 
         <select
-          className="border px-3 py-2 rounded-md mt-3 md:mt-0"
+          className="border px-3 py-2 rounded-md mt-3 md:mt-0 text-sm sm:text-base"
           value={filterRole}
           onChange={(e) => setFilterRole(e.target.value)}
         >
@@ -103,7 +103,72 @@ const ManageUsers = () => {
         </select>
       </div>
 
-      <div className="bg-white rounded-xl shadow-md overflow-x-auto">
+      <div className="block lg:hidden space-y-4">
+        {filteredUsers.map((u, idx) => {
+          const isMySelf = u.email === user.email;
+
+          return (
+            <div
+              key={u._id}
+              className="bg-white rounded-xl shadow-md p-4 hover:shadow-lg transition-shadow"
+            >
+              <div className="space-y-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm font-medium text-gray-500">#{idx + 1}</span>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-semibold ${roleBadge(
+                          u.role
+                        )}`}
+                      >
+                        {u.role}
+                      </span>
+                    </div>
+                    <h3 className="text-base font-medium text-gray-900 truncate">{u.name}</h3>
+                    <p className="text-sm text-gray-600 truncate">{u.email}</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-2 pt-2 border-t">
+                  {!isMySelf && u.role !== "Admin" && (
+                    <button
+                      onClick={() => handleRoleChange(u._id, "Admin")}
+                      className="px-3 py-2 text-xs font-medium bg-green-600 hover:bg-green-700 text-white rounded-md"
+                    >
+                      Make Admin
+                    </button>
+                  )}
+
+                  {!isMySelf && u.role === "Student" && (
+                    <button
+                      onClick={() => handleRoleChange(u._id, "Moderator")}
+                      className="px-3 py-2 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-md"
+                    >
+                      Make Moderator
+                    </button>
+                  )}
+
+                  {isMySelf ? (
+                    <span className="text-sm text-gray-400 italic px-3 py-2">
+                      You
+                    </span>
+                  ) : (
+                    <button
+                      onClick={() => handleDelete(u._id)}
+                      className="px-3 py-2 text-xs font-medium bg-red-600 hover:bg-red-700 text-white rounded-md"
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="hidden lg:block bg-white rounded-xl shadow-md overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-gray-200 text-gray-700 text-lg">
             <tr>

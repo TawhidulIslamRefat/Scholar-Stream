@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
+import LoadingDashboard from "../../../Components/LoadingDashboard";
 
 const Payment = () => {
   const { scholarshipId } = useParams();
@@ -54,7 +55,7 @@ const Payment = () => {
     }
   };
 
-  if (loading) return <p>Loading .....</p>;
+  if (loading) return <LoadingDashboard></LoadingDashboard>;
 
   if (!scholarship) return <p>Scholarship not found.</p>;
 

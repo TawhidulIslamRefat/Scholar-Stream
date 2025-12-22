@@ -1,4 +1,15 @@
 import React from "react";
+import Swal from "sweetalert2";
+
+const handleNewsLetter = (e) => {
+  e.preventDefault();
+  Swal.fire({
+    icon: "success",
+    title: "Thanks For Joining Our NewsLetter",
+    confirmButtonColor: "#08B89D",
+  });
+  e.target.reset();
+};
 
 const NewsletterSection = () => {
   return (
@@ -22,7 +33,7 @@ const NewsletterSection = () => {
         <div className="w-10 h-10 bg-white rotate-45 rounded-md"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 flex items-center justify-between relative z-10">
+      <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between relative z-10">
         <div>
           <h2 className="text-4xl font-bold text-white mb-2">
             Join Our Newsletter
@@ -32,16 +43,22 @@ const NewsletterSection = () => {
           </p>
         </div>
 
-        <div className="flex bg-white rounded-2xl shadow-lg overflow-hidden w-[480px] h-[60px]">
-          <input
-            type="email"
-            placeholder="Enter your email:"
-            className="flex-1 px-5 text-[16px] outline-none text-gray-700"
-          />
-          <button className="bg-black text-white px-8 text-[16px] font-semibold hover:opacity-90">
-            Subscribe Now
-          </button>
-        </div>
+        <form onSubmit={handleNewsLetter}>
+          <div className="flex bg-white rounded-2xl shadow-lg overflow-hidden w-full mt-5 h-[60px]">
+            <input
+              type="email"
+              placeholder="Enter your email:"
+              className="flex-1 px-5 text-[16px] outline-none text-gray-700"
+              required
+            />
+            <button
+            type="submit"
+              className="bg-black text-white px-8 text-[16px] font-semibold hover:opacity-90"
+            >
+              Subscribe Now
+            </button>
+          </div>
+        </form>
       </div>
     </section>
   );

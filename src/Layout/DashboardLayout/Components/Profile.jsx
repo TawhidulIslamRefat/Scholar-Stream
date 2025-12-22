@@ -42,7 +42,6 @@ const Profile = () => {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      {/* Hero Profile Section */}
       <div className={`${getRoleGradient()} rounded-xl p-8 text-white shadow-lg`}>
         <div className="flex flex-col md:flex-row items-center gap-6">
           <div className="relative">
@@ -81,9 +80,7 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* Information Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Personal Info */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
           <div className="flex items-center mb-4">
             <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
@@ -111,7 +108,6 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* Account Status */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
           <div className="flex items-center mb-4">
             <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
@@ -141,7 +137,6 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* Account Details */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-6">Account Details</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -92,7 +92,7 @@ const SignIn = () => {
   };
   return (
     <div>
-      <div className="min-h-screen flex flex-col md:flex-row justify-center items-center w-9/12 mx-auto">
+      <div className="min-h-screen flex flex-col md:flex-row justify-center items-center w-full md:w-9/12 mx-auto">
         <div className=" font-display text-text-main flex items-center justify-center p-6 flex-1 ">
           <div className="w-full max-w-[460px] mx-auto ">
             <header className="mb-8">
@@ -211,7 +211,7 @@ const SignIn = () => {
             </div>
           </div>
         </div>
-        <div className="flex-1">
+        <div className="flex-1 px-5 md:px-0">
           <img src={img} alt="Auth" />
         </div>
       </div>
