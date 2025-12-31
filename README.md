@@ -73,11 +73,6 @@ The main goals of this project are:
 
 ---
 
-## 💻 Screenshots
-
-> *(Add clean screenshots or GIFs here if available)*
-
----
 
 ## 💾 Installation & Run Locally
 
