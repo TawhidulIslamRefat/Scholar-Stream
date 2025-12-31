@@ -53,7 +53,7 @@ The main goals of this project are:
 ## 🛠️ Technologies Used
 
 ### Frontend
-- React, React Router DOM, Axios  
+- React, React Router , Axios  
 - Firebase Authentication  
 - Tailwind CSS  
 - SweetAlert2  
