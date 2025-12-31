@@ -50,6 +50,22 @@ The main goals of this project are:
 
 ---
 
+## 🖼️ Screenshots
+
+<p align="center">
+  <img src="https://i.ibb.co/TM7hjrdr/Screenshot-2025-12-31-122233.png" width="48%" />
+  <img src="https://i.ibb.co/XxNdDtR5/Screenshot-2025-12-31-122258.png" width="48%" />
+</p>
+<p align="center">
+  <img src="https://i.ibb.co/s9tFPdqh/Screenshot-2025-12-31-122331.png" width="48%" />
+  <img src="https://i.ibb.co/hxNfsq5j/Screenshot-2025-12-31-122518.png" width="48%" />
+</p>
+<p align="center">
+  <img src="https://i.ibb.co/BKcJVdNR/Screenshot-2025-12-31-122409.png" width="48%" />
+</p>
+
+---
+
 ## 🛠️ Technologies Used
 
 ### Frontend
