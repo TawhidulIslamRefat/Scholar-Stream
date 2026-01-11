@@ -34,12 +34,12 @@ const StoriesSection = () => {
 
   return (
     <section className="py-6 sm:py-16 mt-6 sm:mt-10">
-      <div className="w-full md:w-9/12 mx-auto px-2 sm:px-6">
+      <div className="w-full md:w-9/12 mx-auto px-2 sm:px-0">
         <div className="text-center mb-8 sm:mb-12">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 px-2 sm:px-0">
             Success Stories
           </h2>
-          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-2 sm:px-0">
+          <p className="text-base font-medium sm:text-lg text-gray-600 max-w-2xl mx-auto px-2 sm:px-0">
             Discover how students achieved their dreams through scholarships and guidance
           </p>
         </div>
@@ -63,7 +63,7 @@ const StoriesSection = () => {
                   <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3 line-clamp-2">
                     {story.title}
                   </h3>
-                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed mb-3 sm:mb-4 line-clamp-3">
+                  <p className="text-sm font-medium sm:text-base text-gray-600 leading-relaxed mb-3 sm:mb-4 line-clamp-3">
                     {story.description}
                   </p>
                   

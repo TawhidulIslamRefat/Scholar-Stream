@@ -40,6 +40,51 @@ const Navbar = () => {
         >
           All Scholarships
         </NavLink>
+      </li> 
+      <li>
+        <NavLink 
+          to="/guideline" 
+          className={({ isActive }) =>
+            `font-medium text-sm px-3 py-2 rounded-lg transition-colors duration-200 ${
+              isActive 
+                ? 'text-primary bg-primary/10' 
+                : 'text-gray-700 hover:text-primary hover:bg-gray-100'
+            }`
+          }
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          Guideline
+        </NavLink>
+      </li>
+      <li>
+        <NavLink 
+          to="/about-us" 
+          className={({ isActive }) =>
+            `font-medium text-sm px-3 py-2 rounded-lg transition-colors duration-200 ${
+              isActive 
+                ? 'text-primary bg-primary/10' 
+                : 'text-gray-700 hover:text-primary hover:bg-gray-100'
+            }`
+          }
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          About Us
+        </NavLink>
+      </li>
+      <li>
+        <NavLink 
+          to="/feedback" 
+          className={({ isActive }) =>
+            `font-medium text-sm px-3 py-2 rounded-lg transition-colors duration-200 ${
+              isActive 
+                ? 'text-primary bg-primary/10' 
+                : 'text-gray-700 hover:text-primary hover:bg-gray-100'
+            }`
+          }
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          Feedback
+        </NavLink>
       </li>
     </>
   );
@@ -67,12 +112,12 @@ const Navbar = () => {
 
   return (
     <nav className="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
-      <div className=" w-full md:w-9/12 mx-auto px-4 sm:px-6 ">
+      <div className=" w-full md:w-9/12 mx-auto px-4 sm:px-0 ">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <Link to="/" className="flex items-center gap-1 hover:opacity-80 transition-opacity">
               <img src={logo} alt="Logo" className="w-8 h-8" />
-              <span className="text-xl font-bold text-gray-900">ScholarStream</span>
+              <span className="text-xl font-bold bg-linear-to-r from-primary to-green-600 bg-clip-text text-transparent">ScholarPoint</span>
             </Link>
           </div>
           <div className="hidden md:flex items-center space-x-1">
@@ -148,7 +193,7 @@ const Navbar = () => {
                     
                     <div className="text-center pt-4 border-t border-gray-100 mt-4">
                       <p className="text-xs text-gray-500 font-medium">
-                        ScholarStream Portal
+                        ScholarPoint Portal
                       </p>
                     </div>
                   </div>

@@ -25,6 +25,11 @@ import Payment from "../Layout/DashboardLayout/Payment/Payment";
 import PaymentSuccess from "../Layout/DashboardLayout/Payment/PaymentSuccess";
 import PaymentFailed from "../Layout/DashboardLayout/Payment/PaymentFailed";
 import Overview from "../Layout/DashboardLayout/Components/Overview";
+import Guidelines from "../Pages/Guidelines/Guidelines";
+import AboutUs from "../Pages/AboutUs/AboutUs";
+import Feedback from "../Pages/Feedback/Feedback";
+import TermsConditions from "../Pages/TermsConditions/TermsConditions";
+import PrivacyPolicy from "../Pages/PrivacyPolicy/PrivacyPolicy";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -62,6 +67,26 @@ export const router = createBrowserRouter([
             <CheckoutPage></CheckoutPage>
           </PrivateRoute>
         ),
+      },
+      {
+        path: "/guideline",
+        element: <Guidelines></Guidelines>,
+      },
+      {
+        path: "/about-us",
+        element: <AboutUs></AboutUs>,
+      },
+      {
+        path: "/feedback",
+        element: <Feedback></Feedback>,
+      },
+      {
+        path: "/terms",
+        element: <TermsConditions></TermsConditions>,
+      },
+      {
+        path: "/privacy",
+        element: <PrivacyPolicy></PrivacyPolicy>,
       },
     ],
   },

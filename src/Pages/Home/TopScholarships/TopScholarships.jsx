@@ -36,7 +36,7 @@ const TopScholarships = () => {
 
   return (
     <div>
-      <div className=" w-[90%] sm:w-[95%] 2xl:w-9/12 mx-auto mt-15 md:mt-5">
+      <div className=" w-[90%] sm:w-[95%] 2xl:w-9/12 mx-auto mt-22 ">
         <div
           className="text-center mb-10 mt-7 md:mt-15 md:mb-14"
           data-aos="fade-up"
@@ -48,7 +48,7 @@ const TopScholarships = () => {
             Achieve More with the World’s Best Scholarships
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 space-y-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 space-y-2">
           {scholarships.slice(0, 8).map((scholarship) => (
             <TopScholarshipCard
               key={scholarship._id}

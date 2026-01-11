@@ -4,7 +4,10 @@ import Testimonial from '../SuccessStroy/SuccessStory';
 import FAQ from '../FAQ/FAQ';
 import NewsletterSection from '../Newsletter/Newsletter';
 import TopScholarships from '../TopScholarships/TopScholarships';
-import { div, title } from 'framer-motion/client';
+import Statistics from '../Statistics/Statistics';
+import Features from '../Features/Features';
+import Blogs from '../Blogs/Blogs';
+import CallToAction from '../CallToAction/CallToAction';
 
 const Homepage = () => {
   const sectionVariants = {
@@ -34,7 +37,7 @@ const Homepage = () => {
 
   return (
     <div>
-      <title>ScholarStream Home</title>
+      <title>ScholarPoint Home</title>
       <Motion.div
       variants={containerVariants}
       initial="hidden"
@@ -48,6 +51,9 @@ const Homepage = () => {
       >
         <Hero />
       </Motion.section>
+      <section>
+        <Statistics></Statistics>
+      </section>
       <Motion.section
         variants={sectionVariants}
         initial="hidden"
@@ -56,7 +62,12 @@ const Homepage = () => {
       >
         <TopScholarships />
       </Motion.section>
-
+      <section>
+        <Features></Features>
+      </section>
+      <section>
+        <Blogs></Blogs>
+      </section>
       <Motion.section
         variants={sectionVariants}
         initial="hidden"
@@ -65,7 +76,9 @@ const Homepage = () => {
       >
         <Testimonial />
       </Motion.section>
-
+       <section>
+        <CallToAction></CallToAction>
+       </section>
       <Motion.section
         variants={sectionVariants}
         initial="hidden"

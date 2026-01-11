@@ -4,6 +4,7 @@ import useAuth from "../../Hooks/useAuth";
 import Swal from "sweetalert2";
 import LoadingDashboard from "../../Components/LoadingDashboard";
 import useAxiosSecure from "../../Hooks/useAxiosSecure";
+import { FaUniversity, FaMapMarkerAlt, FaGraduationCap, FaBookOpen, FaCalendarAlt, FaCheckCircle, FaLock } from "react-icons/fa";
 
 const CheckoutPage = () => {
   const { id } = useParams();
@@ -74,123 +75,163 @@ const CheckoutPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br py-8 sm:py-10 md:py-12 px-4">
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-0 font-sans">
       <title>Scholarship Checkout</title>
-      <div className="w-full sm:w-11/12 md:w-10/12 lg:w-9/12 px-4 sm:px-6 md:px-8 lg:px-10 mx-auto">
-        <div className="text-center mb-8 sm:mb-10 md:mb-12">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold">
-            Scholarship Check<span className="text-primary">out</span>
-          </h2>
-          <p className="text-gray-600 text-sm sm:text-base md:text-lg mt-2 font-medium">
-            Review details & confirm your application
-          </p>
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-7 md:gap-8">
-          <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg overflow-hidden">
-            <img
-              src={scholarship.universityImage}
-              alt={scholarship.universityName}
-              className="w-full h-48 sm:h-56 md:h-64"
-            />
+      <div className="max-w-5xl mx-auto mb-10 text-center">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
+          Complete Your <span className="text-primary">Application</span>
+        </h2>
+        <p className="mt-3 text-lg text-gray-500">
+          Review your scholarship details and secure your future.
+        </p>
+      </div>
 
-            <div className="p-4 sm:p-5 md:p-6">
-              <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800">
-                {scholarship.scholarshipName}
-              </h3>
+      <div className="w-[98%] md:w-9/12 mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-              <p className="text-primary font-medium mt-1 text-sm sm:text-base">
-                🎓 {scholarship.universityName}
-              </p>
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-300">
+            <div className="relative h-64 w-full">
+              <img
+                src={scholarship.universityImage}
+                alt={scholarship.universityName}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
+                <div className="p-6 text-white w-full">
+                  <h3 className="text-2xl font-bold leading-tight">{scholarship.scholarshipName}</h3>
+                  <div className="flex items-center gap-2 mt-2 opacity-90 text-sm font-medium">
+                    <FaUniversity />
+                    <span>{scholarship.universityName}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-4 sm:mt-5 md:mt-6 text-sm">
-                <p className="text-sm sm:text-base md:text-[17px]">
-                  📍 <span className="font-medium">Country:</span>{" "}
-                  {scholarship.universityCountry}
-                </p>
-                <p className="text-sm sm:text-base md:text-[17px]">
-                  🎓 <span className="font-medium">Degree:</span>{" "}
-                  {scholarship.degree}
-                </p>
-                <p className="text-sm sm:text-base md:text-[17px]">
-                  📚 <span className="font-medium">Subject:</span>{" "}
-                  {scholarship.subjectCategory}
-                </p>
-                <p className="text-sm sm:text-base md:text-[17px]">
-                  🗓 <span className="font-medium">Deadline:</span>{" "}
-                  {scholarship.applicationDeadline}
-                </p>
+            {/* Content Body */}
+            <div className="p-6 md:p-8">
+              <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-6">
+                <h4 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                  Information Overview
+                </h4>
+                <span className="bg-blue-50 text-blue-600 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                  Verified
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
+                <div className="flex items-start gap-4">
+                  <div className="p-2.5 bg-green-50 text-green-600 rounded-lg shrink-0">
+                    <FaMapMarkerAlt className="text-xl" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Location</span>
+                    <p className="font-semibold text-gray-800 text-base mt-0.5">{scholarship.universityCountry}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="p-2.5 bg-blue-50 text-blue-600 rounded-lg shrink-0">
+                    <FaGraduationCap className="text-xl" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Degree</span>
+                    <p className="font-semibold text-gray-800 text-base mt-0.5">{scholarship.degree}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="p-2.5 bg-purple-50 text-purple-600 rounded-lg shrink-0">
+                    <FaBookOpen className="text-xl" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Subject</span>
+                    <p className="font-semibold text-gray-800 text-base mt-0.5">{scholarship.subjectCategory}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="p-2.5 bg-orange-50 text-orange-600 rounded-lg shrink-0">
+                    <FaCalendarAlt className="text-xl" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Application Deadline</span>
+                    <p className="font-semibold text-gray-800 text-base mt-0.5">{scholarship.applicationDeadline}</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-5 md:p-6 lg:sticky lg:top-6">
-            <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 text-gray-800">
-              Payment Summary
+        </div>
+
+        {/* Right Column: Application Summary */}
+        <div className="lg:col-span-1">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 md:p-8 lg:sticky lg:top-8">
+            <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+              Application Summary
             </h3>
 
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between">
-                <span className="font-medium text-sm sm:text-base md:text-[17px]">
-                  Application Fee
-                </span>
-                <span className="font-medium text-sm sm:text-base md:text-[17px]">
-                  ${scholarship.applicationFees}
-                </span>
+            {/* Receipt Section */}
+            <div className="space-y-4 mb-8">
+              <div className="flex justify-between items-center text-sm text-gray-600">
+                <span>Application Fee</span>
+                <span className="font-medium text-gray-900">${scholarship.applicationFees}</span>
+              </div>
+              <div className="flex justify-between items-center text-sm text-gray-600">
+                <span>Service Charge</span>
+                <span className="font-medium text-gray-900">${scholarship.serviceCharge}</span>
               </div>
 
-              <div className="flex justify-between">
-                <span className="font-medium text-sm sm:text-base md:text-[17px]">
-                  Service Charge
-                </span>
-                <span className="font-medium text-sm sm:text-base md:text-[17px]">
-                  ${scholarship.serviceCharge}
-                </span>
-              </div>
+              <div className="border-t border-dashed border-gray-200 my-4"></div>
 
-              <div className="border-t pt-3 flex justify-between text-base sm:text-lg font-bold text-green-600">
-                <span>Total</span>
-                <span>${totalAmount}</span>
+              <div className="flex justify-between items-center text-lg">
+                <span className="font-bold text-gray-800">Total Payable</span>
+                <span className="font-extrabold text-primary text-2xl">${totalAmount}</span>
               </div>
             </div>
-            <form
-              onSubmit={handleSubmit}
-              className="mt-4 sm:mt-5 md:mt-6 space-y-4"
-            >
-              <div>
-                <label className="block text-sm md:text-sm font-semibold text-gray-700 mb-1">
-                  Applicant Name
-                </label>
-                <input
-                  type="text"
-                  value={user?.displayName || ""}
-                  readOnly
-                  className="input input-bordered w-full font-medium text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                />
+
+            {/* Form Section */}
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="space-y-1">
+                <label className="text-sm font-semibold text-gray-700 ml-1">Applicant Name</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={user?.displayName || ""}
+                    readOnly
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-500 font-medium focus:outline-none cursor-not-allowed"
+                  />
+                  <FaCheckCircle className="absolute right-4 top-3.5 text-green-500 text-lg" />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm md:text-sm font-semibold text-gray-700 mb-1">
-                  Applicant Email
-                </label>
-                <input
-                  type="email"
-                  value={user?.email || ""}
-                  readOnly
-                  className="input input-bordered w-full font-medium text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                />
+              <div className="space-y-1">
+                <label className="text-sm font-semibold text-gray-700 ml-1">Applicant Email</label>
+                <div className="relative">
+                  <input
+                    type="email"
+                    value={user?.email || ""}
+                    readOnly
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-500 font-medium focus:outline-none cursor-not-allowed"
+                  />
+                  <FaCheckCircle className="absolute right-4 top-3.5 text-green-500 text-lg" />
+                </div>
               </div>
 
               <button
                 type="submit"
-                className="btn bg-primary hover:bg-green-700 text-white w-full text-base sm:text-lg mt-4 rounded-xl py-2 sm:py-3 transition-colors duration-200"
+                className="w-full bg-primary hover:bg-green-700 text-white font-bold text-lg py-3.5 rounded-xl shadow-lg hover:shadow-primary/30 transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
               >
-                Confirm & Apply
+                Confirm Application
               </button>
             </form>
 
-            <p className="text-xs sm:text-sm text-gray-600 mt-4 text-center font-medium">
-              🔒 Secure payment | Gateway integration coming soon
-            </p>
+            {/* Secure Badge */}
+            <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-500 font-medium bg-gray-50 py-2 rounded-lg">
+              <FaLock className="text-gray-400" />
+              Secure SSL Encrypted Payment
+            </div>
+
           </div>
         </div>
       </div>
