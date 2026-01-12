@@ -83,7 +83,6 @@ const ManageScholarships = () => {
         });
     };
 
-    // Filter Logic
     const filteredScholarships = useMemo(() => {
         return scholarships.filter(item => {
             const matchesSearch = item.scholarshipName.toLowerCase().includes(searchQuery.toLowerCase()) ||

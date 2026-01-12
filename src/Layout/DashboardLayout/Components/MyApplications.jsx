@@ -11,9 +11,6 @@ import {
   FiXCircle,
   FiClock,
   FiEye,
-  FiMessageSquare,
-  FiMapPin,
-  FiDollarSign,
   FiBook,
   FiChevronDown,
   FiRefreshCw,
@@ -447,7 +444,6 @@ const MyApplications = () => {
         )}
       </AnimatePresence>
 
-      {/* Review Modal */}
       <AnimatePresence>
         {showReviewModal && selectedApplication && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -494,7 +490,6 @@ const MyApplications = () => {
         )}
       </AnimatePresence>
 
-      {/* Edit Modal */}
       <AnimatePresence>
         {showEditModal && selectedApplication && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">

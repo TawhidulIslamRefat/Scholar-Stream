@@ -93,7 +93,7 @@ const ManageApplications = () => {
       Swal.fire({
         icon: "error",
         title: "Failed",
-        text: "Could not update status.",
+        text: "Could not update status.",error,
       });
     } finally {
       setUpdatingStatus(false);
@@ -126,7 +126,7 @@ const ManageApplications = () => {
       setShowFeedback(false);
       Swal.fire("Success", "Feedback added", "success");
     } catch (error) {
-      Swal.fire("Error", "Failed to save feedback");
+      Swal.fire("Error", "Failed to save feedback",error);
     }
   };
 
@@ -153,7 +153,6 @@ const ManageApplications = () => {
     <div className="p-4 sm:p-8 bg-gray-50 min-h-screen space-y-8">
       <title>Manage Applications | ScholarPoint</title>
 
-      {/* Header Section */}
       <div className="bg-linear-to-r from-gray-900 via-blue-950 to-gray-900 rounded-3xl p-8 sm:p-12 text-white shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse pointer-events-none"></div>
         <div className="relative z-10">
@@ -166,7 +165,7 @@ const ManageApplications = () => {
         </div>
       </div>
 
-      {/* Stats Cards Grid */}
+ 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {[
           { label: "Total Applications", value: applications.length, icon: FiBook, color: "from-blue-500 to-indigo-600" },
@@ -189,7 +188,6 @@ const ManageApplications = () => {
         ))}
       </div>
 
-      {/* Filters & Control Bar */}
       <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4">
         <div className="relative flex-1 group">
           <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
@@ -220,7 +218,6 @@ const ManageApplications = () => {
         </div>
       </div>
 
-      {/* Content Area */}
       <div className="space-y-4">
         {filteredApplications.length === 0 ? (
           <div className="bg-white py-20 rounded-3xl border border-gray-100 shadow-sm flex flex-col items-center text-center px-4">
@@ -232,7 +229,6 @@ const ManageApplications = () => {
           </div>
         ) : (
           <>
-            {/* Desktop Table View (Hidden on mobile/tablet) */}
             <div className="hidden xl:block bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
@@ -316,7 +312,6 @@ const ManageApplications = () => {
               </div>
             </div>
 
-            {/* Mobile Card List (Hidden on desktop) */}
             <div className="xl:hidden grid grid-cols-1 md:grid-cols-2 gap-4">
               <AnimatePresence mode='popLayout'>
                 {filteredApplications.map((app) => (
@@ -386,7 +381,6 @@ const ManageApplications = () => {
         )}
       </div>
 
-      {/* Details Modal (Mobile Optimized) */}
       <AnimatePresence>
         {showDetails && selectedApp && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -456,7 +450,6 @@ const ManageApplications = () => {
         )}
       </AnimatePresence>
 
-      {/* Feedback Modal (Mobile Optimized) */}
       <AnimatePresence>
         {showFeedback && selectedApp && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -496,7 +489,6 @@ const ManageApplications = () => {
   );
 };
 
-/* --- SHARED COMPONENTS --- */
 
 const DetailItem = ({ label, value }) => (
   <div className="space-y-0.5">

@@ -13,7 +13,6 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Form State
   const [formData, setFormData] = useState({
     displayName: "",
     photoURL: "",

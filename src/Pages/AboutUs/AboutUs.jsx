@@ -62,7 +62,6 @@ const AboutUs = () => {
       </div>
 
       <div className="w-[98%] md:w-9/12 mx-auto px-4 md:px-0 py-12">
-        {/* Who We Are */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 md:p-8 mb-6">
           <h2 className=" text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-4">
             Who We Are

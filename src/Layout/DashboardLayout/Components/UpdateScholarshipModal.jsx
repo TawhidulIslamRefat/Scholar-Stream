@@ -69,7 +69,6 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4">
-      {/* Backdrop */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -78,14 +77,12 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
         className="absolute inset-0 bg-gray-900/60 backdrop-blur-md"
       />
 
-      {/* Modal Container */}
       <motion.div
         initial={{ scale: 0.95, opacity: 0, y: 30 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.95, opacity: 0, y: 30 }}
         className="bg-white rounded-2xl sm:rounded-3xl lg:rounded-[2.5rem] w-full max-w-5xl max-h-[92vh] sm:max-h-[90vh] overflow-hidden shadow-2xl relative z-10 flex flex-col border border-white"
       >
-        {/* Header - Cinematic Style */}
         <div className="bg-linear-to-r from-gray-900 via-blue-950 to-gray-900 px-6 sm:px-8 py-6 sm:py-8 text-white relative overflow-hidden shrink-0">
           <div className="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
           <div className="relative z-10 flex justify-between items-center">
@@ -96,16 +93,14 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
               <h2 className="text-xl sm:text-3xl font-black tracking-tight">Modify <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-indigo-400">Scholarship</span></h2>
             </div>
             <button onClick={onClose} className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-xl sm:rounded-2xl transition-all border-none cursor-pointer group">
-              <FiX className="w-5 h-5 sm:w-6 h-6 group-hover:rotate-90 transition-transform" />
+              <FiX className="w-5 h-5 sm:w-6  group-hover:rotate-90 transition-transform" />
             </button>
           </div>
         </div>
 
-        {/* Content - Adaptive Grid Layout */}
         <div className="flex-1 overflow-y-auto p-6 sm:p-10 scrollbar-hide">
           <form onSubmit={handleSubmit} id="update-form" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 sm:gap-10">
 
-            {/* Column 1: Core Identity */}
             <div className="space-y-6 sm:space-y-8 md:col-span-1">
               <SectionHeader icon={FiBook} title="Scholarship Core" color="from-blue-500 to-indigo-600" />
               <div className="space-y-4 sm:space-y-5">
@@ -118,7 +113,6 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
               </div>
             </div>
 
-            {/* Column 2: Institutional Host */}
             <div className="space-y-6 sm:space-y-8 md:col-span-1">
               <SectionHeader icon={FiMapPin} title="Institutional Data" color="from-purple-500 to-pink-600" />
               <div className="space-y-4 sm:space-y-5">
@@ -132,7 +126,6 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
               </div>
             </div>
 
-            {/* Column 3: Financials & System */}
             <div className="space-y-6 sm:space-y-8 md:col-span-2 xl:col-span-1">
               <SectionHeader icon={FiDollarSign} title="Financial Meta" color="from-emerald-500 to-teal-600" />
               <div className="space-y-4 sm:space-y-5">
@@ -159,7 +152,6 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
           </form>
         </div>
 
-        {/* Footer - Actions */}
         <div className="px-6 sm:px-8 py-5 sm:py-6 bg-gray-50/50 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-5 sm:gap-6 shrink-0">
           <p className="text-gray-400 text-[10px] sm:text-xs font-medium w-full md:w-auto text-center md:text-left">Identity ID: <span className="font-mono text-gray-500">{_id}</span></p>
           <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full md:w-auto">
@@ -186,7 +178,6 @@ const UpdateScholarshipModal = ({ scholarship, onClose, onUpdate }) => {
   );
 };
 
-/* --- SHARED COMPONENTS --- */
 
 const FormGroup = ({ label, icon: Icon, ...props }) => (
   <div className="space-y-1.5 sm:space-y-2 group">

@@ -97,7 +97,7 @@ const CheckoutPage = () => {
                 alt={scholarship.universityName}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
+              <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent flex items-end">
                 <div className="p-6 text-white w-full">
                   <h3 className="text-2xl font-bold leading-tight">{scholarship.scholarshipName}</h3>
                   <div className="flex items-center gap-2 mt-2 opacity-90 text-sm font-medium">
@@ -108,7 +108,6 @@ const CheckoutPage = () => {
               </div>
             </div>
 
-            {/* Content Body */}
             <div className="p-6 md:p-8">
               <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-6">
                 <h4 className="text-lg font-bold text-gray-800 flex items-center gap-2">
@@ -164,14 +163,12 @@ const CheckoutPage = () => {
           </div>
         </div>
 
-        {/* Right Column: Application Summary */}
         <div className="lg:col-span-1">
           <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 md:p-8 lg:sticky lg:top-8">
             <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
               Application Summary
             </h3>
 
-            {/* Receipt Section */}
             <div className="space-y-4 mb-8">
               <div className="flex justify-between items-center text-sm text-gray-600">
                 <span>Application Fee</span>
@@ -190,7 +187,6 @@ const CheckoutPage = () => {
               </div>
             </div>
 
-            {/* Form Section */}
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-1">
                 <label className="text-sm font-semibold text-gray-700 ml-1">Applicant Name</label>
@@ -226,7 +222,6 @@ const CheckoutPage = () => {
               </button>
             </form>
 
-            {/* Secure Badge */}
             <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-500 font-medium bg-gray-50 py-2 rounded-lg">
               <FaLock className="text-gray-400" />
               Secure SSL Encrypted Payment

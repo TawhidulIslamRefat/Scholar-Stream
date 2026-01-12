@@ -119,7 +119,6 @@ const ContactUs = () => {
 
       <div className="max-w-6xl mx-auto px-4 py-12">
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Contact Methods */}
           <div className="lg:col-span-1 space-y-6">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 pb-2 border-b border-gray-200">
@@ -132,7 +131,7 @@ const ContactUs = () => {
                     key={index}
                     className="flex items-start gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors"
                   >
-                    <div className="flex-shrink-0 w-12 h-12 bg-primary/10 text-primary rounded-lg flex items-center justify-center">
+                    <div className="shrink-0 w-12 h-12 bg-primary/10 text-primary rounded-lg flex items-center justify-center">
                       {method.icon}
                     </div>
                     <div className="flex-1">
@@ -169,7 +168,6 @@ const ContactUs = () => {
             </div>
           </div>
 
-          {/* Contact Form */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
