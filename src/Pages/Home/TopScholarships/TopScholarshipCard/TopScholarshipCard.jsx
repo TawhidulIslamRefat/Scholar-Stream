@@ -48,22 +48,22 @@ const TopScholarshipCard = ({ scholarship }) => {
             </div>
           </div>
 
-          <p className="text-gray-500 text-sm line-clamp-2 mb-4 leading-relaxed">
+          <p className="text-gray-500 font-medium  text-sm line-clamp-2 mb-4 leading-relaxed">
             {description || `A prestigious opportunity for ${degree} students at ${universityName}. Apply now to secure your funding.`}
           </p>
 
           <div className="grid grid-cols-2 gap-y-3 gap-x-2 mb-1 text-sm">
             <div className="flex items-center gap-2 text-gray-600">
               <BsGeoAlt className="text-primary/70" />
-              <span className="truncate">{universityCountry}</span>
+              <span className="truncate font-medium">{universityCountry}</span>
             </div>
             <div className="flex items-center gap-2 text-gray-600">
               <BsCalendarEvent className="text-primary/70" />
-              <span className="truncate">{applicationDeadline || "Open"}</span>
+              <span className="truncate font-medium">{applicationDeadline || "Open"}</span>
             </div>
             <div className="flex items-center gap-2 text-gray-600">
               <FaGraduationCap className="text-primary/70" />
-              <span className="truncate">{degree}</span>
+              <span className="truncate font-medium">{degree}</span>
             </div>
             <div className="flex items-center gap-2 font-semibold text-green-600">
               <span className="px-2 py-0.5 bg-green-50 rounded-md">

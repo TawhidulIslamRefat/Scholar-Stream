@@ -67,18 +67,6 @@ const Hero = () => {
                   Search Scholarships
                 </span>
               </Link>
-              
-              <button
-                onClick={scrollToNext}
-                className="group bg-white/90 backdrop-blur-sm hover:bg-white text-[#0A2540] font-semibold px-6 sm:px-8 py-3 sm:py-4 rounded-full shadow-lg hover:shadow-xl text-sm sm:text-base transition-all duration-300 transform hover:scale-105 border border-white/50"
-              >
-                <span className="flex items-center gap-2">
-                  <svg className="w-5 h-5 group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                  </svg>
-                  Explore More
-                </span>
-              </button>
             </div>
           </div>
 

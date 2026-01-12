@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, NavLink, Outlet } from "react-router";
+import { Link, NavLink, Outlet, useNavigate } from "react-router";
 import useAuth from "../../Hooks/useAuth";
 import {
   FaUser,
@@ -16,15 +16,46 @@ import {
   FaHome,
   FaBars,
   FaTimes,
+  FaSignOutAlt,
 } from "react-icons/fa";
 import useRole from "../../Hooks/useRole";
 import LoadingDashboard from "../../Components/LoadingDashboard";
+import Swal from "sweetalert2";
 
 
 const DashboardLayout = () => {
-  const { user } = useAuth();
+  const { user, logOut } = useAuth();
+  const navigate = useNavigate();
   const { role, roleLoading } = useRole();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  const handleLogout = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You will be logged out of your account",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#008000",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, log me out!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logOut()
+          .then(() => {
+            Swal.fire({
+              title: "Logged Out!",
+              text: "You have been logged out successfully.",
+              icon: "success",
+              timer: 1500,
+              showConfirmButton: false,
+            });
+            navigate("/");
+          })
+          .catch((error) => console.log(error));
+      }
+    });
+  };
+
 
   if (roleLoading) {
     return <LoadingDashboard></LoadingDashboard>
@@ -49,12 +80,6 @@ const DashboardLayout = () => {
     ];
 
     const adminItems = [
-      {
-        name: "Analytics",
-        path: "/dashboard/analytics",
-        icon: <FaChartBar className="w-5 h-5" />,
-        roles: ["admin"],
-      },
       {
         name: "Add Scholarship",
         path: "/dashboard/add-scholarship",
@@ -144,13 +169,12 @@ const DashboardLayout = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <aside
-        className={`fixed top-0 left-0 z-40 h-screen transition-transform ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } bg-white shadow-xl w-64 sm:w-72 border-r border-gray-200`}
+        className={`fixed top-0 left-0 z-40 h-screen transition-transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } bg-white shadow-xl w-64 sm:w-72 border-r border-gray-200`}
       >
         <div className={`bg-linear-to-r ${getRoleColor()} p-4 sm:p-6 text-white`}>
           <div className="flex items-center justify-between mb-3 sm:mb-4">
-            <h2 className="text-lg sm:text-xl font-bold">Scholar-Stream</h2>
+            <h2 className="text-lg sm:text-xl font-bold">Scholar-Point</h2>
             <button
               onClick={() => setIsSidebarOpen(false)}
               className="lg:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
@@ -190,10 +214,9 @@ const DashboardLayout = () => {
               key={index}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-xl transition-all duration-200 ${
-                  isActive
-                    ? `bg-linear-to-r ${getRoleColor()} text-white shadow-lg`
-                    : "text-gray-700 hover:bg-gray-100"
+                `flex items-center space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-xl transition-all duration-200 ${isActive
+                  ? `bg-linear-to-r ${getRoleColor()} text-white shadow-lg`
+                  : "text-gray-700 hover:bg-gray-100"
                 }`
               }
             >
@@ -212,22 +235,29 @@ const DashboardLayout = () => {
           </Link>
         </nav>
 
-       
+
         <div className="p-3 sm:p-4 border-t border-gray-200">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-xl text-red-600 hover:bg-red-50 transition-all duration-200 mb-4 group"
+          >
+            <FaSignOutAlt className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 group-hover:scale-110 transition-transform" />
+            <span className="font-medium text-sm sm:text-base truncate">Logout</span>
+          </button>
+
           <div className="text-center">
-            <p className="text-xs text-gray-500">Scholar-Stream Dashboard</p>
+            <p className="text-xs text-gray-500">Scholar-Point Dashboard</p>
             <p className="text-xs text-gray-400">v2.0.0</p>
           </div>
         </div>
       </aside>
 
-      
+
       <div
-        className={`transition-all duration-300 ${
-          isSidebarOpen ? "lg:ml-72 ml-0" : "ml-0"
-        }`}
+        className={`transition-all duration-300 ${isSidebarOpen ? "lg:ml-72 ml-0" : "ml-0"
+          }`}
       >
-        
+
         <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-30">
           <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
             <div className="flex items-center space-x-3 sm:space-x-4 flex-1 min-w-0">
@@ -249,18 +279,18 @@ const DashboardLayout = () => {
               </div>
             </div>
 
-           
+
             <div className="flex items-center space-x-2 sm:space-x-4"></div>
           </div>
         </header>
 
-        
+
         <main className="p-4 sm:p-6">
           <Outlet />
         </main>
       </div>
 
-      
+
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"

@@ -1,7 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Swal from "sweetalert2";
 import LoadingDashboard from "../../../Components/LoadingDashboard";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FiSearch,
+  FiFilter,
+  FiCheckCircle,
+  FiXCircle,
+  FiClock,
+  FiEye,
+  FiMessageSquare,
+  FiMoreVertical,
+  FiMapPin,
+  FiMail,
+  FiUser,
+  FiCalendar,
+  FiDollarSign,
+  FiBook,
+  FiChevronDown,
+  FiRefreshCw,
+  FiAlertCircle
+} from "react-icons/fi";
 
 const ManageApplications = () => {
   const [applications, setApplications] = useState([]);
@@ -11,774 +31,478 @@ const ManageApplications = () => {
   const [showFeedback, setShowFeedback] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const axiosSecure = useAxiosSecure();
 
   useEffect(() => {
-    axiosSecure
-      .get("/applications")
-      .then(({ data }) => setApplications(data))
-      .catch((error) => {
-        console.error("Error fetching applications:", error);
-        Swal.fire("Error", "Failed to load applications", "error");
-      })
-      .finally(() => setLoading(false));
+    fetchApplications();
   }, [axiosSecure]);
 
-  const updateStatus = (id, status) => {
+  const fetchApplications = async () => {
+    setLoading(true);
+    try {
+      const { data } = await axiosSecure.get("/applications");
+      setApplications(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Error fetching applications:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Connection Error",
+        text: "Failed to load applications. Please check your connection.",
+        confirmButtonColor: "#3B82F6",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredApplications = useMemo(() => {
+    return applications.filter((app) => {
+      const searchStr = searchTerm.toLowerCase();
+      const matchesSearch =
+        (app.applicantName || "").toLowerCase().includes(searchStr) ||
+        (app.applicantEmail || "").toLowerCase().includes(searchStr) ||
+        (app.universityName || "").toLowerCase().includes(searchStr);
+
+      const matchesStatus = statusFilter === "all" || app.applicationStatus === statusFilter;
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [applications, searchTerm, statusFilter]);
+
+  const updateStatus = async (id, status) => {
     setUpdatingStatus(true);
-    axiosSecure
-      .patch(`/applications/${id}`, { applicationStatus: status })
-      .then(() => {
-        setApplications((prev) =>
-          prev.map((app) =>
-            app._id === id ? { ...app, applicationStatus: status } : app
-          )
-        );
-        Swal.fire("Success", `Status updated to ${status}`, "success");
-      })
-      .catch((error) => Swal.fire("Error", "Failed to update status", error))
-      .finally(() => setUpdatingStatus(false));
+    try {
+      await axiosSecure.patch(`/applications/${id}`, { applicationStatus: status });
+      setApplications((prev) =>
+        prev.map((app) =>
+          app._id === id ? { ...app, applicationStatus: status } : app
+        )
+      );
+      Swal.fire({
+        icon: "success",
+        title: "Updated",
+        text: `Status set to ${status}`,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+      });
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Failed",
+        text: "Could not update status.",
+      });
+    } finally {
+      setUpdatingStatus(false);
+    }
   };
 
   const handleStatusUpdate = (app, newStatus) => {
-    setSelectedApp(app);
-    updateStatus(app._id, newStatus);
+    Swal.fire({
+      title: "Confirm Update",
+      text: `Change status to ${newStatus}?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3B82F6",
+      cancelButtonColor: "#6B7280",
+    }).then((res) => {
+      if (res.isConfirmed) updateStatus(app._id, newStatus);
+    });
   };
 
-
-  const submitFeedback = () => {
-    if (!feedback.trim()) {
-      Swal.fire("Error", "Please enter feedback", "warning");
-      return;
+  const submitFeedback = async () => {
+    if (!feedback.trim()) return;
+    try {
+      await axiosSecure.patch(`/applications/${selectedApp._id}`, { feedback });
+      setApplications((prev) =>
+        prev.map((app) =>
+          app._id === selectedApp._id ? { ...app, feedback } : app
+        )
+      );
+      setFeedback("");
+      setShowFeedback(false);
+      Swal.fire("Success", "Feedback added", "success");
+    } catch (error) {
+      Swal.fire("Error", "Failed to save feedback");
     }
-
-    axiosSecure
-      .patch(`/applications/${selectedApp._id}`, { feedback })
-      .then(() => {
-        setApplications((prev) =>
-          prev.map((app) =>
-            app._id === selectedApp._id ? { ...app, feedback } : app
-          )
-        );
-        setFeedback("");
-        setShowFeedback(false);
-        Swal.fire("Success", "Feedback added successfully", "success");
-      })
-      .catch((error) => Swal.fire("Error", "Failed to add feedback", error));
   };
 
-  const getStatusBadge = (status) => {
-    const colors = {
-      pending: "bg-yellow-100 text-yellow-800",
-      processing: "bg-blue-100 text-blue-800",
-      completed: "bg-green-100 text-green-800",
-      rejected: "bg-red-100 text-red-800",
-    };
+  const getStatusInfo = (status) => {
+    const config = {
+      pending: { color: "bg-amber-100 text-amber-700 border-amber-200", icon: FiClock, label: "Pending" },
+      processing: { color: "bg-blue-100 text-blue-700 border-blue-200", icon: FiRefreshCw, label: "Processing" },
+      completed: { color: "bg-emerald-100 text-emerald-700 border-emerald-200", icon: FiCheckCircle, label: "Approved" },
+      rejected: { color: "bg-rose-100 text-rose-700 border-rose-200", icon: FiXCircle, label: "Rejected" },
+    }[status || "pending"];
 
+    const Icon = config.icon;
     return (
-      <span
-        className={`px-2 py-1 rounded text-xs font-medium ${
-          colors[status] || colors.pending
-        }`}
-      >
-        {status?.charAt(0).toUpperCase() + status?.slice(1) || "Pending"}
+      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black border uppercase tracking-tight ${config.color}`}>
+        <Icon className={status === "processing" ? "animate-spin" : ""} />
+        {config.label}
       </span>
     );
   };
 
-  if (loading) {
-    return <LoadingDashboard></LoadingDashboard>;
-  }
+  if (loading) return <LoadingDashboard />;
 
   return (
-    <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
-      <title>Manage Application</title>
-      <div className="mb-4 sm:mb-6">
-        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 border">
-          <div className="flex flex-col sm:flex-row sm:items-center mb-4 gap-3 sm:gap-0">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-500 rounded-lg flex items-center justify-center sm:mr-3 shrink-0">
-              <svg
-                className="w-4 h-4 sm:w-5 sm:h-5 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                />
-              </svg>
-            </div>
-            <div className="flex-1 min-w-0">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
-                Scholarship Applications
-              </h2>
-              <p className="text-gray-600 text-sm sm:text-base">
-                Manage student applications
-              </p>
-            </div>
-          </div>
+    <div className="p-4 sm:p-8 bg-gray-50 min-h-screen space-y-8">
+      <title>Manage Applications | ScholarPoint</title>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-            <div className="bg-blue-50 p-3 rounded-lg text-center">
-              <div className="text-lg sm:text-xl font-bold text-blue-600">
-                {applications.length}
-              </div>
-              <div className="text-xs sm:text-sm text-blue-700">Total</div>
-            </div>
-            <div className="bg-green-50 p-3 rounded-lg text-center">
-              <div className="text-lg sm:text-xl font-bold text-green-600">
-                {
-                  applications.filter(
-                    (app) => app.applicationStatus === "completed"
-                  ).length
-                }
-              </div>
-              <div className="text-xs sm:text-sm text-green-700">Approved</div>
-            </div>
-            <div className="bg-yellow-50 p-3 rounded-lg text-center">
-              <div className="text-lg sm:text-xl font-bold text-yellow-600">
-                {
-                  applications.filter(
-                    (app) => app.applicationStatus === "pending"
-                  ).length
-                }
-              </div>
-              <div className="text-xs sm:text-sm text-yellow-700">Pending</div>
-            </div>
-          </div>
+      {/* Header Section */}
+      <div className="bg-linear-to-r from-gray-900 via-blue-950 to-gray-900 rounded-3xl p-8 sm:p-12 text-white shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse pointer-events-none"></div>
+        <div className="relative z-10">
+          <h1 className="text-3xl sm:text-4xl font-bold mb-3 flex items-center gap-3">
+            <FiBook className="text-blue-400" /> Scholarship Applications
+          </h1>
+          <p className="text-gray-300 text-sm sm:text-lg max-w-2xl leading-relaxed">
+            Review, evaluate, and manage student submissions. Guide the next generation of scholars towards their dreams.
+          </p>
         </div>
       </div>
 
-      {applications.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-sm p-6 sm:p-8 text-center border">
-          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg
-              className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+      {/* Stats Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        {[
+          { label: "Total Applications", value: applications.length, icon: FiBook, color: "from-blue-500 to-indigo-600" },
+          { label: "Pending Review", value: applications.filter(a => (a.applicationStatus || 'pending') === 'pending').length, icon: FiClock, color: "from-amber-400 to-orange-500" },
+          { label: "Approved Items", value: applications.filter(a => a.applicationStatus === 'completed').length, icon: FiCheckCircle, color: "from-emerald-400 to-teal-500" },
+          { label: "Rejected Applications", value: applications.filter(a => a.applicationStatus === 'rejected').length, icon: FiXCircle, color: "from-rose-400 to-pink-500" }
+        ].map((stat, i) => (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
+            key={i} className="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:shadow-md transition-shadow group"
+          >
+            <div className={`p-3.5 sm:p-4 rounded-xl bg-linear-to-br ${stat.color} text-white shadow-lg group-hover:scale-110 transition-transform`}>
+              <stat.icon className="w-5 h-5 sm:w-6 sm:h-6" />
+            </div>
+            <div>
+              <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest">{stat.label}</p>
+              <h3 className="text-xl sm:text-2xl font-black text-gray-800">{stat.value}</h3>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Filters & Control Bar */}
+      <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4">
+        <div className="relative flex-1 group">
+          <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+          <input
+            type="text" placeholder="Search by name, email, or university..."
+            className="w-full pl-11 pr-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-blue-500 transition-all outline-none text-sm font-medium"
+            value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="flex gap-2">
+          <div className="relative flex-1 md:min-w-[200px]">
+            <FiFilter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+            <select
+              className="w-full pl-11 pr-10 py-3 bg-gray-50 rounded-xl appearance-none outline-none focus:ring-2 focus:ring-blue-500 text-sm font-bold text-gray-700 cursor-pointer"
+              value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
+              <option value="all">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="processing">Processing</option>
+              <option value="completed">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
           </div>
-          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
-            No Applications
-          </h3>
-          <p className="text-gray-500 text-sm sm:text-base">
-            No scholarship applications submitted yet.
-          </p>
+          <button onClick={fetchApplications} className="p-3 bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-xl transition-colors border-none cursor-pointer active:scale-95" title="Refresh">
+            <FiRefreshCw className={loading ? "animate-spin" : ""} />
+          </button>
         </div>
-      ) : (
-        <>
-          <div className="block lg:hidden space-y-4">
-            {applications.map((app) => (
-              <div
-                key={app._id}
-                className="bg-white rounded-lg shadow-sm border p-4"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium shrink-0">
-                      {app.applicantName?.charAt(0)?.toUpperCase() || "S"}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-gray-900 text-sm truncate">
-                        {app.applicantName}
-                      </div>
-                      <div className="text-xs text-gray-500 truncate">
-                        {app.applicantEmail}
-                      </div>
-                    </div>
-                  </div>
+      </div>
 
-                  <div className="grid grid-cols-2 gap-3 text-xs">
-                    <div>
-                      <span className="text-gray-500">University:</span>
-                      <div className="font-medium text-gray-900 truncate">
-                        {app.universityName}
-                      </div>
-                      <div className="text-gray-500 truncate">
-                        {app.scholarshipName}
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Subject:</span>
-                      <div className="mt-1">
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                          {app.subjectCategory || "General"}
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Amount:</span>
-                      <div className="font-semibold text-green-600">
-                        ${app.applicationFees || 0}
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Payment:</span>
-                      <div className="mt-1">
-                        <span
-                          className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                            app.paymentStatus === "paid"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-yellow-100 text-yellow-800"
-                          }`}
-                        >
-                          {app.paymentStatus === "paid" ? "Paid" : "Pending"}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-gray-500 text-xs">Status:</span>
-                      <div className="mt-1">
-                        {getStatusBadge(app.applicationStatus)}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2 pt-2 border-t">
-                    <button
-                      onClick={() => {
-                        setSelectedApp(app);
-                        setShowDetails(true);
-                      }}
-                      className="px-3 py-1.5 bg-blue-500 text-white text-xs rounded-lg hover:bg-blue-600 transition-colors duration-200 flex items-center gap-1"
-                    >
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                      View
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSelectedApp(app);
-                        setFeedback(app.feedback || "");
-                        setShowFeedback(true);
-                      }}
-                      className="px-3 py-1.5 bg-gray-500 text-white text-xs rounded-lg hover:bg-gray-600 transition-colors duration-200 flex items-center gap-1"
-                    >
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                      </svg>
-                      Feedback
-                    </button>
-
-                    <div className="flex gap-1 flex-wrap">
-                      {app.applicationStatus !== "processing" && (
-                        <button
-                          onClick={() => handleStatusUpdate(app, "processing")}
-                          disabled={updatingStatus}
-                          className="px-3 py-1.5 bg-linear-to-r from-blue-500 to-blue-600 text-white text-xs rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 flex items-center gap-1 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                          </svg>
-                          {updatingStatus ? "..." : "Processing"}
-                        </button>
-                      )}
-                      {app.applicationStatus !== "completed" && (
-                        <button
-                          onClick={() => handleStatusUpdate(app, "completed")}
-                          disabled={updatingStatus}
-                          className="px-3 py-1.5 bg-linear-to-r from-green-500 to-green-600 text-white text-xs rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 flex items-center gap-1 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                          {updatingStatus ? "..." : "Complete"}
-                        </button>
-                      )}
-                      {app.applicationStatus !== "rejected" && (
-                        <button
-                          onClick={() => handleStatusUpdate(app, "rejected")}
-                          disabled={updatingStatus}
-                          className="px-3 py-1.5 bg-linear-to-r from-red-500 to-red-600 text-white text-xs rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 flex items-center gap-1 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                          {updatingStatus ? "..." : "Reject"}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+      {/* Content Area */}
+      <div className="space-y-4">
+        {filteredApplications.length === 0 ? (
+          <div className="bg-white py-20 rounded-3xl border border-gray-100 shadow-sm flex flex-col items-center text-center px-4">
+            <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+              <FiAlertCircle className="w-10 h-10 text-gray-300" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-800">No Applications Found</h3>
+            <p className="text-gray-500 max-w-xs">Try adjusting your search or filter settings to find what you're looking for.</p>
           </div>
-
-          <div className="hidden lg:block bg-white rounded-lg shadow-sm border overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                      Student
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                      University
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                      Subject
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                      Amount
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                      Status
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                      Payment
-                    </th>
-                    <th className="px-4 py-3 text-center text-sm font-medium text-gray-700">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {applications.map((app) => (
-                    <tr key={app._id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3">
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium mr-3">
-                            {app.applicantName?.charAt(0)?.toUpperCase() || "S"}
-                          </div>
-                          <div>
-                            <div className="font-medium text-gray-900">
-                              {app.applicantName}
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              {app.applicantEmail}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="font-medium text-gray-900">
-                          {app.universityName}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {app.scholarshipName}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                          {app.subjectCategory || "General"}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className="font-semibold text-green-600">
-                          ${app.applicationFees || 0}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        {getStatusBadge(app.applicationStatus)}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span
-                          className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                            app.paymentStatus === "paid"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-yellow-100 text-yellow-800"
-                          }`}
-                        >
-                          {app.paymentStatus === "paid" ? "Paid" : "Pending"}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center justify-center gap-2 flex-wrap">
-                          <button
-                            onClick={() => {
-                              setSelectedApp(app);
-                              setShowDetails(true);
-                            }}
-                            className="px-3 py-1.5 bg-blue-500 text-white text-xs rounded-lg hover:bg-blue-600 transition-colors duration-200 flex items-center gap-1"
-                          >
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                            View
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSelectedApp(app);
-                              setFeedback(app.feedback || "");
-                              setShowFeedback(true);
-                            }}
-                            className="px-3 py-1.5 bg-gray-500 text-white text-xs rounded-lg hover:bg-gray-600 transition-colors duration-200 flex items-center gap-1"
-                          >
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                            </svg>
-                            Feedback
-                          </button>
-                        
-                          <div className="flex gap-1 flex-wrap">
-                            {app.applicationStatus !== "processing" && (
-                              <button
-                                onClick={() => handleStatusUpdate(app, "processing")}
-                                disabled={updatingStatus}
-                                className="px-3 py-1.5 bg-linear-to-r from-blue-500 to-blue-600 text-white text-xs rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 flex items-center gap-1 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                              >
-                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                </svg>
-                                {updatingStatus ? "..." : "Processing"}
-                              </button>
-                            )}
-                            {app.applicationStatus !== "completed" && (
-                              <button
-                                onClick={() => handleStatusUpdate(app, "completed")}
-                                disabled={updatingStatus}
-                                className="px-3 py-1.5 bg-linear-to-r from-green-500 to-green-600 text-white text-xs rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 flex items-center gap-1 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                              >
-                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                </svg>
-                                {updatingStatus ? "..." : "Complete"}
-                              </button>
-                            )}
-                            {app.applicationStatus !== "rejected" && (
-                              <button
-                                onClick={() => handleStatusUpdate(app, "rejected")}
-                                disabled={updatingStatus}
-                                className="px-3 py-1.5 bg-linear-to-r from-red-500 to-red-600 text-white text-xs rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 flex items-center gap-1 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                              >
-                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                                {updatingStatus ? "..." : "Reject"}
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      </td>
+        ) : (
+          <>
+            {/* Desktop Table View (Hidden on mobile/tablet) */}
+            <div className="hidden xl:block bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead className="bg-gray-50/50 text-gray-400 uppercase text-[10px] font-black tracking-widest border-b border-gray-100">
+                    <tr>
+                      <th className="px-6 py-5">Applicant</th>
+                      <th className="px-6 py-5">Scholarship Info</th>
+                      <th className="px-6 py-5">Financials</th>
+                      <th className="px-6 py-5">Status</th>
+                      <th className="px-6 py-5 text-center">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </>
-      )}
-
-      {showDetails && selectedApp && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full shadow-lg max-h-[90vh] overflow-y-auto">
-            <div className="p-4 sm:p-6">
-              <div className="flex justify-between items-center mb-4 sm:mb-6">
-                <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
-                  Application Details
-                </h3>
-                <button
-                  onClick={() => setShowDetails(false)}
-                  className="text-gray-400 hover:text-gray-600 p-1"
-                >
-                  <svg
-                    className="w-5 h-5 sm:w-6 sm:h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold text-gray-700 mb-2 text-sm sm:text-base">
-                      Student Information
-                    </h4>
-                    <div className="bg-gray-50 p-3 sm:p-4 rounded-lg space-y-2 text-sm">
-                      <div>
-                        <span className="font-medium">Name:</span>{" "}
-                        {selectedApp.applicantName}
-                      </div>
-                      <div>
-                        <span className="font-medium">Email:</span>{" "}
-                        {selectedApp.applicantEmail}
-                      </div>
-                      <div>
-                        <span className="font-medium">Applied:</span>{" "}
-                        {new Date(selectedApp.appliedDate).toLocaleDateString()}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold text-gray-700 mb-2 text-sm sm:text-base">
-                      Academic Details
-                    </h4>
-                    <div className="bg-gray-50 p-3 sm:p-4 rounded-lg space-y-2 text-sm">
-                      <div>
-                        <span className="font-medium">University:</span>{" "}
-                        {selectedApp.universityName}
-                      </div>
-                      <div>
-                        <span className="font-medium">Scholarship:</span>{" "}
-                        {selectedApp.scholarshipName}
-                      </div>
-                      <div>
-                        <span className="font-medium">Subject:</span>{" "}
-                        {selectedApp.subjectCategory}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold text-gray-700 mb-2 text-sm sm:text-base">
-                      Financial & Status
-                    </h4>
-                    <div className="bg-gray-50 p-3 sm:p-4 rounded-lg space-y-2 text-sm">
-                      <div>
-                        <span className="font-medium">Amount:</span>{" "}
-                        <span className="text-green-600 font-semibold">
-                          ${selectedApp.applicationFees}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="font-medium">Status:</span>{" "}
-                        {getStatusBadge(selectedApp.applicationStatus)}
-                      </div>
-                      <div>
-                        <span className="font-medium">Payment:</span>
-                        <span
-                          className={`ml-2 px-2 py-1 rounded text-xs ${
-                            selectedApp.paymentStatus === "paid"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-yellow-100 text-yellow-800"
-                          }`}
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    <AnimatePresence mode='popLayout'>
+                      {filteredApplications.map((app) => (
+                        <motion.tr
+                          layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                          key={app._id} className="hover:bg-blue-50/30 transition-colors group"
                         >
-                          {selectedApp.paymentStatus === "paid"
-                            ? "Paid"
-                            : "Pending"}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold text-gray-700 mb-2 text-sm sm:text-base">
-                      Feedback
-                    </h4>
-                    <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
-                      <p className="text-gray-700 text-sm">
-                        {selectedApp.feedback || "No feedback provided yet."}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-4 sm:mt-6 space-y-4">
-                <div className="bg-linear-to-br from-gray-50 via-white to-gray-50 p-4 sm:p-6 rounded-2xl border border-gray-200 shadow-sm">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-linear-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-gray-800 text-lg">
-                        Update Application Status
-                      </h4>
-                      <p className="text-gray-600 text-sm">
-                        Change the current status of this application
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <button
-                      onClick={() => handleStatusUpdate(selectedApp, "processing")}
-                      disabled={updatingStatus || selectedApp.applicationStatus === "processing"}
-                      className={`group relative overflow-hidden px-6 py-4 rounded-2xl font-semibold text-sm transition-all duration-300 transform hover:scale-105 ${
-                        selectedApp.applicationStatus === "processing"
-                          ? "bg-blue-100 text-blue-800 border-2 border-blue-300 cursor-not-allowed shadow-inner"
-                          : "bg-linear-to-r from-blue-500 to-indigo-600 text-white hover:from-blue-600 hover:to-indigo-700 shadow-lg hover:shadow-2xl"
-                      } disabled:opacity-50 disabled:transform-none`}
-                    >
-                      <div className="flex flex-col items-center gap-2">
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                        <span>
-                          {updatingStatus ? "Updating..." : selectedApp.applicationStatus === "processing" ? "Currently Processing" : "Set to Processing"}
-                        </span>
-                      </div>
-                      {selectedApp.applicationStatus !== "processing" && (
-                        <div className="absolute inset-0 bg-linear-to-r from-blue-600 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
-                      )}
-                    </button>
-                    
-                    <button
-                      onClick={() => handleStatusUpdate(selectedApp, "completed")}
-                      disabled={updatingStatus || selectedApp.applicationStatus === "completed"}
-                      className={`group relative overflow-hidden px-6 py-4 rounded-2xl font-semibold text-sm transition-all duration-300 transform hover:scale-105 ${
-                        selectedApp.applicationStatus === "completed"
-                          ? "bg-green-100 text-green-800 border-2 border-green-300 cursor-not-allowed shadow-inner"
-                          : "bg-linear-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 shadow-lg hover:shadow-2xl"
-                      } disabled:opacity-50 disabled:transform-none`}
-                    >
-                      <div className="flex flex-col items-center gap-2">
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span>
-                          {updatingStatus ? "Updating..." : selectedApp.applicationStatus === "completed" ? "Already Completed" : "Mark as Completed"}
-                        </span>
-                      </div>
-                      {selectedApp.applicationStatus !== "completed" && (
-                        <div className="absolute inset-0 bg-linear-to-r from-green-600 to-emerald-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
-                      )}
-                    </button>
-                    
-                    <button
-                      onClick={() => handleStatusUpdate(selectedApp, "rejected")}
-                      disabled={updatingStatus || selectedApp.applicationStatus === "rejected"}
-                      className={`group relative overflow-hidden px-6 py-4 rounded-2xl font-semibold text-sm transition-all duration-300 transform hover:scale-105 ${
-                        selectedApp.applicationStatus === "rejected"
-                          ? "bg-red-100 text-red-800 border-2 border-red-300 cursor-not-allowed shadow-inner"
-                          : "bg-linear-to-r from-red-500 to-rose-600 text-white hover:from-red-600 hover:to-rose-700 shadow-lg hover:shadow-2xl"
-                      } disabled:opacity-50 disabled:transform-none`}
-                    >
-                      <div className="flex flex-col items-center gap-2">
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                        <span>
-                          {updatingStatus ? "Updating..." : selectedApp.applicationStatus === "rejected" ? "Already Rejected" : "Reject Application"}
-                        </span>
-                      </div>
-                      {selectedApp.applicationStatus !== "rejected" && (
-                        <div className="absolute inset-0 bg-linear-to-r from-red-600 to-rose-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
-                      )}
-                    </button>
-                  </div>
-                  
-                  <div className="mt-6 flex items-center justify-center">
-                    <div className="bg-white/80 backdrop-blur-sm px-4 py-2 rounded-xl border border-gray-200 shadow-sm">
-                      <span className="text-sm font-medium text-gray-700">Current Status:</span>
-                      <span className="ml-2">{getStatusBadge(selectedApp.applicationStatus)}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => setShowDetails(false)}
-                  className="w-full px-6 py-4 bg-linear-to-r from-gray-500 to-gray-600 text-white rounded-2xl hover:from-gray-600 hover:to-gray-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                  Close Details
-                </button>
+                          <td className="px-6 py-6 border-none">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full bg-linear-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-blue-600 font-bold border border-blue-200">
+                                {app.applicantName?.charAt(0) || "S"}
+                              </div>
+                              <div>
+                                <p className="font-bold text-gray-800 text-sm leading-tight">{app.applicantName}</p>
+                                <p className="text-xs text-gray-400 flex font-medium items-center gap-1"><FiMail className="w-3" /> {app.applicantEmail}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-6 border-none">
+                            <p className="font-bold text-gray-700 text-sm truncate max-w-[200px]">{app.universityName}</p>
+                            <p className="text-xs text-blue-500 font-medium">{app.scholarshipName}</p>
+                          </td>
+                          <td className="px-6 py-6 border-none font-mono text-sm">
+                            <div className="flex flex-col">
+                              <span className="font-bold text-green-600 text-base">${app.applicationFees || 0}</span>
+                              <span className={`text-[9px] font-black uppercase tracking-tighter ${app.paymentStatus === 'paid' ? 'text-emerald-500' : 'text-amber-500 placeholder-amber-400'}`}>
+                                {app.paymentStatus || 'Pending'}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-6 border-none">
+                            {getStatusInfo(app.applicationStatus)}
+                          </td>
+                          <td className="px-6 py-6 border-none">
+                            <div className="flex items-center justify-center gap-2">
+                              <button onClick={() => { setSelectedApp(app); setShowDetails(true); }} className="p-2 hover:bg-blue-100 text-blue-600 rounded-lg transition-colors cursor-pointer border-none bg-transparent" title="View Details">
+                                <FiEye className="w-5 h-5" />
+                              </button>
+                              <button onClick={() => { setSelectedApp(app); setFeedback(app.feedback || ""); setShowFeedback(true); }} className="p-2 hover:bg-purple-100 text-purple-600 rounded-lg transition-colors cursor-pointer border-none bg-transparent" title="Add Feedback">
+                                <FiMessageSquare className="w-5 h-5" />
+                              </button>
+                              <div className="relative group/menu">
+                                <button className="p-2 hover:bg-gray-100 text-gray-400 rounded-lg cursor-pointer border-none bg-transparent">
+                                  <FiMoreVertical className="w-5 h-5" />
+                                </button>
+                                <div className="absolute right-0 top-full mt-1 bg-white shadow-2xl border border-gray-100 rounded-2xl py-2 w-48 z-50 opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all ring-1 ring-black/5">
+                                  {[
+                                    { key: 'processing', label: 'Start Processing', icon: FiRefreshCw, color: 'text-blue-600' },
+                                    { key: 'completed', label: 'Approve Application', icon: FiCheckCircle, color: 'text-emerald-600' },
+                                    { key: 'rejected', label: 'Reject Application', icon: FiXCircle, color: 'text-rose-600' }
+                                  ].map((action) => (
+                                    <button
+                                      key={action.key} onClick={() => handleStatusUpdate(app, action.key)}
+                                      disabled={app.applicationStatus === action.key}
+                                      className={`w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold hover:bg-gray-50 ${action.color} disabled:opacity-30 disabled:pointer-events-none cursor-pointer border-none bg-transparent text-left`}
+                                    >
+                                      <action.icon /> {action.label}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </AnimatePresence>
+                  </tbody>
+                </table>
               </div>
             </div>
-          </div>
-        </div>
-      )}
 
-      {showFeedback && selectedApp && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full shadow-lg max-h-[90vh] overflow-y-auto">
-            <div className="p-4 sm:p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
-                  Add Feedback
-                </h3>
-                <button
-                  onClick={() => setShowFeedback(false)}
-                  className="text-gray-400 hover:text-gray-600 p-1"
-                >
-                  <svg
-                    className="w-5 h-5 sm:w-6 sm:h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+            {/* Mobile Card List (Hidden on desktop) */}
+            <div className="xl:hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+              <AnimatePresence mode='popLayout'>
+                {filteredApplications.map((app) => (
+                  <motion.div
+                    layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+                    key={app._id} className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-4 relative overflow-hidden group"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
+                    <div className="flex justify-between items-start">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-xl bg-linear-to-br from-blue-50 to-indigo-50 flex items-center justify-center text-blue-600 font-bold border border-blue-100 shadow-xs">
+                          {app.applicantName?.charAt(0)}
+                        </div>
+                        <div>
+                          <h4 className="font-black text-gray-800 text-sm leading-tight">{app.applicantName}</h4>
+                          <p className="text-[10px] text-gray-400 font-bold flex items-center gap-1 mt-0.5"><FiMail className="w-2.5" /> {app.applicantEmail}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => { setSelectedApp(app); setShowDetails(true); }} className="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors border-none bg-transparent cursor-pointer"><FiEye className="w-5 h-5" /></button>
+                        <button onClick={() => { setSelectedApp(app); setFeedback(app.feedback || ""); setShowFeedback(true); }} className="p-2.5 text-purple-600 hover:bg-purple-50 rounded-xl transition-colors border-none bg-transparent cursor-pointer"><FiMessageSquare className="w-5 h-5" /></button>
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-50/50 p-4 rounded-xl border border-gray-100/50 space-y-3">
+                      <div>
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 flex items-center gap-1.5"><FiBook className="w-3" /> Scholarship</p>
+                        <p className="text-xs font-bold text-gray-700 line-clamp-1">{app.universityName}</p>
+                        <p className="text-[10px] text-blue-500 font-bold mt-0.5">{app.scholarshipName}</p>
+                      </div>
+                      <div className="flex justify-between items-end pt-2 border-t border-gray-100">
+                        <div>
+                          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Financials</p>
+                          <p className="text-sm font-black text-emerald-600">${app.applicationFees || 0} <span className="text-[10px] text-gray-400 lowercase font-medium ml-1">fees paid</span></p>
+                        </div>
+                        {getStatusInfo(app.applicationStatus)}
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleStatusUpdate(app, 'processing')}
+                        disabled={app.applicationStatus === 'processing'}
+                        className="flex-1 py-2.5 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-tight rounded-xl hover:bg-blue-600 hover:text-white transition-all border-none cursor-pointer disabled:opacity-30"
+                      >
+                        Start Process
+                      </button>
+                      <button
+                        onClick={() => handleStatusUpdate(app, 'completed')}
+                        disabled={app.applicationStatus === 'completed'}
+                        className="flex-1 py-2.5 bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase tracking-tight rounded-xl hover:bg-emerald-600 hover:text-white transition-all border-none cursor-pointer disabled:opacity-30"
+                      >
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => handleStatusUpdate(app, 'rejected')}
+                        disabled={app.applicationStatus === 'rejected'}
+                        className="flex-1 py-2.5 bg-rose-50 text-rose-600 text-[10px] font-black uppercase tracking-tight rounded-xl hover:bg-rose-600 hover:text-white transition-all border-none cursor-pointer disabled:opacity-30"
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Details Modal (Mobile Optimized) */}
+      <AnimatePresence>
+        {showDetails && selectedApp && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowDetails(false)} className="absolute inset-0 bg-gray-900/70 backdrop-blur-md" />
+            <motion.div initial={{ scale: 0.9, opacity: 0, y: 30 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 30 }} className="bg-white rounded-[2rem] sm:rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl relative z-10 scrollbar-hide">
+              <div className="p-6 sm:p-10 space-y-8">
+                <div className="flex justify-between items-start sticky top-0 bg-white/80 backdrop-blur-md -my-2 py-2 z-10 transition-all">
+                  <div>
+                    <h3 className="text-xl sm:text-2xl font-black text-gray-800">Application Details</h3>
+                    <p className="text-gray-400 text-xs sm:text-sm">Review student credentials and choice</p>
+                  </div>
+                  <button onClick={() => setShowDetails(false)} className="p-2 hover:bg-rose-50 rounded-full text-rose-400 transition-colors cursor-pointer border-none bg-transparent">
+                    <FiXCircle className="w-6 h-6 sm:w-7 sm:h-7" />
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                  <div className="space-y-8">
+                    <section>
+                      <h4 className="flex items-center gap-2 text-[10px] font-black text-blue-600 uppercase tracking-widest mb-4 border-b border-blue-50 pb-2"><FiUser className="w-3" /> Student Portfolio</h4>
+                      <div className="space-y-4 px-1">
+                        <DetailItem label="Full Legal Name" value={selectedApp.applicantName} />
+                        <DetailItem label="Personal Email" value={selectedApp.applicantEmail} />
+                        <DetailItem label="Application Date" value={new Date(selectedApp.appliedDate || Date.now()).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })} />
+                      </div>
+                    </section>
+                    <section>
+                      <h4 className="flex items-center gap-2 text-[10px] font-black text-purple-600 uppercase tracking-widest mb-4 border-b border-purple-50 pb-2"><FiBook className="w-3" /> Academic Intent</h4>
+                      <div className="space-y-4 px-1">
+                        <DetailItem label="Degree Category" value={selectedApp.degree || "Not Specified"} />
+                        <DetailItem label="Subject / Field" value={selectedApp.subjectCategory || "General Studies"} />
+                      </div>
+                    </section>
+                  </div>
+                  <div className="space-y-8">
+                    <section>
+                      <h4 className="flex items-center gap-2 text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-4 border-b border-emerald-50 pb-2"><FiMapPin className="w-3" /> Destination</h4>
+                      <div className="space-y-4 px-1">
+                        <DetailItem label="University Name" value={selectedApp.universityName} />
+                        <DetailItem label="Award Name" value={selectedApp.scholarshipName} />
+                        <DetailItem label="Location" value={`${selectedApp.universityCity || 'International'}, ${selectedApp.universityCountry || ''}`} />
+                      </div>
+                    </section>
+                    <section className="bg-blue-600 p-6 rounded-[1.5rem] text-white shadow-xl shadow-blue-100 relative overflow-hidden group">
+                      <div className="absolute top-0 right-0 -mr-4 -mt-4 w-20 h-20 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+                      <div className="flex justify-between items-center mb-4 relative z-10">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-blue-100">Status & Fees</span>
+                        <div className="scale-90 origin-right">
+                          {getStatusInfo(selectedApp.applicationStatus)}
+                        </div>
+                      </div>
+                      <div className="relative z-10">
+                        <p className="text-3xl font-black flex items-center gap-1.5"><FiDollarSign className="w-6" /> {selectedApp.applicationFees || 0}</p>
+                        <p className="text-[10px] font-bold text-blue-200 uppercase mt-1">Non-refundable application fee</p>
+                      </div>
+                    </section>
+                  </div>
+                </div>
+
+                <div className="pt-8 flex flex-col sm:flex-row gap-3 sticky bottom-0 bg-white/80 backdrop-blur-md -my-2 py-4 z-10 border-t border-gray-50">
+                  <button onClick={() => setShowDetails(false)} className="flex-1 py-4 bg-gray-100 text-gray-700 font-bold rounded-2xl hover:bg-gray-200 transition-all cursor-pointer border-none shadow-sm active:scale-95">Back to List</button>
+                  <button onClick={() => { setShowDetails(false); setShowFeedback(true); }} className="flex-1 py-4 bg-blue-600 text-white font-black uppercase tracking-wider text-sm rounded-2xl hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all cursor-pointer active:scale-95">Submit Feedback</button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Feedback Modal (Mobile Optimized) */}
+      <AnimatePresence>
+        {showFeedback && selectedApp && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowFeedback(false)} className="absolute inset-0 bg-gray-900/70 backdrop-blur-md" />
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-white rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl relative z-10 p-8 space-y-8">
+              <div className="flex justify-between items-center">
+                <h3 className="text-xl font-black text-gray-800 flex items-center gap-2"><FiMessageSquare className="text-blue-500" /> Provide Feedback</h3>
+                <button onClick={() => setShowFeedback(false)} className="text-gray-400 hover:text-rose-500 cursor-pointer border-none bg-transparent transition-colors"><FiXCircle className="w-6 h-6" /></button>
               </div>
 
-              <div className="mb-4 bg-blue-50 p-3 sm:p-4 rounded-lg">
-                <div className="flex items-center">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium mr-3 shrink-0">
-                    {selectedApp.applicantName?.charAt(0)?.toUpperCase() || "S"}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="font-semibold text-gray-900 text-sm sm:text-base truncate">
-                      {selectedApp.applicantName}
-                    </div>
-                    <div className="text-xs sm:text-sm text-gray-600 truncate">
-                      {selectedApp.universityName}
-                    </div>
-                  </div>
+              <div className="bg-linear-to-br from-blue-50 to-indigo-50 p-5 rounded-2xl border border-blue-100 flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-white font-black text-lg shadow-lg shadow-blue-100">{selectedApp.applicantName?.charAt(0)}</div>
+                <div className="min-w-0">
+                  <p className="text-sm font-black text-gray-800 truncate">{selectedApp.applicantName}</p>
+                  <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mt-0.5 truncate">{selectedApp.universityName}</p>
                 </div>
               </div>
 
-              <div className="mb-4 sm:mb-6">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Feedback Message
-                </label>
+              <div className="space-y-2">
+                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Academic Feedback / Reasons</label>
                 <textarea
-                  value={feedback}
-                  onChange={(e) => setFeedback(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-sm"
-                  rows="4"
-                  placeholder="Provide feedback about the application..."
+                  value={feedback} onChange={(e) => setFeedback(e.target.value)}
+                  className="w-full p-5 bg-gray-50 border border-gray-100 rounded-[1.5rem] focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none resize-none min-h-[160px] text-sm font-medium shadow-inner"
+                  placeholder="Explain your decision or ask for more documents..."
                 />
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  onClick={() => setShowFeedback(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={submitFeedback}
-                  className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm"
-                >
-                  Submit
-                </button>
+                <button onClick={() => setShowFeedback(false)} className="flex-1 py-3 text-sm font-bold text-gray-500 hover:text-gray-800 cursor-pointer border-none bg-transparent active:scale-95 transition-all">Discard</button>
+                <button onClick={submitFeedback} className="flex-1 py-4 bg-blue-600 text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-blue-700 shadow-xl shadow-blue-100 transition-all cursor-pointer active:scale-95">Save Feedback</button>
               </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </div>
   );
 };
+
+/* --- SHARED COMPONENTS --- */
+
+const DetailItem = ({ label, value }) => (
+  <div className="space-y-0.5">
+    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{label}</p>
+    <p className="text-sm font-bold text-gray-700 break-words">{value || "Unspecified"}</p>
+  </div>
+);
 
 export default ManageApplications;

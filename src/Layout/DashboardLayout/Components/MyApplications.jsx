@@ -1,8 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import useAuth from "../../../Hooks/useAuth";
 import Swal from "sweetalert2";
 import LoadingDashboard from "../../../Components/LoadingDashboard";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FiSearch,
+  FiFilter,
+  FiCheckCircle,
+  FiXCircle,
+  FiClock,
+  FiEye,
+  FiMessageSquare,
+  FiMapPin,
+  FiDollarSign,
+  FiBook,
+  FiChevronDown,
+  FiRefreshCw,
+  FiAlertCircle,
+  FiEdit,
+  FiTrash2,
+  FiCreditCard,
+  FiStar,
+  FiBriefcase
+} from "react-icons/fi";
 
 const MyApplications = () => {
   const { user } = useAuth();
@@ -14,39 +35,63 @@ const MyApplications = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [reviewData, setReviewData] = useState({ rating: 5, comment: "" });
   const [editData, setEditData] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const axiosSecure = useAxiosSecure();
 
   useEffect(() => {
     if (user?.email) {
-      axiosSecure
-        .get(`/applications/user/${user.email}`)
-        .then(({ data }) => setApplications(data))
-        .catch((err) => {
-          console.error(err);
-          Swal.fire("Error", "Failed to load applications", "error");
-        })
-        .finally(() => setLoading(false));
+      fetchApplications();
     }
   }, [user, axiosSecure]);
 
+  const fetchApplications = () => {
+    setLoading(true);
+    axiosSecure
+      .get(`/applications/user/${user.email}`)
+      .then(({ data }) => setApplications(Array.isArray(data) ? data : []))
+      .catch((err) => {
+        console.error(err);
+        Swal.fire("Error", "Failed to load applications", "error");
+      })
+      .finally(() => setLoading(false));
+  };
+
+  const filteredApplications = useMemo(() => {
+    return applications.filter((app) => {
+      const searchStr = searchTerm.toLowerCase();
+      const matchesSearch =
+        (app.scholarshipName || "").toLowerCase().includes(searchStr) ||
+        (app.universityName || "").toLowerCase().includes(searchStr);
+      const matchesStatus = statusFilter === "all" || app.applicationStatus === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [applications, searchTerm, statusFilter]);
+
+  const stats = useMemo(() => [
+    { label: "Total Applied", value: applications.length, icon: FiBook, color: "text-blue-600", bg: "bg-blue-50" },
+    { label: "Pending Review", value: applications.filter(a => (a.applicationStatus || 'pending') === 'pending').length, icon: FiClock, color: "text-amber-600", bg: "bg-amber-50" },
+    { label: "Approved Items", value: applications.filter(a => a.applicationStatus === 'completed').length, icon: FiCheckCircle, color: "text-emerald-600", bg: "bg-emerald-50" },
+    { label: "Fees Settled", value: applications.filter(a => a.paymentStatus === 'paid').length, icon: FiCreditCard, color: "text-indigo-600", bg: "bg-indigo-50" }
+  ], [applications]);
+
   const handleDelete = (applicationId) => {
     Swal.fire({
-      title: "Delete Application?",
-      text: "This action cannot be undone!",
+      title: "Confirm Deletion",
+      text: "Are you sure you want to remove this application?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonColor: "#EF4444",
+      cancelButtonColor: "#64748B",
+      confirmButtonText: "Yes, delete",
+      cancelButtonText: "Cancel"
     }).then((result) => {
       if (result.isConfirmed) {
         axiosSecure
           .delete(`/applications/${applicationId}`)
           .then(() => {
-            setApplications((prev) =>
-              prev.filter((app) => app._id !== applicationId)
-            );
-            Swal.fire("Deleted!", "Application has been deleted.", "success");
+            setApplications((prev) => prev.filter((app) => app._id !== applicationId));
+            Swal.fire("Removed", "Application has been deleted successfully.", "success");
           })
           .catch((err) => {
             console.error(err);
@@ -58,7 +103,7 @@ const MyApplications = () => {
 
   const handleSubmitReview = () => {
     if (!reviewData.comment.trim()) {
-      Swal.fire("Error", "Please add a comment", "warning");
+      Swal.fire("Note", "Please provide a comment for your review.", "info");
       return;
     }
     const reviewPayload = {
@@ -76,7 +121,7 @@ const MyApplications = () => {
       .then(() => {
         setShowReviewModal(false);
         setReviewData({ rating: 5, comment: "" });
-        Swal.fire("Success", "Review submitted successfully", "success");
+        Swal.fire("Thank You", "Your feedback has been submitted.", "success");
       })
       .catch((err) => {
         console.error(err);
@@ -103,20 +148,16 @@ const MyApplications = () => {
   };
 
   const getStatusBadge = (status) => {
-    const colors = {
-      pending: "bg-yellow-100 text-yellow-800",
-      approved: "bg-green-100 text-green-800",
-      rejected: "bg-red-100 text-red-800",
-      completed: "bg-blue-100 text-blue-800",
-    };
+    const config = {
+      pending: "bg-amber-100/80 text-amber-700 border-amber-200",
+      processing: "bg-blue-100/80 text-blue-700 border-blue-200",
+      completed: "bg-emerald-100/80 text-emerald-700 border-emerald-200",
+      rejected: "bg-rose-100/80 text-rose-700 border-rose-200",
+    }[status || "pending"];
 
     return (
-      <span
-        className={`px-2 py-1 rounded text-xs font-medium ${
-          colors[status] || colors.pending
-        }`}
-      >
-        {status?.charAt(0).toUpperCase() + status?.slice(1) || "Pending"}
+      <span className={`px-2.5 py-1 rounded-md text-[11px] font-bold border uppercase tracking-wider ${config}`}>
+        {status === 'completed' ? 'Approved' : (status || 'pending')}
       </span>
     );
   };
@@ -137,467 +178,372 @@ const MyApplications = () => {
       })
       .catch((err) => {
         console.error("Payment error:", err.response?.data || err.message);
-        Swal.fire("Error", "Payment failed", "error");
+        Swal.fire("Payment Notice", "Encountered an issue redirecting to payment gateway.", "error");
       });
   };
 
-  if (loading) {
-    return <LoadingDashboard></LoadingDashboard>;
-  }
+  if (loading) return <LoadingDashboard />;
 
   return (
-    <div className="p-4 sm:p-6">
-      <title>My Application</title>
-      <div className="mb-4 sm:mb-6">
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
-          My Applications
-        </h2>
-        <p className="text-gray-600 mt-1 text-sm sm:text-base">
-          Manage your scholarship applications
-        </p>
-      </div>
-
-      {applications.length === 0 ? (
-        <div className="text-center py-8 sm:py-12 bg-gray-50 rounded-lg">
-          <div className="text-3xl sm:text-4xl mb-4">📚</div>
-          <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-2">
-            No Applications Yet
-          </h3>
-          <p className="text-gray-500 text-sm sm:text-base">
-            You haven't applied for any scholarships yet.
+    <div className="p-0 sm:p-8 bg-[#F1F5F9] min-h-screen space-y-6">
+      <title>My Applications | ScholarPoint</title>
+      <div className="bg-white rounded-2xl p-6 sm:p-10 shadow-sm border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-6 overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full -mr-16 -mt-16 opacity-50 blur-2xl"></div>
+        <div className="relative z-10">
+          <div className="flex items-center gap-2 text-primary text-xs font-bold uppercase tracking-widest mb-3">
+            <FiBriefcase className="w-4 h-4" /> Personal Dashboard
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 leading-tight">
+            Manage <span className="text-primary">Applications</span>
+          </h1>
+          <p className="text-slate-500 text-sm mt-2 max-w-xl font-medium">
+            Review and track the progress of your scholarship submissions. Maintain your documents and engage with feedback.
           </p>
         </div>
-      ) : (
-        <div className="bg-white rounded-lg shadow border overflow-hidden">
-          <div className="block lg:hidden">
-            <div className="divide-y divide-gray-200">
-              {applications.map((application) => (
-                <div key={application._id} className="p-4 hover:bg-gray-50">
-                  <div className="space-y-3">
-                    <div>
-                      <div className="font-medium text-gray-900 text-sm">
-                        {application.universityName}
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        {application.scholarshipName}
-                      </div>
-                    </div>
+        <div className="flex gap-3 relative z-10">
+          <button onClick={fetchApplications} className="flex items-center gap-2 px-5 py-3 bg-indigo-50 text-primary rounded-xl font-bold text-sm hover:bg-indigo-100 transition-colors border-none cursor-pointer active:scale-95">
+            <FiRefreshCw className={loading ? "animate-spin" : ""} /> Refresh Data
+          </button>
+        </div>
+      </div>
 
-                    <div className="grid grid-cols-2 gap-3 text-xs">
-                      <div>
-                        <span className="text-gray-500">Address:</span>
-                        <div className="text-gray-600 truncate">
-                          {application.universityAddress}
-                        </div>
-                      </div>
-                      <div>
-                        <span className="text-gray-500">Subject:</span>
-                        <div className="text-gray-600 truncate">
-                          {application.subjectCategory}
-                        </div>
-                      </div>
-                      <div>
-                        <span className="text-gray-500">Fees:</span>
-                        <div className="text-green-600 font-medium">
-                          ${application.applicationFees}
-                        </div>
-                      </div>
-                      <div>
-                        <span className="text-gray-500">Status:</span>
-                        <div className="mt-1">
-                          {getStatusBadge(application.applicationStatus)}
-                        </div>
-                      </div>
-                    </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        {stats.map((stat, i) => (
+          <div
+            key={i} className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs flex items-center gap-4 hover:border-indigo-300 transition-all group"
+          >
+            <div className={`p-3 rounded-lg ${stat.bg} ${stat.color} group-hover:scale-105 transition-transform`}>
+              <stat.icon className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-0.5">{stat.label}</p>
+              <h3 className="text-xl font-extrabold text-slate-800 leading-none">{stat.value}</h3>
+            </div>
+          </div>
+        ))}
+      </div>
 
-                    <div>
-                      <span className="text-gray-500 text-xs">Feedback:</span>
-                      <div className="text-gray-600 text-xs truncate">
-                        {application.feedback || "No feedback yet"}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-2">
-                      <div>
-                        {application.paymentStatus === "paid" ? (
-                          <span className="text-green-600 font-semibold text-xs">
-                            Paid
-                          </span>
-                        ) : (
-                          <button
-                            onClick={() => handlePayment(application)}
-                            className="btn px-3 py-2 bg-green-500 text-white text-sm font-medium rounded"
-                          >
-                            Pay Now
-                          </button>
-                        )}
-                      </div>
-
-                      <div className="flex gap-1 flex-wrap">
-                        <button
-                          onClick={() => {
-                            setSelectedApplication(application);
-                            setShowDetailsModal(true);
-                          }}
-                          className="btn px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
+      <div className="bg-white p-4 rounded-xl shadow-xs border border-slate-200 flex flex-col lg:flex-row gap-4 items-stretch lg:items-center">
+        <div className="relative flex-1 group">
+          <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
+          <input
+            type="text" placeholder="Search by program or university..."
+            className="w-full pl-11 pr-4 py-3 bg-slate-50 rounded-lg border border-transparent focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-100 transition-all outline-none text-sm font-medium text-slate-700"
+            value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="flex gap-2">
+          <div className="relative min-w-[160px]">
+            <FiFilter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+            <select
+              className="w-full pl-11 pr-10 py-3 bg-slate-50 rounded-lg appearance-none outline-none border border-transparent focus:border-indigo-200 focus:bg-white text-sm font-bold text-slate-600 cursor-pointer"
+              value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option value="all">Status: All</option>
+              <option value="pending">Pending</option>
+              <option value="processing">Processing</option>
+              <option value="completed">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+          </div>
+        </div>
+      </div>
+      <div className="space-y-4">
+        {filteredApplications.length === 0 ? (
+          <div className="bg-white py-16 rounded-2xl border border-slate-200 shadow-xs flex flex-col items-center text-center px-4">
+            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+              <FiAlertCircle className="w-8 h-8 text-slate-300" />
+            </div>
+            <h3 className="text-lg font-bold text-slate-800">No applications found</h3>
+            <p className="text-slate-500 text-sm max-w-xs mt-1">Start your journey by applying for scholarships in the main directory.</p>
+          </div>
+        ) : (
+          <>
+            <div className="hidden xl:block bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead className="bg-slate-50/50 text-slate-400 uppercase text-[10px] font-bold tracking-widest border-b border-slate-100">
+                    <tr>
+                      <th className="px-6 py-4">Institution & Program</th>
+                      <th className="px-6 py-4">Subject</th>
+                      <th className="px-6 py-4">Financials</th>
+                      <th className="px-6 py-4">Current Status</th>
+                      <th className="px-6 py-4 text-center">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50">
+                    <AnimatePresence mode='popLayout text-xs'>
+                      {filteredApplications.map((app) => (
+                        <motion.tr
+                          layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                          key={app._id} className="hover:bg-slate-50/80 transition-colors group"
                         >
-                          Details
-                        </button>
+                          <td className="px-6 py-5">
+                            <div>
+                              <p className="font-bold text-slate-800 text-sm">{app.universityName}</p>
+                              <p className="text-xs text-primary font-medium mt-0.5">{app.scholarshipName}</p>
+                            </div>
+                          </td>
+                          <td className="px-6 py-5">
+                            <p className="text-xs font-bold text-slate-600">{app.subjectCategory || "General"}</p>
+                            <p className="text-[10px] text-slate-400 font-medium">Applied: {new Date(app.appliedDate).toLocaleDateString()}</p>
+                          </td>
+                          <td className="px-6 py-5">
+                            <p className="font-bold text-slate-800 text-sm">${app.applicationFees || 0}</p>
+                            <span className={`text-[10px] font-bold uppercase tracking-tight ${app.paymentStatus === 'paid' ? 'text-emerald-600' : 'text-amber-600'}`}>
+                              {app.paymentStatus === "paid" ? "Payment Confirmed" : "Awaiting Fees"}
+                            </span>
+                          </td>
+                          <td className="px-6 py-5">
+                            {getStatusBadge(app.applicationStatus)}
+                          </td>
+                          <td className="px-6 py-5">
+                            <div className="flex items-center justify-center gap-1.5 font-bold">
+                              <button onClick={() => { setSelectedApplication(app); setShowDetailsModal(true); }} className="p-2.5 hover:bg-indigo-50 text-indigo-600 rounded-lg transition-colors border-none bg-transparent cursor-pointer" title="View Details">
+                                <FiEye className="w-4 h-4" />
+                              </button>
 
-                        {application.applicationStatus === "pending" && (
-                          <>
-                            <button
-                              onClick={() => {
-                                setSelectedApplication(application);
-                                setEditData({
-                                  subjectCategory: application.subjectCategory,
-                                });
-                                setShowEditModal(true);
-                              }}
-                              className="btn px-2 py-1 bg-yellow-500 text-white text-xs rounded hover:bg-yellow-600"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleDelete(application._id)}
-                              className="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600"
-                            >
-                              Delete
-                            </button>
-                          </>
-                        )}
+                              {app.paymentStatus !== "paid" && (
+                                <button onClick={() => handlePayment(app)} className="p-2.5 hover:bg-emerald-50 text-emerald-600 rounded-lg transition-colors border-none bg-transparent cursor-pointer" title="Pay Now">
+                                  <FiCreditCard className="w-4 h-4" />
+                                </button>
+                              )}
 
-                        {application.applicationStatus === "completed" && (
-                          <button
-                            onClick={() => {
-                              setSelectedApplication(application);
-                              setShowReviewModal(true);
-                            }}
-                            className="btn px-2 py-1 bg-purple-500 text-white text-xs rounded hover:bg-purple-600"
-                          >
-                            Review
-                          </button>
-                        )}
+                              {app.applicationStatus === "pending" && (
+                                <>
+                                  <button onClick={() => { setSelectedApplication(app); setEditData({ subjectCategory: app.subjectCategory }); setShowEditModal(true); }} className="p-2.5 hover:bg-amber-50 text-amber-600 rounded-lg transition-colors border-none bg-transparent cursor-pointer" title="Edit">
+                                    <FiEdit className="w-4 h-4" />
+                                  </button>
+                                  <button onClick={() => handleDelete(app._id)} className="p-2.5 hover:bg-rose-50 text-rose-600 rounded-lg transition-colors border-none bg-transparent cursor-pointer" title="Remove">
+                                    <FiTrash2 className="w-4 h-4" />
+                                  </button>
+                                </>
+                              )}
+
+                              {app.applicationStatus === "completed" && (
+                                <button onClick={() => { setSelectedApplication(app); setShowReviewModal(true); }} className="p-2.5 hover:bg-purple-50 text-purple-600 rounded-lg transition-colors border-none bg-transparent cursor-pointer" title="Review">
+                                  <FiStar className="w-4 h-4" />
+                                </button>
+                              )}
+                            </div>
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </AnimatePresence>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="xl:hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+              <AnimatePresence mode='popLayout'>
+                {filteredApplications.map((app) => (
+                  <motion.div
+                    layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }}
+                    key={app._id} className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="min-w-0 flex-1">
+                        <h4 className="font-bold text-slate-800 text-sm leading-tight truncate">{app.universityName}</h4>
+                        <p className="text-[11px] text-primary font-bold mt-0.5 truncate uppercase tracking-tighter">{app.scholarshipName}</p>
                       </div>
+                      <div className="ml-2">
+                        {getStatusBadge(app.applicationStatus)}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 bg-slate-50/50 p-4 rounded-lg border border-slate-100">
+                      <div>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Subject</p>
+                        <p className="text-xs font-bold text-slate-700">{app.subjectCategory || "General"}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Fees</p>
+                        <p className="text-xs font-extrabold text-slate-800">${app.applicationFees || 0}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button onClick={() => { setSelectedApplication(app); setShowDetailsModal(true); }} className="flex-1 py-2.5 bg-indigo-50 text-indigo-600 text-[11px] font-bold uppercase rounded-lg hover:bg-indigo-100 border-none cursor-pointer">Details</button>
+
+                      {app.paymentStatus !== "paid" && (
+                        <button onClick={() => handlePayment(app)} className="flex-1 py-2.5 bg-emerald-50 text-emerald-600 text-[11px] font-bold uppercase rounded-lg hover:bg-emerald-100 border-none cursor-pointer">Pay Now</button>
+                      )}
+
+                      {app.applicationStatus === "pending" && (
+                        <>
+                          <button onClick={() => { setSelectedApplication(app); setEditData({ subjectCategory: app.subjectCategory }); setShowEditModal(true); }} className="px-3 bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-100 border-none cursor-pointer"><FiEdit className="w-4 h-4" /></button>
+                          <button onClick={() => handleDelete(app._id)} className="px-3 bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100 border-none cursor-pointer"><FiTrash2 className="w-4 h-4" /></button>
+                        </>
+                      )}
+
+                      {app.applicationStatus === "completed" && (
+                        <button onClick={() => { setSelectedApplication(app); setShowReviewModal(true); }} className="flex-1 py-2.5 bg-purple-50 text-purple-600 text-[11px] font-bold uppercase rounded-lg hover:bg-purple-100 border-none cursor-pointer">Add Review</button>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          </>
+        )}
+      </div>
+
+      <AnimatePresence>
+        {showDetailsModal && selectedApplication && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowDetailsModal(false)} className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" />
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl relative z-10 p-6 sm:p-8 space-y-8 scrollbar-hide border border-slate-200">
+              <div className="flex justify-between items-center border-b border-slate-100 pb-5">
+                <div>
+                  <h3 className="text-xl font-extrabold text-slate-800">Application Overview</h3>
+                  <p className="text-slate-400 text-xs font-medium uppercase tracking-wider mt-1">Ref ID: {selectedApplication._id}</p>
+                </div>
+                <button onClick={() => setShowDetailsModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors border-none bg-transparent cursor-pointer">
+                  <FiXCircle className="w-8 h-8" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-6">
+                  <div>
+                    <p className="text-[11px] font-bold text-slate-400 uppercase mb-2">Institutional Details</p>
+                    <div className="space-y-4">
+                      <DetailBlock label="University Name" value={selectedApplication.universityName} />
+                      <DetailBlock label="Scholarship Program" value={selectedApplication.scholarshipName} />
+                      <DetailBlock label="Subject Field" value={selectedApplication.subjectCategory} />
+                      <DetailBlock label="Campus Location" value={selectedApplication.universityAddress} />
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
 
-          <div className="hidden lg:block overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b">
-                <tr>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                    University
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                    Address
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                    Subject
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                    Fees
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                    Status
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                    Feedback
-                  </th>
-                  <th className="px-4 py-3 text-center text-sm font-medium text-gray-700">
-                    Payment
-                  </th>
-                  <th className="px-4 py-3 text-center text-sm font-medium text-gray-700">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {applications.map((application) => (
-                  <tr key={application._id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3">
-                      <div className="font-medium text-gray-900">
-                        {application.universityName}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {application.scholarshipName}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
-                      {application.universityAddress || "N/A"}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
-                      {application.subjectCategory || "N/A"}
-                    </td>
-                    <td className="px-4 py-3 text-sm font-medium text-green-600">
-                      ${application.applicationFees || 0}
-                    </td>
-                    <td className="px-4 py-3">
-                      {getStatusBadge(application.applicationStatus)}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600 max-w-xs truncate">
-                      {application.feedback || "No feedback yet"}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      {application.paymentStatus === "paid" ? (
-                        <span className="text-green-600 font-semibold text-xs">
-                          Paid
-                        </span>
-                      ) : (
-                        <button
-                          onClick={() => handlePayment(application)}
-                          className="px-3 py-1 bg-green-500 text-white text-xs rounded"
-                        >
-                          Pay Now
-                        </button>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex gap-2 justify-center flex-wrap">
-                        <button
-                          onClick={() => {
-                            setSelectedApplication(application);
-                            setShowDetailsModal(true);
-                          }}
-                          className="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
-                        >
-                          Details
-                        </button>
+                <div className="space-y-6">
+                  <div>
+                    <p className="text-[11px] font-bold text-slate-400 uppercase mb-2">Process Summary</p>
+                    <div className="space-y-4">
+                      <DetailBlock label="Submission Date" value={new Date(selectedApplication.appliedDate).toLocaleDateString()} />
+                      <DetailBlock label="Application Fees" value={`$${selectedApplication.applicationFees}`} />
+                      <DetailBlock label="Payment Status" value={selectedApplication.paymentStatus?.toUpperCase() || "PENDING"} />
+                    </div>
+                  </div>
 
-                        {application.applicationStatus === "pending" && (
-                          <button
-                            onClick={() => {
-                              setSelectedApplication(application);
-                              setEditData({
-                                subjectCategory: application.subjectCategory,
-                              });
-                              setShowEditModal(true);
-                            }}
-                            className="px-3 py-1 bg-yellow-500 text-white text-xs rounded hover:bg-yellow-600"
-                          >
-                            Edit
-                          </button>
-                        )}
+                  <div className="p-5 mt-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <p className="text-[11px] font-bold text-slate-400 uppercase mb-3 px-1">Officer Feedback</p>
+                    <p className="text-sm font-medium text-slate-700 italic px-1 leading-relaxed">
+                      "{selectedApplication.feedback || "No administrative notes yet. Status will be updated as review progresses."}"
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-                        {application.applicationStatus === "pending" && (
-                          <button
-                            onClick={() => handleDelete(application._id)}
-                            className="px-3 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600"
-                          >
-                            Delete
-                          </button>
-                        )}
-
-                        {application.applicationStatus === "completed" && (
-                          <button
-                            onClick={() => {
-                              setSelectedApplication(application);
-                              setShowReviewModal(true);
-                            }}
-                            className="px-3 py-1 bg-purple-500 text-white text-xs rounded hover:bg-purple-600"
-                          >
-                            Review
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-      {showDetailsModal && selectedApplication && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-4 sm:p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-base sm:text-lg font-semibold">
-                  Application Details
-                </h3>
-                <button
-                  onClick={() => setShowDetailsModal(false)}
-                  className="text-gray-500 hover:text-gray-700 text-xl p-1"
-                >
-                  ×
+              <div className="pt-2">
+                <button onClick={() => setShowDetailsModal(false)} className="w-full py-4 bg-slate-800 text-white font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-slate-900 transition-all border-none cursor-pointer">
+                  Done Viewing
                 </button>
               </div>
-              <div className="space-y-3 text-sm">
-                <div>
-                  <span className="font-medium">Scholarship:</span>{" "}
-                  {selectedApplication.scholarshipName}
-                </div>
-                <div>
-                  <span className="font-medium">University:</span>{" "}
-                  {selectedApplication.universityName}
-                </div>
-                <div>
-                  <span className="font-medium">Applied Date:</span>{" "}
-                  {new Date(
-                    selectedApplication.appliedDate
-                  ).toLocaleDateString()}
-                </div>
-                <div>
-                  <span className="font-medium">Status:</span>{" "}
-                  {getStatusBadge(selectedApplication.applicationStatus)}
-                </div>
-                <div>
-                  <span className="font-medium">Fees:</span> $
-                  {selectedApplication.applicationFees}
-                </div>
-                <div>
-                  <span className="font-medium">Payment:</span>{" "}
-                  {selectedApplication.paymentStatus || "Pending"}
-                </div>
-                <div>
-                  <span className="font-medium">Feedback:</span>{" "}
-                  {selectedApplication.feedback || "No feedback yet"}
-                </div>
-              </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
 
-      {showReviewModal && selectedApplication && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-4 sm:p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-base sm:text-lg font-semibold">
-                  Add Review
-                </h3>
-                <button
-                  onClick={() => setShowReviewModal(false)}
-                  className="text-gray-500 hover:text-gray-700 text-xl p-1"
-                >
-                  ×
-                </button>
+      {/* Review Modal */}
+      <AnimatePresence>
+        {showReviewModal && selectedApplication && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowReviewModal(false)} className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" />
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl relative z-10 p-8 space-y-6 border border-slate-200">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-purple-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-purple-600">
+                  <FiStar className="w-8 h-8 fill-current" />
+                </div>
+                <h3 className="text-xl font-extrabold text-slate-800">Share Your Experience</h3>
+                <p className="text-slate-500 text-sm mt-1">Draft a review for {selectedApplication.universityName}</p>
               </div>
 
-              <div className="mb-4">
-                <p className="text-sm text-gray-600 mb-1">
-                  Reviewing: {selectedApplication.scholarshipName}
-                </p>
-                <p className="text-xs text-gray-500">
-                  University: {selectedApplication.universityName}
-                </p>
-              </div>
-
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">Rating</label>
-                <div className="flex gap-1 justify-center">
+              <div className="space-y-4">
+                <div className="flex justify-center gap-2">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
-                      onClick={() =>
-                        setReviewData({ ...reviewData, rating: star })
-                      }
-                      className={`text-xl sm:text-2xl transition-colors ${
-                        star <= reviewData.rating
-                          ? "text-yellow-400"
-                          : "text-gray-300"
-                      } hover:text-yellow-400 p-1`}
+                      onClick={() => setReviewData({ ...reviewData, rating: star })}
+                      className={`text-2xl transition-all border-none bg-transparent cursor-pointer p-1 ${star <= reviewData.rating ? 'text-amber-400 scale-110' : 'text-slate-200 hover:text-amber-200'}`}
                     >
                       ★
                     </button>
                   ))}
                 </div>
-                <p className="text-center text-xs text-gray-500 mt-1">
-                  {reviewData.rating} out of 5 stars
-                </p>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-400 uppercase mb-2 ml-1">Comments</label>
+                  <textarea
+                    value={reviewData.comment}
+                    onChange={(e) => setReviewData({ ...reviewData, comment: e.target.value })}
+                    className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-purple-100 transition-all outline-none resize-none min-h-[120px] text-sm font-medium text-slate-700"
+                    placeholder="Describe the application process or campus experience..."
+                  />
+                </div>
               </div>
 
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">
-                  Comment
-                </label>
-                <textarea
-                  value={reviewData.comment}
-                  onChange={(e) =>
-                    setReviewData({ ...reviewData, comment: e.target.value })
-                  }
-                  className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none text-sm"
-                  rows="4"
-                  placeholder="Share your experience with this scholarship program..."
-                />
+              <div className="flex gap-3">
+                <button onClick={() => setShowReviewModal(false)} className="flex-1 py-3.5 text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors border-none bg-transparent cursor-pointer">Discard</button>
+                <button onClick={handleSubmitReview} className="flex-1 py-3.5 bg-purple-600 text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-purple-700 transition-all border-none cursor-pointer">Submit Feedback</button>
               </div>
-
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  onClick={() => setShowReviewModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors text-sm"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSubmitReview}
-                  className="flex-1 px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors text-sm"
-                >
-                  Submit Review
-                </button>
-              </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
 
-      {showEditModal && selectedApplication && (
-        <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-200 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-4 sm:p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-base sm:text-lg font-semibold">
-                  Edit Application
-                </h3>
-                <button
-                  onClick={() => setShowEditModal(false)}
-                  className="text-gray-500 hover:text-gray-700 text-xl p-1"
-                >
-                  ×
-                </button>
+      {/* Edit Modal */}
+      <AnimatePresence>
+        {showEditModal && selectedApplication && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowEditModal(false)} className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" />
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl relative z-10 p-8 space-y-6 border border-slate-200">
+              <div className="flex items-center gap-4 border-b border-slate-100 pb-5">
+                <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center text-amber-600">
+                  <FiEdit className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-extrabold text-slate-800">Edit Application Details</h3>
               </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">
-                  Subject
-                </label>
-                <input
-                  type="text"
-                  value={editData.subjectCategory}
-                  onChange={(e) =>
-                    setEditData({
-                      ...editData,
-                      subjectCategory: e.target.value,
-                    })
-                  }
-                  className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                />
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-400 uppercase mb-2 ml-1">Primary Subject Field</label>
+                  <input
+                    type="text"
+                    value={editData.subjectCategory}
+                    onChange={(e) => setEditData({ ...editData, subjectCategory: e.target.value })}
+                    className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-amber-100 outline-none text-sm font-bold text-slate-700 transition-all shadow-xs"
+                    placeholder="e.g. Computer Science & Engineering"
+                  />
+                </div>
+                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-start gap-3">
+                  <FiAlertCircle className="text-amber-500 mt-0.5 shrink-0" />
+                  <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
+                    Changes are permitted only while application is 'Pending'. This update resets the officer review timestamp.
+                  </p>
+                </div>
               </div>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  onClick={() => setShowEditModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 text-sm"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleEditSubmit}
-                  className="flex-1 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-sm"
-                >
-                  Save
-                </button>
+
+              <div className="flex gap-3 pt-2">
+                <button onClick={() => setShowEditModal(false)} className="flex-1 py-3.5 text-sm font-bold text-slate-400 hover:text-slate-600 border-none bg-transparent cursor-pointer">Cancel</button>
+                <button onClick={handleEditSubmit} className="flex-1 py-3.5 bg-amber-500 text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-amber-600 transition-all border-none cursor-pointer">Update Records</button>
               </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </div>
   );
 };
+
+
+const DetailBlock = ({ label, value }) => (
+  <div>
+    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{label}</p>
+    <p className="text-sm font-extrabold text-slate-700 mt-0.5">{value || "Not Provided"}</p>
+  </div>
+);
 
 export default MyApplications;

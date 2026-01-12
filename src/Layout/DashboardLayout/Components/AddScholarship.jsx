@@ -2,12 +2,26 @@ import React, { useState } from "react";
 import useAuth from "../../../Hooks/useAuth";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
+import { motion } from "framer-motion";
+import {
+  FiPlusCircle,
+  FiBook,
+  FiMapPin,
+  FiDollarSign,
+  FiCalendar,
+  FiImage,
+  FiGlobe,
+  FiRefreshCw,
+  FiCheckCircle,
+  FiAward,
+  FiInfo
+} from "react-icons/fi";
 
 const AddScholarship = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
 
-  const [formData, setFormData] = useState({
+  const initialFormState = {
     scholarshipName: "",
     universityName: "",
     universityImage: "",
@@ -23,8 +37,9 @@ const AddScholarship = () => {
     applicationDeadline: "",
     postDate: new Date().toISOString().slice(0, 10),
     postedUserEmail: user?.email || "",
-  });
+  };
 
+  const [formData, setFormData] = useState(initialFormState);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -39,333 +54,162 @@ const AddScholarship = () => {
       await axiosSecure.post("/scholarships", formData);
       Swal.fire({
         icon: "success",
-        title: "Success!",
-        text: "Scholarship added successfully!",
-        showConfirmButton: false,
-        timer: 2000,
+        title: "Scholarship Added",
+        text: "The new scholarship has been successfully published to the portal.",
+        background: "#ffffff",
+        confirmButtonColor: "#3B82F6",
+        timer: 3000,
       });
 
-      setFormData({
-        scholarshipName: "",
-        universityName: "",
-        universityImage: "",
-        universityCountry: "",
-        universityCity: "",
-        universityWorldRank: "",
-        subjectCategory: "",
-        scholarshipCategory: "",
-        degree: "",
-        tuitionFees: "",
-        applicationFees: "",
-        serviceCharge: "",
-        applicationDeadline: "",
-        postDate: new Date().toISOString().slice(0, 10),
-        postedUserEmail: user?.email || "",
-      });
+      setFormData(initialFormState);
     } catch (err) {
       console.error(err);
       Swal.fire({
         icon: "error",
-        title: "Error",
-        text: "Failed to add scholarship. Please try again.",
+        title: "Submission Error",
+        text: "We couldn't add the scholarship. Please check your connection and try again.",
+        confirmButtonColor: "#EF4444",
       });
     } finally {
       setLoading(false);
     }
   };
 
+  const SectionHeader = ({ icon: Icon, title, color }) => (
+    <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8 border-b border-gray-200 pb-3 sm:pb-4">
+      <div className={`p-2 sm:p-2.5 rounded-xl bg-linear-to-br ${color} text-white shadow-md`}>
+        <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+      </div>
+      <h3 className="text-xs sm:text-sm font-bold text-gray-800 tracking-tight">{title}</h3>
+    </div>
+  );
+
   return (
-    <div className="w-full max-w-6xl mx-auto p-4 sm:p-6">
-      <title>Add Scholarship</title>
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-        <div className="bg-gray-200 px-4 sm:px-6 py-4 border-b border-gray-200">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-2">
-            Add New Scholarship
+    <div className="p-1 sm:p-8 lg:p-12 bg-[#F8FAFC] min-h-screen space-y-8 sm:space-y-12">
+      <title>Add New Scholarship | ScholarPoint</title>
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-linear-to-r from-gray-900 via-blue-950 to-gray-900 rounded-2xl sm:rounded-3xl lg:rounded-[2.5rem] p-6 sm:p-10 lg:p-14 text-white shadow-2xl relative overflow-hidden"
+      >
+        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse pointer-events-none"></div>
+        <div className="relative z-10 space-y-3 sm:space-y-4">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-2 flex items-center gap-3 sm:gap-4">
+            <FiPlusCircle className="text-blue-400 shrink-0" /> New Scholarship
           </h1>
-          <p className="text-gray-600 font-medium mb-3 text-sm sm:text-base">
-            Create a new scholarship opportunity for students worldwide
+          <p className="text-blue-100 text-sm sm:text-lg lg:text-xl max-w-2xl font-medium leading-relaxed opacity-90 italic">
+            Fill out the form below to create a new scholarship opportunity. Please provide clear and accurate information for students.
           </p>
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
-            Scholarship Information
-          </h2>
         </div>
+      </motion.div>
 
-        <form onSubmit={handleSubmit} className="p-4 sm:p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-            <div className="lg:col-span-2">
-              <label className="block font-semibold text-gray-900 mb-2 text-sm sm:text-base">
-                Scholarship Name
-              </label>
-              <input
-                type="text"
-                name="scholarshipName"
-                value={formData.scholarshipName}
-                onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-pink-500 transition-colors outline-none text-sm sm:text-[15px]"
-                placeholder="e.g., Harvard Merit Scholarship Program"
-                required
-              />
-            </div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="bg-white rounded-2xl sm:rounded-3xl lg:rounded-[2.5rem] shadow-xl shadow-blue-900/5 border border-white overflow-hidden"
+      >
+        <form onSubmit={handleSubmit} className="p-6 sm:p-10 lg:p-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10 sm:gap-12 lg:gap-14">
 
-            <div>
-              <label className="block font-semibold text-gray-900 mb-2 text-sm sm:text-base">
-                University Name
-              </label>
-              <input
-                type="text"
-                name="universityName"
-                value={formData.universityName}
-                onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-pink-500 transition-colors outline-none text-sm sm:text-[15px]"
-                placeholder="e.g., Harvard University"
-                required
-              />
+            <div className="space-y-8 sm:space-y-10 md:col-span-1">
+              <SectionHeader icon={FiBook} title="1. Scholarship Information" color="from-blue-500 to-indigo-600" />
+
+              <div className="space-y-5 sm:space-y-6">
+                <FormGroup label="Scholarship Name" name="scholarshipName" value={formData.scholarshipName} onChange={handleChange} placeholder="Enter name" required />
+                <FormGroup label="Subject / Field" name="subjectCategory" value={formData.subjectCategory} onChange={handleChange} placeholder="e.g., Computer Science" required />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <FormGroup label="Funding" name="scholarshipCategory" value={formData.scholarshipCategory} onChange={handleChange} placeholder="e.g., Full Fund" required />
+                  <FormGroup label="Degree" name="degree" value={formData.degree} onChange={handleChange} placeholder="e.g., Masters" required />
+                </div>
+              </div>
             </div>
 
-            <div>
-              <label className="block font-semibold text-gray-900 mb-2 text-sm sm:text-base">
-                University Image URL
-              </label>
-              <input
-                type="url"
-                name="universityImage"
-                value={formData.image}
-                onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-pink-500 transition-colors outline-none text-sm sm:text-[15px]"
-                placeholder="https://example.com/university-logo.jpg"
-              />
+            <div className="space-y-8 sm:space-y-10 md:col-span-1">
+              <SectionHeader icon={FiMapPin} title="2. University Details" color="from-purple-500 to-pink-600" />
+
+              <div className="space-y-5 sm:space-y-6">
+                <FormGroup label="University Name" name="universityName" value={formData.universityName} onChange={handleChange} placeholder="Enter name" required />
+                <FormGroup label="University Logo URL" name="universityImage" value={formData.universityImage} onChange={handleChange} placeholder="Paste link" icon={FiImage} />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <FormGroup label="Country" name="universityCountry" value={formData.universityCountry} onChange={handleChange} placeholder="e.g., USA" required />
+                  <FormGroup label="City" name="universityCity" value={formData.universityCity} onChange={handleChange} placeholder="e.g., New York" />
+                </div>
+                <FormGroup label="Global Rank" name="universityWorldRank" value={formData.universityWorldRank} onChange={handleChange} placeholder="Current rank" type="number" icon={FiGlobe} />
+              </div>
             </div>
 
-            <div>
-              <label className="block font-semibold text-gray-900 mb-2 text-sm sm:text-base">
-                Country
-              </label>
-              <input
-                type="text"
-                name="universityCountry"
-                value={formData.country}
-                onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-pink-500 transition-colors outline-none text-sm sm:text-[15px]"
-                placeholder="e.g., United States"
-                required
-              />
-            </div>
-            <div>
-              <label className="block font-semibold text-gray-900 mb-2 text-sm sm:text-base">
-                City
-              </label>
-              <input
-                type="text"
-                name="universityCity"
-                value={formData.city}
-                onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-pink-500 transition-colors outline-none text-sm sm:text-[15px]"
-                placeholder="e.g., Cambridge"
-                required
-              />
-            </div>
-            <div>
-              <label className="block font-semibold text-gray-900 mb-2 text-sm sm:text-base">
-                World Rank
-              </label>
-              <input
-                type="number"
-                name="universityWorldRank"
-                value={formData.worldRank}
-                onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-pink-500 transition-colors outline-none text-sm sm:text-[15px]"
-                placeholder="e.g., 1"
-                min="1"
-              />
-            </div>
-            <div>
-              <label className="block font-semibold text-gray-900 mb-2 text-sm sm:text-base">
-                Subject Category
-              </label>
-              <input
-                type="text"
-                name="subjectCategory"
-                value={formData.subjectCategory}
-                onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-pink-500 transition-colors outline-none text-sm sm:text-[15px]"
-                placeholder="e.g., Computer Science, Medicine, Engineering"
-                required
-              />
-            </div>
+            <div className="space-y-8 sm:space-y-10 md:col-span-2 xl:col-span-1">
+              <SectionHeader icon={FiDollarSign} title="3. Fees & Deadline" color="from-emerald-500 to-teal-600" />
 
-            <div>
-              <label className="block font-semibold text-gray-900 mb-2 text-sm sm:text-base">
-                Scholarship Category
-              </label>
-              <input
-                type="text"
-                name="scholarshipCategory"
-                value={formData.scholarshipCategory}
-                onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-pink-500 transition-colors outline-none text-sm sm:text-[15px]"
-                placeholder="e.g., Merit-based, Need-based, Athletic"
-                required
-              />
-            </div>
+              <div className="space-y-5 sm:space-y-6">
+                <FormGroup label="Tuition Fees (Optional)" name="tuitionFees" value={formData.tuitionFees} onChange={handleChange} placeholder="Yearly USD" type="number" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <FormGroup label="App Fee" name="applicationFees" value={formData.applicationFees} onChange={handleChange} placeholder="Amount USD" type="number" required />
+                  <FormGroup label="Service Fee" name="serviceCharge" value={formData.serviceCharge} onChange={handleChange} placeholder="Amount USD" type="number" required />
+                </div>
+                <FormGroup label="Application Deadline" name="applicationDeadline" value={formData.applicationDeadline} onChange={handleChange} type="date" icon={FiCalendar} min={new Date().toISOString().split("T")[0]} required />
 
-            <div>
-              <label className="block font-semibold text-gray-900 mb-2 text-sm sm:text-base">
-                Degree Type
-              </label>
-              <input
-                type="text"
-                name="degree"
-                value={formData.degree}
-                onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-pink-500 transition-colors outline-none text-sm sm:text-[15px]"
-                placeholder="e.g., Bachelor's, Master's, PhD"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block font-semibold text-gray-900 mb-2 text-sm sm:text-base">
-                Tuition Fees (USD)
-              </label>
-              <input
-                type="number"
-                name="tuitionFees"
-                value={formData.tuitionFees}
-                onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-pink-500 transition-colors outline-none text-sm sm:text-[15px]"
-                placeholder="e.g., 50000"
-                min="0"
-              />
-            </div>
-            <div>
-              <label className="block font-semibold text-gray-900 mb-2 text-sm sm:text-base">
-                Application Fees (USD)
-              </label>
-              <input
-                type="number"
-                name="applicationFees"
-                value={formData.applicationFees}
-                onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-pink-500 transition-colors outline-none text-sm sm:text-[15px]"
-                placeholder="e.g., 100"
-                min="0"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block font-semibold text-gray-900 mb-2 text-sm sm:text-base">
-                Service Charge (USD)
-              </label>
-              <input
-                type="number"
-                name="serviceCharge"
-                value={formData.serviceCharge}
-                onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-pink-500 transition-colors outline-none text-sm sm:text-[15px]"
-                placeholder="e.g., 50"
-                min="0"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block font-semibold text-gray-900 mb-2 text-sm sm:text-base">
-                Application Deadline
-              </label>
-              <input
-                type="date"
-                name="applicationDeadline"
-                value={formData.deadline}
-                onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-pink-500 transition-colors outline-none text-sm sm:text-[15px]"
-                min={new Date().toISOString().split("T")[0]}
-                required
-              />
-            </div>
-            <div>
-              <label className="block font-semibold text-gray-900 mb-2 text-sm sm:text-base">
-                Post Date
-              </label>
-              <input
-                type="date"
-                name="postDate"
-                value={formData.postDate}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 text-sm sm:text-[15px]"
-                readOnly
-              />
-            </div>
-            <div>
-              <label className="block font-semibold text-gray-900 mb-2 text-sm sm:text-base">
-                Admin Email
-              </label>
-              <input
-                type="email"
-                name="userEmail"
-                value={formData.postedUserEmail}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 text-sm sm:text-[15px]"
-                readOnly
-              />
+                <div className="pt-2 sm:pt-4">
+                  <div className="p-4 sm:p-5 bg-blue-50 rounded-2xl border border-blue-100 flex items-center gap-3 sm:gap-4">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue-600 flex items-center justify-center text-white shadow-lg shrink-0">
+                      <FiAward className="w-5 h-5 sm:w-6 sm:h-6" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[10px] sm:text-xs font-bold text-blue-600 uppercase tracking-wide leading-tight mb-0.5 sm:mb-1">Created By</p>
+                      <p className="text-xs sm:text-sm font-bold text-gray-800 truncate">{formData.postedUserEmail}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200">
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-end">
+
+          <div className="mt-12 sm:mt-16 pt-8 sm:pt-10 border-t border-gray-100 flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-8">
+            <div className="flex items-center gap-3 text-gray-500 bg-gray-50/50 px-4 sm:px-5 py-3 rounded-xl border border-gray-100 w-full lg:w-auto">
+              <FiInfo className="text-blue-500 w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+              <p className="text-xs sm:text-sm font-medium leading-tight">
+                Please double-check all information before publishing.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-5 w-full lg:w-auto">
               <button
                 type="button"
-                onClick={() => window.location.reload()}
-                className="px-4 sm:px-6 py-2 sm:py-3 border hover:shadow-xl border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm sm:text-base"
+                onClick={() => setFormData(initialFormState)}
+                className="w-full sm:w-auto px-8 py-4 bg-white text-gray-600 text-sm font-bold rounded-2xl hover:bg-gray-50 border border-gray-200 transition-all cursor-pointer shadow-sm active:scale-95"
               >
-                Reset Form
+                Reset All Fields
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className={`px-6 sm:px-8 py-2 sm:py-3 bg-linear-to-r from-red-600 to-pink-600 text-white rounded-lg font-medium transition-all duration-200 text-sm sm:text-base ${
-                  loading
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:from-red-600 hover:to-pink-600 hover:shadow-lg transform hover:scale-105"
-                }`}
+                className="w-full sm:w-auto px-10 py-4 bg-primary text-white text-sm sm:text-base font-bold rounded-2xl hover:bg-blue-700 shadow-xl shadow-blue-200 transition-all flex items-center justify-center gap-3 sm:gap-4 border-none cursor-pointer active:scale-95 disabled:opacity-50"
               >
-                {loading ? (
-                  <span className="flex items-center justify-center">
-                    <svg
-                      className="animate-spin -ml-1 mr-3 h-4 w-4 sm:h-5 sm:w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    <span className="hidden sm:inline">
-                      Adding Scholarship...
-                    </span>
-                    <span className="sm:hidden">Adding...</span>
-                  </span>
-                ) : (
-                  <>
-                    <span className="hidden sm:inline">Add Scholarship</span>
-                    <span className="sm:hidden">Add</span>
-                  </>
-                )}
+                {loading ? <FiRefreshCw className="animate-spin w-4 h-4 sm:w-5 sm:h-5" /> : <FiCheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />}
+                <span>{loading ? "Publishing..." : "Add Scholarship"}</span>
               </button>
             </div>
           </div>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 };
+
+
+const FormGroup = ({ label, icon: Icon, ...props }) => (
+  <div className="space-y-1.5 sm:space-y-2 group">
+    <label className="block text-xs sm:text-sm font-bold text-gray-700 ml-1 group-focus-within:text-blue-600 transition-colors">
+      {label} {props.required && <span className="text-rose-500">*</span>}
+    </label>
+    <div className="relative">
+      {Icon && <Icon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors w-4 h-4 sm:w-5 sm:h-5" />}
+      <input
+        {...props}
+        className={`w-full ${Icon ? 'pl-11 sm:pl-12' : 'px-4 sm:px-5'} pr-4 sm:pr-5 py-3 sm:py-4 bg-[#F8FAFC] border border-gray-100 rounded-xl sm:rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:bg-white outline-none text-sm sm:text-[15px] font-semibold text-gray-900 transition-all placeholder:text-gray-400`}
+      />
+    </div>
+  </div>
+);
 
 export default AddScholarship;

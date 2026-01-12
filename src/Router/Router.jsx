@@ -133,14 +133,6 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "analytics",
-        element: (
-          <AdminRoute>
-            <Analytics />
-          </AdminRoute>
-        ),
-      },
-      {
         path: "manage-applications",
         element: (
           <ModeratorRoute>
