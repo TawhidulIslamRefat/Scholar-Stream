@@ -9,7 +9,7 @@ const statistics = [
 
 const Statistics = () => {
   return (
-    <section className=" mt-10 md:mt-48">
+    <section className=" mt-10 md:mt-60">
       <div className="w-[98%] md:w-9/12 mx-auto px-4 md:px-0">
         <div className="text-center mb-12">
           <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4">

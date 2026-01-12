@@ -12,7 +12,6 @@ import DashBoardLayout from "../Layout/DashboardLayout/DashBoardLayout";
 import Profile from "../Layout/DashboardLayout/Components/Profile";
 import AdminRoute from "./AdminRoute";
 import ModeratorRoute from "./ModeratorRoute";
-import Analytics from "../Layout/DashboardLayout/Components/Analytics";
 import ManageUsers from "../Layout/DashboardLayout/Components/ManageUsers";
 import ManageScholarships from "../Layout/DashboardLayout/Components/ManageScholarships";
 import AddScholarship from "../Layout/DashboardLayout/Components/AddScholarship";
