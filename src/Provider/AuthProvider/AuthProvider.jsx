@@ -54,9 +54,12 @@ const AuthProvider = ({ children }) => {
       setUser(currentUser);
       if (currentUser?.email) {
         try {
-          const res = await axios.post("https://scholarstream-server-alpha.vercel.app/jwt", {
-            email: currentUser.email,
-          });
+          const res = await axios.post(
+            "https://scholarpoint-server.vercel.app/jwt",
+            {
+              email: currentUser.email,
+            }
+          );
           localStorage.setItem("access-token", res.data.token);
         } catch (error) {
           console.error("JWT error:", error);

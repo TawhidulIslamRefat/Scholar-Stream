@@ -18,9 +18,12 @@ const PaymentSuccess = () => {
   useEffect(() => {
     if (!sessionId) return;
 
-    fetch(`https://scholarstream-server-alpha.vercel.app/payment-success?session_id=${sessionId}`, {
-      method: "PATCH",
-    })
+    fetch(
+      `https://scholarpoint-server.vercel.app/payment-success?session_id=${sessionId}`,
+      {
+        method: "PATCH",
+      }
+    )
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {

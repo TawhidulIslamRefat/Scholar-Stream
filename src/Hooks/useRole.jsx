@@ -12,7 +12,7 @@ const useRole = () => {
       return;
     }
 
-    fetch(`https://scholarstream-server-alpha.vercel.app/users/${user.email}/role`) 
+    fetch(`https://scholarpoint-server.vercel.app/users/${user.email}/role`)
       .then((res) => res.json())
       .then((data) => {
         setRole(data?.role || "Student");

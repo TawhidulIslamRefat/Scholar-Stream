@@ -11,7 +11,7 @@ const Payment = () => {
     const fetchScholarship = async () => {
       try {
         const res = await fetch(
-          `https://scholarstream-server-alpha.vercel.app/scholarships/${scholarshipId}`
+          `https://scholarpoint-server.vercel.app/scholarships/${scholarshipId}`
         );
         const data = await res.json();
         setScholarship(data);
@@ -38,7 +38,7 @@ const Payment = () => {
 
     try {
       const res = await fetch(
-        "https://scholarstream-server-alpha.vercel.app/create-checkout-session",
+        "https://scholarpoint-server.vercel.app/create-checkout-session",
         {
           method: "POST",
           headers: {
