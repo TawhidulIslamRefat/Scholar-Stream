@@ -1,4 +1,4 @@
-# 🎓 Scholarship Stream
+# 🎓 Scholar - Point
 
 Scholarship Stream is a full-stack web application designed to help students discover scholarships, apply online, and manage applications efficiently. It also provides powerful dashboards for Admins and Moderators to manage users, scholarships, applications, and payments.
 
